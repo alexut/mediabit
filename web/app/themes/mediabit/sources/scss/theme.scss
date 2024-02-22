@@ -1,0 +1,36 @@
+// Custom bootstrap variable overrides
+@import "variable_overrides_mb";
+
+// Bootstrap and its default variables
+@import "bootstrap/bootstrap";
+// inc
+@import "inc/slider";
+// end inc
+@import "mixins/hamburger";
+
+@import "general";
+// end global
+
+ // Bscore old styles 
+//  TODO: review what you keep from here.
+@import "inc/admin_bar";
+@import "inc/alerts";
+// @import "inc/breadcrumb";
+// @import "inc/colors";
+// @import "inc/comments";
+@import "inc/footer";
+@import "inc/forms";
+@import "inc/header";
+// @import "inc/loop";
+// @import "inc/markups";
+// @import "inc/single";
+// @import "inc/temporary";
+// @import "inc/top_button";
+// @import "inc/utilities";
+@import "inc/widgets";
+
+// Splide
+@import "inc/slider";
+
+// Pages
+@import "pages/contact";

@@ -1,0 +1,13 @@
+ewww-image-optimizer/ewww-image-optimizer.php
+litespeed-cache/litespeed-cache.php
+shortpixel-adaptive-images/short-pixel-ai.php
+shortpixel-image-optimiser/wp-shortpixel.php
+wp-rocket/wp-rocket.php
+wp-smushit/wp-smush.php
+autoptimize/autoptimize.php
+bunnycdn/bunnycdn.php
+jetpack/jetpack.php
+iubenda-cookie-law-solution/iubenda_cookie_solution.php
+w3-total-cache/w3-total-cache.php
+wp-fastest-cache/wpFastestCache.php
+wp-optimize/wp-optimize.php

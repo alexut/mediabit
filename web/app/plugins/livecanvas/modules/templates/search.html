@@ -1,0 +1,42 @@
+<section class="py-6 bg-light text-center">
+	<div class="container">
+		<div class="lc-block">
+			<h1 class="display-4 fw-bold">Search results for [lc_the_search_query]</h1>
+		</div>
+		<div class="lc-block col-lg-8 mx-auto mb-4">
+			<div class="lead text-muted">
+				<p>Haven't you found anything interesting? <a class="link-secondary" href="[lc_home_url]">Back to home</a></p>
+
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="py-5">
+	<div class="container">
+		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3">
+			<!-- Starts the loop -->
+			[lc_loop]
+
+			<div class="col mb-4">
+				<div class="card shadow-sm h-100">
+					<!-- Thumbnail-->
+					<div>[lc_the_thumbnail size="medium" class="w-100" style="height: 256px;object-fit: cover"]</div>
+					<div class="card-body">
+
+						<!-- Date-->
+						<small class="text-muted">[lc_the_date]</small>
+
+						<h2>[lc_the_title link=1 class="stretched-link"]</h2>
+
+						<div class="card-text">[lc_the_excerpt link=1 length=20]</div>
+
+					</div>
+				</div>
+			</div>
+			[/lc_loop]
+			<!-- End of the loop -->
+		</div>
+		<div class="pt-4"> [lc_the_pagination class="pagination pagination-lg justify-content-center"] </div>
+	</div>
+</section>

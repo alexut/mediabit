@@ -1,0 +1,111 @@
+<section class="woocommerce">
+	<div class="container-fluid mb-4 overflow-hidden">
+		<div class="row align-items-center">
+			<div class="col-lg-6 g-0 align-self-lg-stretch"> 
+				
+				[lc_wc_carousel image_class="w-100"] 
+				
+				<style>
+					/* Carousel Mobile optimization. Limits the image height on mobile */
+					@media (min-width: 992px) {
+						#carouselLiveCanvas>div.carousel-inner>div>img {
+							height: calc(100vh - 4rem);
+							object-fit: cover;
+							object-position: center;
+						}
+					}
+				</style>
+			</div>
+			<div class="col-lg-6 col-xl-5 ps-lg-5 mb-5 py-lg-4">
+				<div>
+					[lc_wc_notices]
+				</div>
+				
+				<div class="lc-block">
+					[lc_wc_on_sale_badge class="badge bg-success rounded-pill rfs-7 mt-4 mt-lg-0"]
+				</div>
+
+				<div class="mt-3 lc-block">
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb rfs-6">
+							<li class="breadcrumb-item">
+								<a class="link-dark text-decoration-none" href="[lc_wc_get_page_url]">Home</a>
+							</li>
+							<li class="breadcrumb-item">
+								<a class="link-dark text-decoration-none" href="[lc_wc_product_category get='url']">[lc_wc_product_category]</a>
+							</li>
+							<li class="breadcrumb-item active" aria-current="page">[lc_wc_product get="name"]</li>
+						</ol>
+					</nav>
+				</div>
+
+				
+				<div class="lc-block">
+					<h1 class="display-2 fw-bolder">[lc_wc_product get="name"]</h1>
+				</div>
+
+				<div class="lc-block d-block d-sm-flex justify-content-between my-4">
+					<div>
+						<h4>[lc_wc_product get="price_html"]</h4>
+					</div>
+					<div>
+						[lc_wc_product_rating]
+					</div>
+				</div>
+
+				<div class="lc-block lead text-secondary-400 mb-4">
+						[lc_wc_product get="short_description" filter="wpautop"] 
+				</div>
+
+				<div class="lc-block">
+					[lc_wc_product_add_to_cart class='btn-primary btn btn-lg' qty_class='form-control-lg' select_class='form-control']
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="woocommerce">
+	<div class="container">
+		<ul class="nav nav-tabs flex-column flex-sm-row rfs-8" role="tablist">
+			<li class="nav-item" role="presentation">
+				<a class="nav-link detail-nav-link active" data-bs-toggle="tab" href="#description" role="tab" aria-selected="true">[lc_wc_label text="Description"]</a>
+			</li>
+			<li class="nav-item" role="presentation">
+				<a class="nav-link detail-nav-link additional-information-nav-link" data-bs-toggle="tab" href="#additional-information" role="tab" aria-selected="false" tabindex="-1">[lc_wc_label text="Additional information"]</a>
+			</li>
+			<li class="nav-item" role="presentation">
+				<a class="nav-link detail-nav-link" data-bs-toggle="tab" href="#reviews" role="tab" aria-selected="false" tabindex="-1">[lc_wc_label text="Reviews"]</a>
+			</li>
+		</ul>
+		<div class="tab-content py-4">
+
+			<div class=" tab-pane active lc-block" id="description" role="tabpanel"> 
+
+				[lc_wc_product_tab_description] 
+
+			</div>
+
+
+			<div class="tab-pane lc-block" id="additional-information" role="tabpanel"> 
+
+				[lc_wc_product_tab_additional_information] 
+
+			</div>
+
+
+			<div class="tab-pane lc-block" id="reviews" role="tabpanel"> 
+				
+				[lc_wc_product_tab_reviews]  ([lc_wc_product get="review_count"])
+
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="woocommerce">
+	<div class="container">
+
+		[lc_wc_related columns="4" posts_per_page="4" orderby="rand" order="desc"]
+
+	</div>
+</section>

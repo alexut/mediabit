@@ -1,0 +1,176 @@
+// https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss
+
+$spacer: 1rem;
+
+// variables
+
+$primary: #d50f4b;
+$secondary: #1c2556;
+$body-color: #3b5266;
+$body-bg: #fff;
+$headings-color: #1c2556;
+
+
+
+$gray-100: #f8f9fa !default;
+$gray-200: #ebf2f7; //Light blue background
+$gray-300: #d3dce5; //Border color
+$gray-400: #dedede; //App bg
+$gray-500: #bdccd6; //Dark blue background
+$gray-600: #8298ab; // Slider trigger
+$gray-700: #495057 !default;
+$gray-800: #3b5266; // Text color
+$gray-900: #304659; // Headings color
+
+$pink-100: #f7ebee;
+$pink-200: #f7e5e7;
+
+$spacer: 1rem !default;
+$spacers: () !default;
+// stylelint-disable-next-line scss/dollar-variable-default
+$spacers: map-merge(
+  (
+    0: 0,
+    1: (
+      $spacer * 0.25,
+    ),
+    2: (
+      $spacer * 0.5,
+    ),
+    3: $spacer,
+    4: (
+      $spacer * 1.5,
+    ),
+    5: (
+      $spacer * 3,
+    ),
+    6: (
+      $spacer * 5,
+    ),
+    7: (
+      $spacer * 7.5,
+    ),
+    8: (
+      $spacer * 10,
+    ),
+  ),
+  $spacers
+);
+
+$body-color: $gray-800;
+
+$link-color: $gray-900;
+$link-hover-color: $primary;
+$link-hover-decoration: none;
+
+$paragraph-margin-bottom: 0.75rem;
+
+$xs: 0;
+$sm: 576px;
+$md: 768px;
+$lg: 992px;
+$xl: 1332px;
+$xxl: 1640px;
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1352px,
+  xxl: 1680px
+);
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1240px,
+  xxl: 1380px
+);
+
+$grid-gutter-width: 34px;
+
+$enable-responsive-font-sizes: true;
+
+
+$font-family-base:"Inter", Roboto, "Helvetica Neue", Arial, sans-serif; 
+$font-size-base: 1rem;
+$font-size-sm: $font-size-base * 0.75;
+$headings-font-weight: 800;
+$border-radius: 5px;
+$headings-line-height: 1.1;
+// Headings
+
+
+$h1-font-size: $font-size-base * 3.6;
+$h2-font-size: $font-size-base * 2.7;
+$h3-font-size: $font-size-base * 2.05;
+$h4-font-size: $font-size-base * 1.5;
+$h5-font-size: $font-size-base;
+$h6-font-size: $font-size-base * 0.75;
+
+$headings-font-family: "LatoWebBold", sans-serif;
+$headings-color: $secondary;
+
+// Buttons
+
+$btn-font-family: $font-family-base;
+$btn-font-size: $font-size-base;
+$btn-white-space: nowrap;
+
+$btn-font-size-sm: $font-size-base;
+
+$btn-font-weight: 600;
+$btn-box-shadow: none;
+$btn-active-box-shadow: none;
+
+$btn-border-radius: 7px;
+$btn-border-radius-sm: 4px;
+
+$input-btn-padding-y: 0.75rem;
+$input-btn-padding-x: 1.5rem;
+
+$input-btn-padding-y-sm: .4rem;
+$input-btn-padding-x-sm: .8rem;
+$input-btn-font-size-sm: .95rem;
+
+$input-border-radius: 4px;
+$input-border-radius-sm: 4px;
+
+$input-bg: white;
+$input-border-color: $gray-300;
+$input-color: $gray-800;
+$form-label-font-weight:   600;
+// Navs
+$navbar-nav-link-padding-x: 1.8rem;
+
+$navbar-light-toggler-border-color: transparent;
+$nav-link-font-size:   1rem;
+$nav-link-font-weight: 600;
+
+// Navbar
+$navbar-light-color: $secondary;
+$navbar-light-active-color: $primary;
+
+$navbar-padding-y: .25rem;
+
+
+a {
+  transition: color 0.1s ease-in;
+}
+
+$input-btn-focus-box-shadow: 0 0 0 0 #fff;
+$custom-range-thumb-bg: $secondary;
+
+// splide variable overrides
+:root {
+  --splide-breakpoint-xs: #{map-get($grid-breakpoints, sm)};
+  --splide-breakpoint-sm: #{map-get($grid-breakpoints, md)};
+  --splide-breakpoint-md: #{map-get($grid-breakpoints, lg)};
+  --splide-breakpoint-lg: #{map-get($grid-breakpoints, xl)};
+  --splide-breakpoint-xl: #{map-get($grid-breakpoints, xxl)};
+}
+
+$bright : #ebe9ea;
+// de facut un sitem de culori sa acopere toate culorile din site si de mutat sus

@@ -1,0 +1,55 @@
+<section>
+	<!-- thumbnail -->
+	<div class="container-fluid g-0"> [lc_the_thumbnail size= 'post-full' class = "w-100 min-vh-25 min-vh-md-50 mb-n7" style="max-height: 400px;object-fit: cover;"] </div>
+
+	<div class="container p-5 bg-light mt-md-n6 position-relative rounded">
+		<div class="row text-center">
+			<div class="col-md-12 mb-4">
+				<!-- the title -->
+				<div class="lc-block">
+					<h1 class="display-4 fw-bold">[lc_the_title link=0]</h1>
+				</div>
+				
+				<!-- post meta -->
+				<div class="lc-block">
+					<p class="lead text-muted">[lc_the_date] <span>by</span> [lc_the_author] </p>
+				</div>
+				
+				<!-- categories -->
+				<div class="lc-block mb-2">
+					[lc_the_terms taxonomy=category class="" link_class="badge bg-primary rounded-pill link-light text-decoration-none"]
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8 offset-md-2">
+
+				<div class="lc-block"> [lc_the_content]</div>
+
+				<div class="lc-block"> [lc_edit_post_link text="Edit this post" class='d-block mt-4 mb-5']</div>
+
+				<div class="lc-block"> [lc_the_sharing]</div>
+
+				<div class="lc-block"> [lc_the_comments]</div>
+
+			</div>
+		</div>
+
+		<div class="row border-top border-bottom">
+			<div class="col-sm-6 py-3 py-md-4">
+				<div class="d-flex align-items-center ">
+
+					[lc_the_previous_post_link class="btn btn-link"]
+
+				</div>
+			</div>
+			<div class="col-sm-6 py-3 py-md-4">
+				<div class="d-flex align-items-center justify-content-end">
+
+					[lc_the_next_post_link class="btn btn-link"]
+
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

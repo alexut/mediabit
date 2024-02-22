@@ -1,0 +1,84 @@
+<div>
+	[lc_wc_notices]
+</div>
+
+
+<section class="py-5">
+	<div class="container">
+
+		<div class="row">
+			<div class="col-lg-3">
+				<div class="lc-block vstack gap-4">
+					[lc_wc_sidebar]
+				</div>
+			</div>
+			<div class="col-lg-9">
+				<div class="row mb-5 g-3 align-items-lg-center">
+					<div class="col-sm-6">
+						[lc_wc_result_count]
+					</div>
+					<div class="col-sm-6">
+						[lc_wc_order_by form_class="woocommerce-ordering" class="orderby me-auto"]
+					</div>
+				</div>
+				<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 g-4">
+					<!-- Starts the loop -->
+					[lc_loop]
+
+					<div class="col">
+
+						<div class="card h-100 mx-auto">
+							<!-- Thumbnail-->
+							<div class="position-relative">
+								<div class="lc-block">
+									[lc_the_thumbnail size="medium" placeholder_url="http://via.placeholder.com/600x600" class="card-img-top"]
+								</div>
+
+								<div class="lc-block position-absolute top-0 end-0 mt-1 me-1 text-end opacity-75">
+									[lc_wc_on_sale_badge]
+								</div>
+
+
+								<div class="card-body">
+
+									<div class="hstack justify-content-between align-items-baseline">
+										<div class="lc-block">
+											<p class="text-muted card-text">
+												[lc_the_terms taxonomy="product_cat" class=" " link="0" parent=""]
+											</p>
+										</div>
+
+										<div class="lc-block">
+											[lc_wc_rating]
+										</div>
+
+									</div>
+
+									<div class="lc-block">
+										<h2 class="h5 mb-2">[lc_the_title link="1" link_class="stretched-link"]</h2>
+									</div>
+
+									<div class="lc-block">
+										<p class="text-success">[lc_wc_product get="price_html"]</p>
+									</div>
+
+								</div>
+							</div>
+
+							<div class="card-footer bg-transparent border-0 position-relative pb-3">
+								<div class="lc-block d-grid d-lg-block gap-2">
+									[lc_wc_add_to_cart class="btn btn-outline-primary"]
+								</div>
+							</div>
+
+						</div>
+					</div>
+					[/lc_loop]
+					<!-- End of the loop -->
+				</div>
+			</div>
+		</div>
+
+		<div class="py-5"> [lc_the_pagination class="pagination pagination-lg justify-content-center"] </div>
+	</div>
+</section>

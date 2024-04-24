@@ -25,3 +25,41 @@ Loop
 .card .tags-heading {
   display: none;
 }
+
+.latest-posts {
+  .card {
+    // animate the card on hover
+    transition: all 0.5s;
+    .card-body {
+      position: relative;
+      min-height: 200px;
+      @include media-breakpoint-up(lg) {
+        min-height:325px;
+      }
+    }
+    h4 a{
+      text-decoration: none;
+    }
+    .card-category a{
+      text-decoration: none;
+      position: absolute;
+      bottom: 20px;
+      left: 16px;
+    }
+    .btn-link {
+      position: absolute;
+      bottom: 0px;
+      right: 0;
+      i {
+        font-size: 24px;;
+      }
+    }
+    // increase shadow and move 10px up on hover
+    &:hover {
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1)!important;
+      transform: translateY(-10px);
+      transition: all 0.3s;
+    }
+     
+  }
+}

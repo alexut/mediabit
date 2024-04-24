@@ -3,6 +3,58 @@ Forms
 --------------------------------------------------------------*/
 
 // Select
-select {
-  @extend .form-select;
+// Define the colors and styles for the button and the selected state
+$button-background: #fff; 
+$button-border: $primary; 
+$button-text-color: $primary;
+$button-hover-background: $primary;
+$button-active-background: $primary;
+$button-active-border: $primary;
+$button-active-color: #fff;
+
+.form-check-box {
+  .wpcf7-list-item {
+    position: relative;
+    display: inline-block; // Display as inline-block to put all checkboxes in a row
+    margin-right: 5px; // Spacing between buttons
+
+    // Here, we're styling the span that is adjacent to the checkbox
+    // The checkbox is hidden (opacity: 0, z-index: -1) but accessible
+    input[type='checkbox'] {
+      position: absolute;
+      opacity: 0;
+      z-index: -1;
+      // We use the + adjacent sibling combinator to target the label span next to the checkbox
+      & + span.wpcf7-list-item-label {
+        display: block;
+        cursor: pointer;
+        padding: 10px 20px; // Padding for the button
+        margin: 5px 0; // Margin for spacing between buttons
+        background-color: $button-background;
+        border: 1px solid $button-border;
+        border-radius: 5px; // Rounded corners for buttons
+        color: $button-text-color;
+        transition: background-color 0.3s, color 0.3s, border 0.3s;
+
+        &:hover {
+          background-color: $button-hover-background;
+          color: $button-active-color;
+        }
+      }
+      // When the checkbox is checked, the label span next to it will have these styles
+      &:checked + span.wpcf7-list-item-label {
+        background-color: $button-active-background;
+        border-color: $button-active-border;
+        color: $button-active-color;
+        &:after {
+          // content: '\2713'; // Unicode checkmark symbol
+          color: $button-active-color;
+          position: absolute;
+          top: 50%;
+          right: 10px;
+          transform: translateY(-50%);
+        }
+      }
+    }
+  }
 }

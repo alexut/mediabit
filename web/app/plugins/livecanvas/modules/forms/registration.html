@@ -1,0 +1,43 @@
+<form autocomplete="on" role="form" method="post" id="lc-registration-form">
+
+    <div class="form-group mb-3">
+        
+        <label>Your Email Address</label>
+        <input autocomplete="email" class="form-control" name="efield" type="email" required placeholder="john@doe.com">
+    </div>
+
+
+    <div class="form-group mb-3">
+
+        <label>Your Desired Username</label>
+
+        <input autocomplete="off" class="form-control d-none" name="mouzetrp" type="text" value="" id="hhh">
+        <input autocomplete="off" type="hidden" name="checkit" value="yo">
+
+        <input autocomplete="username" class="form-control" name="ufield" type="text" required placeholder="johndoe">
+    </div>
+
+
+    <div class="form-group mb-3">
+
+        <label>Password</label>
+        <input autocomplete="new-password" class="form-control" name="pfield" type="password" required>
+    </div>
+
+ 
+    <div class="d-grid gap-2">
+        
+        <input type="hidden" name="next_page_slug" value="/">
+
+        <input id="lc-create-account" autocomplete="off" class="mt-3 mb-3 btn btn-lg btn-block btn-primary" type="submit" value="Create my Account">
+
+    </div>
+
+
+    [lc_form action="lc_submit_user_registration"]
+
+</form>
+
+<div class="lc_form_feedback"></div>
+
+ 

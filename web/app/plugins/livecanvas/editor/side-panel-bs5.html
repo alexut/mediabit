@@ -1,20 +1,16 @@
 <div class="top-actions">
 	<!-- <a class="minimize-sidepanel"> <i class="fa fa-chevron-down"></i></a> -->
 	<!-- <a class="toggle-side-mode"> <i class="fa fa-chevron-circle-left"></i></a> -->
-	<a class="close-sidepanel">  <!-- <span>Close</span> -->   <i class="fa fa-times"></i></a>
+	<a class="close-sidepanel">  
+		<svg width="21" height="21" fill="var(--color-grey-2)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="color: var(--color-grey-2);" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+	</a>
 </div>
 
- 
 <section item-type="generic">
     <h1>Item x</h1> 
-     
     <form> 
     </form>
-   
 </section>
- 
- 
- 
  
 <section item-type="history">
     <h1>History</h1>
@@ -24,27 +20,295 @@
     <form>
 		     <ul id="history-steps"> </ul>
     </form>
-   
 </section>
  
- 
- 
+<!-- NEW OBJECT BASED PANEL -->
+<section item-type="edit-properties">
 
-
-
+	<h1>Edit Properties</h1> 
+     
+    <form id="the-dynamic-editing-form"> 
+    </form>
+   
+</section>
 
 <section item-type="sections">
     <h1>Sections</h1> 
     <!-- <p class="section-suggestion">Replace the selected section with any of the following items:</p> -->
-    <div class="sidepanel-tabs">
-		<a data-show="readymade-sections" class="active"><i class="fa fa-cubes" aria-hidden="true"></i> <span>ReadyMades</span> </a>
+    <div class="sidepanel-tabs" style="position:relative">
+		<a data-show="readymade-sections" class="active" >
+            <i class="fa fa-cubes" aria-hidden="true"></i> 
+            <span>ReadyMades</span> 
+        </a>
+        
+		<div style="position: absolute;left: 116px;top: 2px;width: fit-content; background-color: transparent;;">
+			<a style="width: 20px !important;height:14px !important; padding:2px 4px; text-decoration: none;background-color:transparent;"  href="#" data-copy-html from="#uikit-selection-template" to="#readymade-sections">
+				<i title="Choose UI Kit" style="font-size:13px;" class="fa fa-cog" aria-hidden="true"></i>
+			</a>
+		</div>
+
 		<a data-show="grid-builder"><i class="fa fa-columns" aria-hidden="true"></i> <span>Grid Builder</span></a>
 		<!-- <a data-show="your-custom-sections"><i class="fa fa-star-o" aria-hidden="true"></i> <span>Custom</span> </a> -->
     </div>
 	<form id="readymade-sections" class="items-browser">
-		
-		 
+ 
 	</form>
+
+    <template id="uikit-selection-template">
+
+
+        <div id="uikit-selection" data-target-selector="#readymade-sections" style="display: block;">
+            
+            <h1>UI Kits</h1>
+
+            <ul id="ui-kit-list">
+                <li class="ui-kit-list-item">
+					<a href="#" action-load-uikit="https://library.livecanvas.com/sections/wp-json/livecanvas-remote-api/v1/sections.json" >
+
+						<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 48 48" fill="none">
+							<path d="M48 24C48 37.2548 37.2548 48 24 48C10.7452 48 0 37.2548 0 24C0 10.7452 10.7452 0 24 0C37.2548 0 48 10.7452 48 24Z" fill="#1F0020"/>
+							<path d="M13.8494 35.1177C12.9711 35.1177 12.1534 34.9057 11.3962 34.4817C10.6391 34.0274 10.2605 33.2854 10.2605 32.2557C10.2605 30.8322 10.7602 29.1362 11.7596 27.1677C12.7894 25.1991 13.9554 23.1548 15.2577 21.0348C18.8011 15.2805 21.3148 12.4034 22.7988 12.4034C23.1017 12.4034 23.4045 12.5245 23.7074 12.7668C24.0405 12.9788 24.2222 13.2211 24.2525 13.4936L21.0725 17.7639C19.8308 19.4297 18.7102 20.9742 17.7108 22.3977C16.7114 23.7908 15.8482 25.0477 15.1214 26.1682C14.7579 26.7437 14.3491 27.3948 13.8948 28.1217C13.4405 28.8485 13.0317 29.6057 12.6682 30.3931C12.3351 31.1502 12.1685 31.9225 12.1685 32.71C12.1685 33.0734 12.2745 33.4065 12.4865 33.7094C12.6985 33.982 13.0771 34.1183 13.6222 34.1183C14.5914 34.1183 15.8634 33.6034 17.4382 32.5737C19.0131 31.5137 20.5728 30.06 22.1174 28.2125C22.2688 28.0308 22.4354 27.8642 22.6171 27.7128C22.7988 27.5614 22.9502 27.4857 23.0714 27.4857C23.2228 27.4857 23.2985 27.5765 23.2985 27.7582C23.2985 27.8491 23.1925 28.0308 22.9805 28.3034C22.7988 28.5457 22.6474 28.7425 22.5262 28.894L21.4359 30.1205C20.8302 30.7868 20.1034 31.5137 19.2554 32.3011C18.4377 33.0885 17.5594 33.7548 16.6205 34.3C15.7119 34.8451 14.7882 35.1177 13.8494 35.1177Z" fill="#26C6DA"/>
+							<path d="M25.7473 35.6174C24.7782 35.6174 23.8999 35.3146 23.1125 34.7089C22.3251 34.0729 21.9313 33.24 21.9313 32.2103C21.9313 30.06 23.2488 27.6069 25.8836 24.8508C28.5791 22.0646 30.9868 20.6714 33.1068 20.6714C33.8336 20.6714 34.4091 20.8683 34.8331 21.262C35.2571 21.6254 35.4691 22.0797 35.4691 22.6248C35.4691 23.382 35.2874 24.0786 34.9239 24.7146C34.4999 25.502 33.8942 25.8957 33.1068 25.8957C32.3194 25.8957 31.9256 25.6534 31.9256 25.1688C31.9256 24.8357 32.1225 24.336 32.5162 23.6697C32.9402 22.9731 33.1522 22.6097 33.1522 22.5794C33.1522 22.5188 33.1068 22.4886 33.0159 22.4886C32.1679 22.5794 30.9868 23.2003 29.4725 24.3511C28.8062 24.866 28.2156 25.3506 27.7008 25.8048C27.2162 26.2591 26.8225 26.6983 26.5196 27.1223L24.7479 29.7117C24.5662 29.9843 24.3693 30.4537 24.1573 31.12C23.9756 31.7863 23.8848 32.286 23.8848 32.6191C23.8848 33.2249 24.0816 33.7246 24.4753 34.1183C24.8993 34.512 25.4293 34.7089 26.0653 34.7089C27.5796 34.7089 29.5785 33.7246 32.0619 31.756C34.0608 30.1811 35.6659 28.5911 36.8774 26.986C37.0288 26.8043 37.2105 26.7134 37.4225 26.7134C37.6345 26.7134 37.7405 26.774 37.7405 26.8951C37.7405 26.986 37.6648 27.1374 37.5134 27.3494C35.8476 29.5603 33.8942 31.4683 31.6531 33.0734C29.2605 34.7694 27.2919 35.6174 25.7473 35.6174Z" fill="#E83E8C"/>
+						</svg>
+
+						<div class="ui-kit-list-item-content">
+							<h5>LiveCanvas Library</h5>
+							<p>A beautiful collection of Bootstrap 5 HTML readymade sections.  </p>
+						</div>
+					</a>
+				</li>
+				<li class="ui-kit-list-item">
+
+                    <a class="ui-more-info" title="More Info"
+                        href="https://www.youtube.com/watch?v=GUvAfrX3Aow" target="_blank"><span class="fa fa-external-link"></span></a>
+                            
+					<a href="#" action-load-uikit="livecanvas/v1/posts-by-tax/?post_type=lc_section&tax_name=lc_section_type">
+					
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hdd-fill" viewBox="-2 -2 20 20">
+							<path d="M0 10a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1m2 0a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1M.91 7.204A3 3 0 0 1 2 7h12c.384 0 .752.072 1.09.204l-1.867-3.422A1.5 1.5 0 0 0 11.906 3H4.094a1.5 1.5 0 0 0-1.317.782z"/>
+						</svg>
+					 
+						<div class="ui-kit-list-item-content">
+							<h5>Saved Sections</h5>
+							<p>Retrieve your own saved sections (from the <i>lc_section</i> CPT). </p>
+						</div>
+					</a>
+				</li>
+                <li class="ui-kit-list-item">
+                
+                    <!-- <a title="More Info" class="ui-more-info"
+                        href="" target="_blank"><span class="fa fa-external-link"></span></a> -->
+                
+                    <a href="#" action-load-uikit="livecanvas/v1/html-files-from-theme/?folder=template-livecanvas-sections">
+
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-fill" viewBox="-2 -2 20 20">
+							<path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z"/>
+						</svg>
+                
+                        <div class="ui-kit-list-item-content">
+                            <h5>Child Theme</h5>
+                            <p>Reads .html files from child theme folder: <span style="font-family: monospace;">/template-livecanvas-sections/</span> </p>
+                        </div>
+                    </a>
+                </li>
+
+
+                <li class="ui-kit-list-item" style="display:none">
+                
+                    <!-- <a class="ui-more-info" title="More Info" href="https://ui.bootstrap.ninja/components/" target="_blank"><span
+                            class="fa fa-external-link"></span></a> -->
+                
+                    <a href="#" action-load-uikit="livecanvas/v1/html-files-from-theme/?folder=template-livecanvas-sections">
+                
+                        <i style="width:16px; height:16px" class="fa fa-plug" aria-hidden="true"></i>
+                
+                        <div class="ui-kit-list-item-content">
+                            <h5>Third-party Integration</h5>
+                            <p> Browse sections declared by plugins via API.</p>
+                        </div>
+                    </a>
+                </li>
+
+				<li  class="ui-kit-list-item" style="display:none">
+                
+                    <!-- <a title="More Info" class="ui-more-info"
+                        href="" target="_blank"><span class="fa fa-external-link"></span></a> -->
+                
+                    <a   href="#" action-load-uikit="#">
+
+						<svg id="cloud-library-icon" xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 24 24">
+							<rect width="7.33" height="7.33" x="1" y="1" fill="currentColor">
+								<animate id="svgSpinnersBlocksWave0" attributeName="x" begin="0;svgSpinnersBlocksWave1.end+0.2s" dur="0.6s" values="1;4;1"/>
+								<animate attributeName="y" begin="0;svgSpinnersBlocksWave1.end+0.2s" dur="0.6s" values="1;4;1"/>
+								<animate attributeName="width" begin="0;svgSpinnersBlocksWave1.end+0.2s" dur="0.6s" values="7.33;1.33;7.33"/>
+								<animate attributeName="height" begin="0;svgSpinnersBlocksWave1.end+0.2s" dur="0.6s" values="7.33;1.33;7.33"/>
+							</rect>
+							<rect width="7.33" height="7.33" x="8.33" y="1" fill="currentColor">
+								<animate attributeName="x" begin="svgSpinnersBlocksWave0.begin+0.1s" dur="0.6s" values="8.33;11.33;8.33"/>
+								<animate attributeName="y" begin="svgSpinnersBlocksWave0.begin+0.1s" dur="0.6s" values="1;4;1"/>
+								<animate attributeName="width" begin="svgSpinnersBlocksWave0.begin+0.1s" dur="0.6s" values="7.33;1.33;7.33"/>
+								<animate attributeName="height" begin="svgSpinnersBlocksWave0.begin+0.1s" dur="0.6s" values="7.33;1.33;7.33"/>
+							</rect>
+							<rect width="7.33" height="7.33" x="1" y="8.33" fill="currentColor">
+								<animate attributeName="x" begin="svgSpinnersBlocksWave0.begin+0.1s" dur="0.6s" values="1;4;1"/>
+								<animate attributeName="y" begin="svgSpinnersBlocksWave0.begin+0.1s" dur="0.6s" values="8.33;11.33;8.33"/>
+								<animate attributeName="width" begin="svgSpinnersBlocksWave0.begin+0.1s" dur="0.6s" values="7.33;1.33;7.33"/>
+								<animate attributeName="height" begin="svgSpinnersBlocksWave0.begin+0.1s" dur="0.6s" values="7.33;1.33;7.33"/>
+							</rect>
+							<rect width="7.33" height="7.33" x="15.66" y="1" fill="currentColor">
+								<animate attributeName="x" begin="svgSpinnersBlocksWave0.begin+0.2s" dur="0.6s" values="15.66;18.66;15.66"/>
+								<animate attributeName="y" begin="svgSpinnersBlocksWave0.begin+0.2s" dur="0.6s" values="1;4;1"/>
+								<animate attributeName="width" begin="svgSpinnersBlocksWave0.begin+0.2s" dur="0.6s" values="7.33;1.33;7.33"/>
+								<animate attributeName="height" begin="svgSpinnersBlocksWave0.begin+0.2s" dur="0.6s" values="7.33;1.33;7.33"/>
+							</rect>
+							<rect width="7.33" height="7.33" x="8.33" y="8.33" fill="currentColor">
+								<animate attributeName="x" begin="svgSpinnersBlocksWave0.begin+0.2s" dur="0.6s" values="8.33;11.33;8.33"/>
+								<animate attributeName="y" begin="svgSpinnersBlocksWave0.begin+0.2s" dur="0.6s" values="8.33;11.33;8.33"/>
+								<animate attributeName="width" begin="svgSpinnersBlocksWave0.begin+0.2s" dur="0.6s" values="7.33;1.33;7.33"/>
+								<animate attributeName="height" begin="svgSpinnersBlocksWave0.begin+0.2s" dur="0.6s" values="7.33;1.33;7.33"/>
+							</rect>
+							<rect width="7.33" height="7.33" x="1" y="15.66" fill="currentColor">
+								<animate attributeName="x" begin="svgSpinnersBlocksWave0.begin+0.2s" dur="0.6s" values="1;4;1"/>
+								<animate attributeName="y" begin="svgSpinnersBlocksWave0.begin+0.2s" dur="0.6s" values="15.66;18.66;15.66"/>
+								<animate attributeName="width" begin="svgSpinnersBlocksWave0.begin+0.2s" dur="0.6s" values="7.33;1.33;7.33"/>
+								<animate attributeName="height" begin="svgSpinnersBlocksWave0.begin+0.2s" dur="0.6s" values="7.33;1.33;7.33"/>
+							</rect>
+							<rect width="7.33" height="7.33" x="15.66" y="8.33" fill="currentColor">
+								<animate attributeName="x" begin="svgSpinnersBlocksWave0.begin+0.3s" dur="0.6s" values="15.66;18.66;15.66"/>
+								<animate attributeName="y" begin="svgSpinnersBlocksWave0.begin+0.3s" dur="0.6s" values="8.33;11.33;8.33"/>
+								<animate attributeName="width" begin="svgSpinnersBlocksWave0.begin+0.3s" dur="0.6s" values="7.33;1.33;7.33"/>
+								<animate attributeName="height" begin="svgSpinnersBlocksWave0.begin+0.3s" dur="0.6s" values="7.33;1.33;7.33"/>
+							</rect>
+							<rect width="7.33" height="7.33" x="8.33" y="15.66" fill="currentColor">
+								<animate attributeName="x" begin="svgSpinnersBlocksWave0.begin+0.3s" dur="0.6s" values="8.33;11.33;8.33"/>
+								<animate attributeName="y" begin="svgSpinnersBlocksWave0.begin+0.3s" dur="0.6s" values="15.66;18.66;15.66"/>
+								<animate attributeName="width" begin="svgSpinnersBlocksWave0.begin+0.3s" dur="0.6s" values="7.33;1.33;7.33"/>
+								<animate attributeName="height" begin="svgSpinnersBlocksWave0.begin+0.3s" dur="0.6s" values="7.33;1.33;7.33"/>
+							</rect>
+							<rect width="7.33" height="7.33" x="15.66" y="15.66" fill="currentColor">
+								<animate id="svgSpinnersBlocksWave1" attributeName="x" begin="svgSpinnersBlocksWave0.begin+0.4s" dur="0.6s" values="15.66;18.66;15.66"/>
+								<animate attributeName="y" begin="svgSpinnersBlocksWave0.begin+0.4s" dur="0.6s" values="15.66;18.66;15.66"/>
+								<animate attributeName="width" begin="svgSpinnersBlocksWave0.begin+0.4s" dur="0.6s" values="7.33;1.33;7.33"/>
+								<animate attributeName="height" begin="svgSpinnersBlocksWave0.begin+0.4s" dur="0.6s" values="7.33;1.33;7.33"/>
+							</rect>
+						</svg>
+						
+                
+                        <div class="ui-kit-list-item-content">
+                            <h5>Sections from the LC Cloud </h5>
+                            <p>[UPCOMING] Retrieve the sections you saved to the Cloud across all your projects, or discover community shared material.</p>
+                        </div>
+                    </a>
+                </li>
+       
+            </ul>
+			
+			<h1>Premium UI Kits 
+				<svg style="color:var(--color1);margin-top:-18px" xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" viewBox="0 0 24 24">
+					<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 6l4 6l5-4l-2 10H5L3 8l5 4z"/>
+				</svg>
+			</h1>
+			
+			<ul id="ui-kit-list">
+                
+				<li class="ui-kit-list-item">
+
+					<a class="ui-more-info" title="More Info" href="https://ui.bootstrap.ninja/components/" target="_blank"><span class="fa fa-external-link"></span></a>
+					
+					<a href="#" action-load-uikit="https://ui.bootstrap.ninja/wp-json/api/v1/lc/categories-full/?parent=2">
+						
+						<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+							<circle cx="24" cy="24" r="24" fill="url(#paint0_linear_579_6)"/>
+							<path d="M37.9104 13.0781H38.1044C38.6253 13.1615 38.9685 13.4469 39.1341 13.9343C39.2183 14.1827 39.2147 14.4408 39.1234 14.7086C39.103 14.7686 39.0228 14.8789 38.883 15.0395C38.3369 15.6678 37.7731 16.2812 37.2317 16.9135C36.38 17.9068 35.5343 18.892 34.6944 19.8691C34.4079 19.6191 34.1094 19.3832 33.7989 19.1613C33.573 18.9999 33.3578 18.815 33.1304 18.6486C33.0336 18.5778 32.9703 18.5046 32.8955 18.4157C34.2529 16.8723 35.5951 15.3161 36.9221 13.747C37.2085 13.4082 37.4509 13.1395 37.9104 13.0781Z" fill="#36125A"/>
+							<path d="M15.4503 18.8111C15.4312 18.8399 15.3927 18.8844 15.335 18.9445C14.881 19.4169 14.406 19.8276 13.91 20.1768C13.8328 20.2311 13.7589 20.2362 13.67 20.261C12.418 18.7792 10.8048 16.8663 9.36246 15.2606C9.22711 15.1095 9.04022 14.8856 8.95721 14.7046C8.5189 13.7486 9.60522 12.7173 10.5294 13.2296C10.6561 13.2999 10.7586 13.3804 10.8367 13.4712C12.372 15.2535 13.9151 17.0288 15.4503 18.8111Z" fill="#36125A"/>
+							<path d="M24.0511 14.8927C24.0286 15.6295 24.0198 16.5198 24.0248 17.5635C24.0279 18.3031 24.0299 19.9983 24.0307 22.6488C24.0307 23.0623 24.0153 23.3948 24.0641 23.6883C22.1779 23.6838 20.2913 23.6815 18.4043 23.6812C18.0988 23.6812 17.895 23.6994 17.7929 23.7359C17.4353 23.8642 17.1669 24.3454 17.2413 24.7148C17.3405 25.207 17.7449 25.5536 18.1053 25.8641C19.0402 26.6695 20.1155 27.2766 21.3029 27.6252C22.1559 27.8759 23.0459 28.0033 23.9728 28.0072L24.0098 34.8072C24.0098 34.8203 24.0135 34.8321 24.0208 34.8426C24.0308 34.8568 24.0358 34.8716 24.0358 34.8871L11.9522 34.8883C11.9451 34.8882 11.9382 34.8866 11.932 34.8835C11.9257 34.8804 11.9202 34.8759 11.9159 34.8704C11.9116 34.8649 11.9086 34.8584 11.9072 34.8516C11.9058 34.8447 11.906 34.8376 11.9077 34.8308C12.8528 31.2374 13.7888 27.6385 14.7724 24.0542C15.1489 22.6315 15.5089 21.1895 16.1428 19.8533C16.147 19.8444 16.1496 19.8347 16.1507 19.8242C16.157 19.8221 16.1612 19.8191 16.1632 19.8152C17.6867 16.8938 20.7068 14.8593 24.0511 14.8927Z" fill="#531970"/>
+							<path d="M24.0358 34.8871C24.0358 34.8716 24.0308 34.8568 24.0208 34.8426C24.0135 34.8321 24.0098 34.8203 24.0098 34.8072L23.9728 28.0072C24.0237 28.0043 24.0942 28.0025 24.1841 28.0017C26.472 27.9777 28.5876 27.1188 30.2649 25.5714C30.4286 25.4203 30.5643 25.2582 30.6643 25.0768C30.9743 24.513 30.6088 23.6832 29.9187 23.6824C27.9674 23.6808 26.0159 23.6828 24.0641 23.6883C24.0153 23.3948 24.0307 23.0623 24.0307 22.6488C24.0299 19.9983 24.0279 18.3031 24.0248 17.5635C24.0198 16.5198 24.0286 15.6295 24.0511 14.8927C25.4043 14.8919 26.6657 15.1878 27.8353 15.7803C29.7318 16.7415 31.2993 18.4133 32.1122 20.3869C32.2929 20.8257 32.4708 21.3238 32.6461 21.8812C32.928 22.7769 33.2808 24.0596 33.7044 25.7291C33.7493 25.907 33.8036 26.204 33.8728 26.4645C34.3909 28.4176 34.9116 30.37 35.4348 32.3218C35.6497 33.124 35.8952 33.9196 36.1297 34.7163C36.1433 34.7622 36.1538 34.805 36.1611 34.8446C36.1618 34.8482 36.1617 34.852 36.1608 34.8556C36.1598 34.8591 36.1581 34.8625 36.1557 34.8653C36.1533 34.8682 36.1503 34.8705 36.1469 34.8721C36.1434 34.8737 36.1397 34.8745 36.136 34.8745L24.0358 34.8871Z" fill="#861E8F"/>
+							<path d="M32.8955 18.4157C32.9703 18.5046 33.0336 18.5778 33.1304 18.6486C33.3578 18.815 33.573 18.9999 33.7989 19.1613C34.1094 19.3832 34.4079 19.6191 34.6944 19.8691C34.2437 20.4073 33.8627 20.843 33.5514 21.1761C33.5037 21.2273 33.4981 21.2629 33.5349 21.2831C33.3329 21.654 33.1842 21.9166 33.0887 22.0708C33.0761 22.091 33.0446 22.1058 32.9943 22.1153C32.6992 21.2186 32.395 20.3487 31.9386 19.5173C31.9308 19.5029 31.9323 19.4895 31.9434 19.4772L32.8955 18.4157Z" fill="#291441"/>
+							<path d="M15.4503 18.8111C15.716 19.0912 15.9125 19.318 16.0397 19.4914C16.0596 19.5186 16.0501 19.553 16.011 19.5944C15.6986 20.204 15.4668 20.7477 15.3158 21.2253C15.1794 21.6555 15.0514 22.0037 14.9317 22.2699C14.8794 22.2392 14.8924 22.1523 14.8684 22.0995C14.7396 21.8191 14.6119 21.5376 14.4852 21.2548L13.67 20.261C13.7589 20.2362 13.8328 20.2311 13.91 20.1768C14.406 19.8276 14.881 19.4169 15.335 18.9445C15.3927 18.8844 15.4312 18.8399 15.4503 18.8111Z" fill="#291441"/>
+							<path d="M14.4852 21.2548C14.6119 21.5376 14.7396 21.8191 14.8684 22.0995C14.8924 22.1523 14.8794 22.2392 14.9317 22.2699C14.811 22.7842 14.6736 23.2956 14.4262 23.7654C13.5964 25.1142 12.4951 26.2524 11.2695 27.2506C11.0353 27.4413 10.7971 27.4894 10.555 27.395C10.4624 27.3591 10.3387 27.27 10.184 27.1278C9.65466 26.6421 9.08836 26.1491 8.48507 25.6489C8.34447 25.5321 8.20362 25.4357 8.0625 25.3597C8.0625 25.3576 8.0625 25.3553 8.0625 25.353C8.93937 25.0094 9.78726 24.6046 10.6062 24.1388C12.0088 23.3409 13.2777 22.3309 14.4852 21.2548Z" fill="#531970"/>
+							<path d="M33.5349 21.2831C33.8866 21.5895 34.2441 21.8914 34.6074 22.1889C35.7327 23.1103 36.9344 23.9179 38.2126 24.6117C38.7489 24.9029 39.3056 25.1614 39.8871 25.3491C39.8911 25.3503 39.8947 25.3526 39.8975 25.3557C39.9002 25.3588 39.9021 25.3626 39.9029 25.3667C39.9037 25.3708 39.9033 25.375 39.9018 25.3789C39.9004 25.3828 39.8979 25.3862 39.8946 25.3888C39.077 26.0352 38.2996 26.7249 37.5229 27.4194C37.4591 27.4764 37.395 27.5052 37.3053 27.502C37.1364 27.4965 37.0034 27.4545 36.9063 27.3761C35.6132 26.3322 34.4927 25.1279 33.5447 23.7634C33.5097 23.7131 33.4932 23.6667 33.4743 23.6108C33.3077 23.1161 33.1477 22.6176 32.9943 22.1153C33.0446 22.1058 33.0761 22.091 33.0887 22.0708C33.1842 21.9166 33.3329 21.654 33.5349 21.2831Z" fill="#36125A"/>
+							<path d="M21.8805 26.6773C20.8052 26.9701 19.8042 25.6375 20.35 24.6763C20.4142 24.5629 20.486 24.4575 20.5652 24.3599C20.5859 24.3342 20.5959 24.3379 20.5951 24.3709C20.5644 25.6469 22.1114 25.9778 22.9896 25.3274C23.0004 25.3193 23.0048 25.3219 23.003 25.3353C22.9172 25.9506 22.4943 26.5105 21.8805 26.6773Z" fill="#36125A"/>
+							<path d="M24.9698 25.27C25.8335 25.9683 27.3557 25.7059 27.3927 24.3973C27.3928 24.3946 27.3937 24.3919 27.3953 24.3896C27.3969 24.3874 27.399 24.3856 27.4015 24.3846C27.404 24.3835 27.4068 24.3833 27.4094 24.3838C27.412 24.3843 27.4144 24.3856 27.4163 24.3875C27.8849 24.8466 27.9235 25.5481 27.5552 26.0789C26.7097 27.299 25.1115 26.5983 24.9541 25.2786C24.9523 25.2629 24.9575 25.26 24.9698 25.27Z" fill="#36125A"/>
+							<defs>
+							<linearGradient id="paint0_linear_579_6" x1="10.8047" y1="4.24219" x2="40.3828" y2="48" gradientUnits="userSpaceOnUse">
+							<stop stop-color="white"/>
+							<stop offset="0.6" stop-color="#CAC6D7"/>
+							<stop offset="1" stop-color="#531970"/>
+							</linearGradient>
+							</defs>
+						</svg>
+
+						<div class="ui-kit-list-item-content">
+							<h5>NinjaBootstrap UI: Marketing</h5>
+							<p> 
+                            High-quality components from the creators of NinjaBootstrap.</p>
+						</div>
+					</a>
+				</li>
+                
+                <li class="ui-kit-list-item">
+                
+                    <a class="ui-more-info" title="More Info" href="https://ui.bootstrap.ninja/components/#applicationui"
+                        target="_blank"><span class="fa fa-external-link"></span></a>
+                
+                    <a href="#" action-load-uikit="https://ui.bootstrap.ninja/wp-json/api/v1/lc/categories-full/?parent=22">
+                
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                            <circle cx="24" cy="24" r="24" fill="url(#paint0_linear_579_6)" />
+                            <path
+                                d="M37.9104 13.0781H38.1044C38.6253 13.1615 38.9685 13.4469 39.1341 13.9343C39.2183 14.1827 39.2147 14.4408 39.1234 14.7086C39.103 14.7686 39.0228 14.8789 38.883 15.0395C38.3369 15.6678 37.7731 16.2812 37.2317 16.9135C36.38 17.9068 35.5343 18.892 34.6944 19.8691C34.4079 19.6191 34.1094 19.3832 33.7989 19.1613C33.573 18.9999 33.3578 18.815 33.1304 18.6486C33.0336 18.5778 32.9703 18.5046 32.8955 18.4157C34.2529 16.8723 35.5951 15.3161 36.9221 13.747C37.2085 13.4082 37.4509 13.1395 37.9104 13.0781Z"
+                                fill="#36125A" />
+                            <path
+                                d="M15.4503 18.8111C15.4312 18.8399 15.3927 18.8844 15.335 18.9445C14.881 19.4169 14.406 19.8276 13.91 20.1768C13.8328 20.2311 13.7589 20.2362 13.67 20.261C12.418 18.7792 10.8048 16.8663 9.36246 15.2606C9.22711 15.1095 9.04022 14.8856 8.95721 14.7046C8.5189 13.7486 9.60522 12.7173 10.5294 13.2296C10.6561 13.2999 10.7586 13.3804 10.8367 13.4712C12.372 15.2535 13.9151 17.0288 15.4503 18.8111Z"
+                                fill="#36125A" />
+                            <path
+                                d="M24.0511 14.8927C24.0286 15.6295 24.0198 16.5198 24.0248 17.5635C24.0279 18.3031 24.0299 19.9983 24.0307 22.6488C24.0307 23.0623 24.0153 23.3948 24.0641 23.6883C22.1779 23.6838 20.2913 23.6815 18.4043 23.6812C18.0988 23.6812 17.895 23.6994 17.7929 23.7359C17.4353 23.8642 17.1669 24.3454 17.2413 24.7148C17.3405 25.207 17.7449 25.5536 18.1053 25.8641C19.0402 26.6695 20.1155 27.2766 21.3029 27.6252C22.1559 27.8759 23.0459 28.0033 23.9728 28.0072L24.0098 34.8072C24.0098 34.8203 24.0135 34.8321 24.0208 34.8426C24.0308 34.8568 24.0358 34.8716 24.0358 34.8871L11.9522 34.8883C11.9451 34.8882 11.9382 34.8866 11.932 34.8835C11.9257 34.8804 11.9202 34.8759 11.9159 34.8704C11.9116 34.8649 11.9086 34.8584 11.9072 34.8516C11.9058 34.8447 11.906 34.8376 11.9077 34.8308C12.8528 31.2374 13.7888 27.6385 14.7724 24.0542C15.1489 22.6315 15.5089 21.1895 16.1428 19.8533C16.147 19.8444 16.1496 19.8347 16.1507 19.8242C16.157 19.8221 16.1612 19.8191 16.1632 19.8152C17.6867 16.8938 20.7068 14.8593 24.0511 14.8927Z"
+                                fill="#531970" />
+                            <path
+                                d="M24.0358 34.8871C24.0358 34.8716 24.0308 34.8568 24.0208 34.8426C24.0135 34.8321 24.0098 34.8203 24.0098 34.8072L23.9728 28.0072C24.0237 28.0043 24.0942 28.0025 24.1841 28.0017C26.472 27.9777 28.5876 27.1188 30.2649 25.5714C30.4286 25.4203 30.5643 25.2582 30.6643 25.0768C30.9743 24.513 30.6088 23.6832 29.9187 23.6824C27.9674 23.6808 26.0159 23.6828 24.0641 23.6883C24.0153 23.3948 24.0307 23.0623 24.0307 22.6488C24.0299 19.9983 24.0279 18.3031 24.0248 17.5635C24.0198 16.5198 24.0286 15.6295 24.0511 14.8927C25.4043 14.8919 26.6657 15.1878 27.8353 15.7803C29.7318 16.7415 31.2993 18.4133 32.1122 20.3869C32.2929 20.8257 32.4708 21.3238 32.6461 21.8812C32.928 22.7769 33.2808 24.0596 33.7044 25.7291C33.7493 25.907 33.8036 26.204 33.8728 26.4645C34.3909 28.4176 34.9116 30.37 35.4348 32.3218C35.6497 33.124 35.8952 33.9196 36.1297 34.7163C36.1433 34.7622 36.1538 34.805 36.1611 34.8446C36.1618 34.8482 36.1617 34.852 36.1608 34.8556C36.1598 34.8591 36.1581 34.8625 36.1557 34.8653C36.1533 34.8682 36.1503 34.8705 36.1469 34.8721C36.1434 34.8737 36.1397 34.8745 36.136 34.8745L24.0358 34.8871Z"
+                                fill="#861E8F" />
+                            <path
+                                d="M32.8955 18.4157C32.9703 18.5046 33.0336 18.5778 33.1304 18.6486C33.3578 18.815 33.573 18.9999 33.7989 19.1613C34.1094 19.3832 34.4079 19.6191 34.6944 19.8691C34.2437 20.4073 33.8627 20.843 33.5514 21.1761C33.5037 21.2273 33.4981 21.2629 33.5349 21.2831C33.3329 21.654 33.1842 21.9166 33.0887 22.0708C33.0761 22.091 33.0446 22.1058 32.9943 22.1153C32.6992 21.2186 32.395 20.3487 31.9386 19.5173C31.9308 19.5029 31.9323 19.4895 31.9434 19.4772L32.8955 18.4157Z"
+                                fill="#291441" />
+                            <path
+                                d="M15.4503 18.8111C15.716 19.0912 15.9125 19.318 16.0397 19.4914C16.0596 19.5186 16.0501 19.553 16.011 19.5944C15.6986 20.204 15.4668 20.7477 15.3158 21.2253C15.1794 21.6555 15.0514 22.0037 14.9317 22.2699C14.8794 22.2392 14.8924 22.1523 14.8684 22.0995C14.7396 21.8191 14.6119 21.5376 14.4852 21.2548L13.67 20.261C13.7589 20.2362 13.8328 20.2311 13.91 20.1768C14.406 19.8276 14.881 19.4169 15.335 18.9445C15.3927 18.8844 15.4312 18.8399 15.4503 18.8111Z"
+                                fill="#291441" />
+                            <path
+                                d="M14.4852 21.2548C14.6119 21.5376 14.7396 21.8191 14.8684 22.0995C14.8924 22.1523 14.8794 22.2392 14.9317 22.2699C14.811 22.7842 14.6736 23.2956 14.4262 23.7654C13.5964 25.1142 12.4951 26.2524 11.2695 27.2506C11.0353 27.4413 10.7971 27.4894 10.555 27.395C10.4624 27.3591 10.3387 27.27 10.184 27.1278C9.65466 26.6421 9.08836 26.1491 8.48507 25.6489C8.34447 25.5321 8.20362 25.4357 8.0625 25.3597C8.0625 25.3576 8.0625 25.3553 8.0625 25.353C8.93937 25.0094 9.78726 24.6046 10.6062 24.1388C12.0088 23.3409 13.2777 22.3309 14.4852 21.2548Z"
+                                fill="#531970" />
+                            <path
+                                d="M33.5349 21.2831C33.8866 21.5895 34.2441 21.8914 34.6074 22.1889C35.7327 23.1103 36.9344 23.9179 38.2126 24.6117C38.7489 24.9029 39.3056 25.1614 39.8871 25.3491C39.8911 25.3503 39.8947 25.3526 39.8975 25.3557C39.9002 25.3588 39.9021 25.3626 39.9029 25.3667C39.9037 25.3708 39.9033 25.375 39.9018 25.3789C39.9004 25.3828 39.8979 25.3862 39.8946 25.3888C39.077 26.0352 38.2996 26.7249 37.5229 27.4194C37.4591 27.4764 37.395 27.5052 37.3053 27.502C37.1364 27.4965 37.0034 27.4545 36.9063 27.3761C35.6132 26.3322 34.4927 25.1279 33.5447 23.7634C33.5097 23.7131 33.4932 23.6667 33.4743 23.6108C33.3077 23.1161 33.1477 22.6176 32.9943 22.1153C33.0446 22.1058 33.0761 22.091 33.0887 22.0708C33.1842 21.9166 33.3329 21.654 33.5349 21.2831Z"
+                                fill="#36125A" />
+                            <path
+                                d="M21.8805 26.6773C20.8052 26.9701 19.8042 25.6375 20.35 24.6763C20.4142 24.5629 20.486 24.4575 20.5652 24.3599C20.5859 24.3342 20.5959 24.3379 20.5951 24.3709C20.5644 25.6469 22.1114 25.9778 22.9896 25.3274C23.0004 25.3193 23.0048 25.3219 23.003 25.3353C22.9172 25.9506 22.4943 26.5105 21.8805 26.6773Z"
+                                fill="#36125A" />
+                            <path
+                                d="M24.9698 25.27C25.8335 25.9683 27.3557 25.7059 27.3927 24.3973C27.3928 24.3946 27.3937 24.3919 27.3953 24.3896C27.3969 24.3874 27.399 24.3856 27.4015 24.3846C27.404 24.3835 27.4068 24.3833 27.4094 24.3838C27.412 24.3843 27.4144 24.3856 27.4163 24.3875C27.8849 24.8466 27.9235 25.5481 27.5552 26.0789C26.7097 27.299 25.1115 26.5983 24.9541 25.2786C24.9523 25.2629 24.9575 25.26 24.9698 25.27Z"
+                                fill="#36125A" />
+                            <defs>
+                                <linearGradient id="paint0_linear_579_6" x1="10.8047" y1="4.24219" x2="40.3828" y2="48"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="white" />
+                                    <stop offset="0.6" stop-color="#CAC6D7" />
+                                    <stop offset="1" stop-color="#531970" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                
+                        <div class="ui-kit-list-item-content">
+                            <h5>NinjaBootstrap UI: Application</h5>
+                            <p>
+                                Prototyping app shells, dashboards, sidebar layouts and sign-in pages. 
+                            </p>
+                        </div>
+                    </a>
+                </li>
+       
+            </ul>
+             
+
+        </div>
+    </template>
 	
 	<form id="grid-builder" hidden>
 		<!-- <h4> Base Settings </h4> -->
@@ -76,7 +340,7 @@
 			
 			
 			<h5 class="text-left"> Equal-Width Columns  </h5>					
-			<div class="d-flex">
+			<div>
 				<button  data-rows="12"  ><span>&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span> 1  Column</button>
 				<button  data-rows="6-6" ><span>&#9608;&#9608;&#9608;&#9608;&#9608;&#9608; &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span> 2 Columns</button>
 				<button  data-rows="4-4-4" ><span>&#9608;&#9608;&#9608;&#9608; &#9608;&#9608;&#9608;&#9608; &#9608;&#9608;&#9608;&#9608;</span> 3 Columns</button>
@@ -88,7 +352,7 @@
 	
 				
 			<h5 class="text-left mt-5"> Different width : 2 Columns </h5>
-			<div class="d-flex">
+			<div>
 				<button  data-rows="2-10"><span>&#9608;&#9608; &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span> 2 - 10</button>
 				<button  data-rows="10-2"><span>&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608; &#9608;&#9608;</span> 10 - 2</button>
 				
@@ -106,7 +370,7 @@
 			<h5 class="text-left mt-5"> Different width : 3 Columns </h5>
 			
 			
-			<div class="d-flex">   
+			<div>   
 				<button  data-rows="3-3-6"><span>&#9608;&#9608;&#9608; &#9608;&#9608;&#9608; &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span> 3 - 3 - 6</button>
 				<button  data-rows="6-3-3"><span>&#9608;&#9608;&#9608;&#9608;&#9608;&#9608; &#9608;&#9608;&#9608; &#9608;&#9608;&#9608;</span> 6 - 3 - 3</button>
 				
@@ -146,16 +410,6 @@
 		<form class="add-row-buttons-wrap" get_content_from="#row-structures"></form>
 	</div>
 </section>
- 
- 
- 
-<section item-type="section-properties">
-    <h1>Section Properties</h1> 
-    
-	<form class="add-common-form-elements add-common-form-elements-for-properties-panels"></form>	    
-   
-</section>
- 
  
  
 
@@ -295,11 +549,28 @@
 					<a class="btn btn-primary"   href="#" role="button"  >Click me, I'm a button</a>
 				</template>
 			</block>
-	
+
+            <block>
+                            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                            <h5 class="block-name">Button with Icon</h5>
+                            <i class="block-description">A button with an SVG icon that can link to anything</i>
+                            <template>
+                                <a class="btn btn-primary icon-link icon-link-hover" href="#">
+                                    Read more 
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8">
+                                        </path>
+                                    </svg>
+                                </a>
+                            </template>
+            </block>
+
 
 			<block>
 				<i class="fa fa-star" aria-hidden="true" ></i>
-				<h5 class="block-name">SVG Inline Icon</h5>
+				<h5 class="block-name">SVG inline Icon</h5>
 				<i class="block-description">Bootstrap Icon</i>
 				<template> 
 						 
@@ -1154,15 +1425,27 @@
 		<div id="media-blocks">
 
 			<block>
-				<i class="fa fa-youtube-play " aria-hidden="true"></i>
-				<h5 class="block-name">YouTube</h5>
+				<i class="fa fa-code" aria-hidden="true"></i>
+				<h5 class="block-name"> Generic Iframe </h5>
 				 <template>  
 					<div class="ratio ratio-16x9" lc-helper="video-embed">
-						<iframe loading="lazy" src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" title="YouTube video" allowfullscreen></iframe>
+						<iframe loading="lazy" src="https://getbootstrap.com/" title="" allowfullscreen></iframe>
 					</div>
 
 				</template>
 			</block>
+            <block>
+                <i class="fa fa-youtube-play " aria-hidden="true"></i>
+                <h5 class="block-name">YouTube </h5>
+                <template>
+                    <div class="ratio ratio-16x9" lc-helper="video-embed">
+                        <iframe loading="lazy" src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" title="YouTube video"
+                            allowfullscreen></iframe>
+                    </div>
+            
+                </template>
+            </block>
+
 			<block>
 				<i class="fa fa-youtube-play " aria-hidden="true"></i>
 				<h5 class="block-name">MP4 Video</h5>
@@ -1397,7 +1680,80 @@ if(!!window.IntersectionObserver){
 				
 			
 			 
-			
+            <block>
+                <em>
+                    <i class="fa fa-photo" aria-hidden="true"></i>
+                </em>
+                <h5 class="block-name">Tabber</h5>
+                <i class="block-description"></i>
+                <template>
+                    <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <button class="nav-link active" id="RANDOMID-nav-area-1-tab" data-bs-toggle="tab"
+                                data-bs-target="#RANDOMID-nav-area-1" type="button" role="tab" aria-controls="RANDOMID-nav-area-1"
+                                aria-selected="true">area-1</button>
+                            <button class="nav-link" id="RANDOMID-nav-area-2-tab" data-bs-toggle="tab" data-bs-target="#RANDOMID-nav-area-2"
+                                type="button" role="tab" aria-controls="RANDOMID-nav-area-2" aria-selected="false">area-2</button>
+                            <button class="nav-link" id="RANDOMID-nav-area-3-tab" data-bs-toggle="tab" data-bs-target="#RANDOMID-nav-area-3"
+                                type="button" role="tab" aria-controls="RANDOMID-nav-area-3" aria-selected="false">area-3</button>
+                        </div>
+                    </nav>
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="RANDOMID-nav-area-1" role="tabpanel"
+                            aria-labelledby="RANDOMID-nav-area-1-tab" tabindex="0">
+                            <div class="lc-block">
+                                <div editable="rich">
+                    
+                                    <h2>The quick brown fox jumps over the lazy dog</h2>
+                    
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a lacus est. Etiam diam metus,
+                                        lobortis non augue at, placerat viverra risus. Cras ornare faucibus laoreet. Aenean vel nisi in
+                                        ipsum congue fermentum et ut arcu. Proin leo diam,
+                                        vulputate eu tellus ac, mattis cursus nunc. In aliquet erat ac eros congue maximus. Fusce cursus leo
+                                        at elit tincidunt, consequat ultrices ante pretium. Vivamus ut dapibus nisl, nec condimentum purus.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="RANDOMID-nav-area-2" role="tabpanel" aria-labelledby="RANDOMID-nav-area-2-tab"
+                            tabindex="0">
+                            <div class="lc-block">
+                                <div editable="rich">
+                    
+                                    <h2>The quick brown fox jumps over the lazy dog #2</h2>
+                    
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a lacus est. Etiam diam metus,
+                                        lobortis non augue at, placerat viverra risus. Cras ornare faucibus laoreet. Aenean vel nisi in
+                                        ipsum congue fermentum et ut arcu. Proin leo diam,
+                                        vulputate eu tellus ac, mattis cursus nunc. In aliquet erat ac eros congue maximus. Fusce cursus leo
+                                        at elit tincidunt, consequat ultrices ante pretium. Vivamus ut dapibus nisl, nec condimentum purus.
+                                    </p>
+                                </div>
+                            </div>
+                    
+                        </div>
+                        <div class="tab-pane fade" id="RANDOMID-nav-area-3" role="tabpanel" aria-labelledby="RANDOMID-nav-area-3-tab"
+                            tabindex="0">
+                            <div class="lc-block">
+                                <div editable="rich">
+                    
+                                    <h2>The quick brown fox jumps over the lazy dog #3</h2>
+                    
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a lacus est. Etiam diam metus,
+                                        lobortis non augue at, placerat viverra risus. Cras ornare faucibus laoreet. Aenean vel nisi in
+                                        ipsum congue fermentum et ut arcu. Proin leo diam,
+                                        vulputate eu tellus ac, mattis cursus nunc. In aliquet erat ac eros congue maximus. Fusce cursus leo
+                                        at elit tincidunt, consequat ultrices ante pretium. Vivamus ut dapibus nisl, nec condimentum purus.
+                                    </p>
+                                </div>
+                            </div>
+                    
+                        </div>
+                    
+                    </div>
+                </template>
+            </block>
+
 			<block>
 				<em>
 					 <i class="fa fa-photo" aria-hidden="true"></i>	 
@@ -1481,22 +1837,28 @@ if(!!window.IntersectionObserver){
 		</div>
 
 		
-		<h4 hide-if="lc_dynamic_template">WordPress Integration</h4>
+		<h4 NOOhide-if="lc_dynamic_template">WordPress Integration</h4>
 		<div id="wordpress-integration-blocks">		 
 			<block>
 				<i class="fa fa-wordpress" aria-hidden="true"></i>
-				<h5 class="block-name">Shortcode</h5>
+				<h5 class="block-name">Shortcode
+					<a class="more-item-info-link" href="https://docs.livecanvas.com/shortcodes/" target="_blank"><span class="fa fa-question"></span></a>
+
+				</h5>
 				<i class="block-description">Embed any WP Shortcode</i>
 				<template>
 					<div  lc-helper="shortcode" class="live-shortcode">[lc_dummyshortcode]</div>
 				</template>
 			</block>
+
+
+
 			
 					 
 			<block>
 				<i class="fa fa-wordpress" aria-hidden="true" ></i>
 				<h5 class="block-name"> Get Posts</h5>
-				<i class="block-description">List posts, pages or any custom post type. Uses the <b>get_posts</b>  standard   parameters. Click the shortcode to easily edit the parameters.</i>
+				<i class="block-description">List posts, pages or any custom post type. Uses the <b>get_posts</b>  WordPress  function. Click the shortcode to easily edit the parameters.</i>
 				<template>
 					<div lc-helper="posts-loop" class="live-shortcode">[lc_get_posts post_type="post" output_view="lc_get_posts_card_view" output_number_of_columns="4"  output_featured_image_class="card-img-top" output_article_class="shadow"]</div>
 				</template>
@@ -1504,8 +1866,8 @@ if(!!window.IntersectionObserver){
 			
 			<block>
 				<i class="fa fa-wordpress" aria-hidden="true"></i>
-				<h5 class="block-name"> Get Categories</h5>
-				<i class="block-description">List categories. Uses the <b>wp_list_categories</b>  standard   parameters.</i>
+				<h5 class="block-name"> Get Cats</h5>
+				<i class="block-description">List categories. Uses the <b>wp_list_categories</b>  WordPress function.</i>
 				<template>
 					<div lc-helper="shortcode" class="live-shortcode">[lc_get_cats title_li='']</div>
 				</template>
@@ -1513,8 +1875,26 @@ if(!!window.IntersectionObserver){
 
 			<block>
 				<i class="fa fa-wordpress" aria-hidden="true"></i>
+				<h5 class="block-name"> Get Categories</h5>
+				<i class="block-description">List categories. Uses the <b>wp_get_terms</b>  WordPress function.</i>
+				<template>
+					<div lc-helper="shortcode" class="live-shortcode">[lc_get_categories]</div>
+				</template>
+			</block>
+
+			<block>
+				<i class="fa fa-wordpress" aria-hidden="true"></i>
+				<h5 class="block-name"> Get Tags</h5>
+				<i class="block-description">List tags. Uses the <b>wp_get_terms</b>  WordPress function.</i>
+				<template>
+					<div lc-helper="shortcode" class="live-shortcode">[lc_get_tags]</div>
+				</template>
+			</block>
+
+			<block>
+				<i class="fa fa-wordpress" aria-hidden="true"></i>
 				<h5 class="block-name"> Post List</h5>
-				<i class="block-description">List categories. Uses the <b>wp_list_categories</b>  standard   parameters.</i>
+				<i class="block-description">List categories. Uses the <b>get_posts</b> WordPress  function.</i>
 				<template>
 					<div lc-helper="posts-loop" class="live-shortcode">[lc_get_posts post_type="post" posts_per_page="6" output_view="lc_get_posts_listing_view" output_wrapper_class="list-unstyled" output_link_class="d-block mb-3" ]</div>
 				</template>
@@ -1522,7 +1902,7 @@ if(!!window.IntersectionObserver){
 			<block>
 				<i class="fa fa-wordpress" aria-hidden="true"></i>
 				<h5 class="block-name"> Page List</h5>
-				<i class="block-description">List categories. Uses the <b>wp_list_categories</b>  standard   parameters.</i>
+				<i class="block-description">List pages. Uses the <b>get_posts</b> WordPress  function.</i>
 				<template>
 					<div lc-helper="posts-loop" class="live-shortcode">[lc_get_posts post_type="page" output_view="lc_get_posts_listing_view" output_wrapper_class="list-unstyled" output_link_class="d-block mb-2"]</div>
 				</template>
@@ -1578,7 +1958,12 @@ if(!!window.IntersectionObserver){
 
 			<block>
 				<i class="fa fa-wordpress" aria-hidden="true"></i>
-				<h5 class="block-name" title="To implement custom AJAX forms">AJAX / PHP Custom Form</h5>
+				<h5 class="block-name" title="To implement custom AJAX forms">AJAX/PHP Custom Form
+                    <a class="more-item-info-link" href="https://docs.livecanvas.com/forms-api/" target="_blank"><span
+                            class="fa fa-question"></span></a>
+
+                </h5>
+                
 				<i class="block-description"></i>
 				<template>
 					
@@ -1606,11 +1991,40 @@ if(!!window.IntersectionObserver){
 				</template>
 			</block>
 
+            <block>
+                <i class="fa fa-wordpress" aria-hidden="true"></i>
+                <h5 class="block-name" title=""> Login Form</h5>
+                <i class="block-description"></i>
+                <template>
+                    <div lc-helper="shortcode" class="live-shortcode convertible-shortcode">[lc_insert snippet="forms/login"]</div>
+                </template>
+            </block>
 
+            <block>
+                <i class="fa fa-wordpress" aria-hidden="true"></i>
+                <h5 class="block-name" title=""> Registration Form</h5>
+                <i class="block-description"></i>
+                <template>
+                    <div lc-helper="shortcode" class="live-shortcode convertible-shortcode">[lc_insert snippet="forms/registration"]</div>
+                </template>
+            </block>
 
+            <block>
+                <i class="fa fa-wordpress" aria-hidden="true"></i>
+                <h5 class="block-name">Theme Partial File
+                    <a class="more-item-info-link" href="https://docs.livecanvas.com/dynamic-templating/#lc-get-template-part"
+                        target="_blank"><span class="fa fa-question"></span></a>
+            
+                </h5>
+                <i class="block-description"></i>
+                <template>
+                    <div lc-helper="shortcode" class="live-shortcode">[lc_get_template_part slug="partials/test-partial"]</div>
+                </template>
+            </block>
+            
 		</div>
 		
-		<h4 hide-if="lc_dynamic_template">WooCommerce Integration</h4>
+		<h4 NOOhide-if="lc_dynamic_template">WooCommerce Integration</h4>
 		<div id="woocommerce-integration-blocks">
 
 			<block>
@@ -1968,7 +2382,14 @@ if(!!window.IntersectionObserver){
 					[lc_the_archive_description]
 				</template>
 			</block>
-
+            <block>
+                <i class="fa fa-wordpress" aria-hidden="true"></i>
+                <h5 class="block-name">Order By Widget</h5>
+                <i class="block-description">Returns the Order By Form.</i>
+                <template>
+                    [lc_the_orderby_widget]
+                </template>
+            </block>
 			<block>
 				<i class="fa fa-wordpress" aria-hidden="true"></i>
 				<h5 class="block-name">Pagination</h5> 
@@ -1977,6 +2398,39 @@ if(!!window.IntersectionObserver){
 					[lc_the_pagination]
 				</template>
 			</block>
+
+            <block>
+                <i class="fa fa-wordpress" aria-hidden="true"></i>
+                <h5 class="block-name">Related Posts: Simple</h5>
+                <i class="block-description">Lists posts related by category.</i>
+                <template>
+                    <h2 class="mb-2 mb-lg-4" editable="inline">Related Articles</h2>
+
+                    <div lc-helper="posts-loop" class="live-shortcode">[lc_get_posts post_type="post" posts_per_page="4"
+                        tax_query="category=related" output_view="lc_get_posts_media_object_view" output_number_of_columns="2"
+                        output_no_results_message="No other posts in this category" output_article_class="align-items-center h-100 bg-light-100 p-3 rounded" 
+                        output_hide_elements="Author, Date, Excerpt, Category, Comments" output_excerpt_length="15"
+                        output_heading_tag="h6" output_link_class="link-dark text-decoration-none"
+                        output_featured_image_format="thumbnail" ]
+                    </div>
+                </template>
+            </block>
+
+            <block>
+                <i class="fa fa-wordpress" aria-hidden="true"></i>
+                <h5 class="block-name">Related Posts: Card</h5>
+                <i class="block-description">Lists posts related by category.</i>
+                <template>
+                    <h2 class="mb-2 mb-lg-4" editable="inline">Related Articles</h2>
+                    
+                    <div lc-helper="posts-loop" class="live-shortcode">[lc_get_posts post_type="post" posts_per_page="4"
+                        tax_query="category=related" output_view="lc_get_posts_card_view" output_number_of_columns="2"
+                        output_no_results_message="No other posts in this category" output_article_class="h-100 "
+                        output_hide_elements="Author, Date, Excerpt, Category, Comments" output_excerpt_length="15" output_heading_tag="h5"
+                        output_link_class="link-dark text-decoration-none" output_featured_image_format="medium"
+                        output_featured_image_class="w-100" ]</div>
+                </template>
+            </block>
 
 		</div>
 
@@ -2238,7 +2692,6 @@ if(!!window.IntersectionObserver){
 				<h5 class="block-name">
 					Product Data
 					<a class="more-item-info-link" href="https://docs.livecanvas.com/woocommerce-shortcodes/#lc_wc_product" target="_blank"><span class="fa fa-question"></span></a>
-
 				</h5>
 				<i class="block-description">Choose a parameter to display.</i>
 				<select style="font-size: 10px; margin-top: 5px; background: transparent; color: white;" id="product-data-select">
@@ -2294,7 +2747,6 @@ if(!!window.IntersectionObserver){
 					<option value="rating_html">Rating HTML</option>
 					<option value="review_count">Review Count</option>
 					<option value="reviews_allowed">Reviews Allowed</option>
-					<option value="average_rating">Average Rating
 					<option value="average_rating">Average Rating</option>
 				</select>
 				<template id="shortcode-template">
@@ -2328,127 +2780,7 @@ if(!!window.IntersectionObserver){
  
  
  
- 
- 
-<section item-type="block-properties">
-    <h1>Block Properties</h1> 
-    
-	<form class="add-common-form-elements add-common-form-elements-for-properties-panels">
-
-
-    </form>
-    
-   
-</section>
- 
- 
-
-
-
-<section item-type="container-properties">
-    <h1>Container</h1> 
-     
-    <form class="add-common-form-elements add-common-form-elements-for-properties-panels">
- 
-		<div>
-				<label>Container Width</label>
-				<select class="form-control" name="container_classes" target="classes">
-						<option value="container">.container: Fixed Width</option>
-						<option value="container-fluid">.container-fluid: Full Width</option>
-						<option value="container-sm">.container-sm (Like .container: Full Width on XS only)</option>
-						<option value="container-md">.container-md (Full Width on XS & SM)</option>
-						<option value="container-lg">.container-lg (Full Width until MD)</option>
-						<option value="container-xl">.container-xl (Full Width until LG)</option>
-						<option class="bs5-only" value="container-xxl">.container-xxl (Full Width until XL)</option>
-				</select>
-		</div>
-		 
-		
-    </form>
-   
-</section>
- 
-<section item-type="row-properties">
-    <h1>Row Properties</h1> 
-    
-	<form class="add-common-form-elements add-common-form-elements-for-properties-panels">
-
-
-    </form>
-    
-   
-</section>
-
-<section item-type="column-properties">
-    <h1>Column Properties</h1> 
-     
-    <form class="add-common-form-elements add-common-form-elements-for-properties-panels">
- 
-		<h2>Column Size</h2>
-		
-		 
-		<div class="widget-wrapper-flex activate-input-numbers">
-			<div>
-				<label title="All devices">ALL </label>
-				<input type="number" name="col" min="1" max="12">
-			</div>
-			<div>
-				<label title="SM and up">SM</label>
-				<input type="number" name="col-sm" min="1" max="12">
-			</div>
-			<div>
-				<label title="MD and up">MD</label>
-				<input type="number" name="col-md" min="1" max="12">
-			</div>
-			<div>
-				<label title="LG and up">LG</label>
-				<input type="number" name="col-lg" min="1" max="12">
-			</div>
-			<div>
-				<label title="XL and up">XL</label>
-				<input type="number" name="col-xl" min="1" max="12">
-			</div>
-			<div>
-				<label title="XXL and up">XXL</label>
-				<input type="number" name="col-xxl" min="1" max="12">
-			</div>
-		</div> <!-- /widget-wrapper-flex-->
-
-		<h2>Offset</h2>
-		
-		<div class="widget-wrapper-flex activate-input-numbers">
-			<div>
-				<label title="All devices">ALL </label>
-				<input type="number" name="offset" min="1" max="12">
-			</div>
-			<div>
-				<label title="SM and up">SM</label>
-				<input type="number" name="offset-sm" min="0" max="12">
-			</div>
-			<div>
-				<label title="MD and up">MD</label>
-				<input type="number" name="offset-md" min="0" max="12">
-			</div>
-			<div>
-				<label title="LG and up">LG</label>
-				<input type="number" name="offset-lg" min="0" max="12">
-			</div>
-			<div>
-				<label title="XL and up">XL</label>
-				<input type="number" name="offset-xl" min="0" max="12">
-			</div>
-			<div>
-				<label title="XXL and up">XXL</label>
-				<input type="number" name="offset-xxl" min="0" max="12">
-			</div>
-		</div> <!-- /widget-wrapper-flex-->
-
-		 
-    </form>
-   
-</section>
- 
- 
+  
  
  
 <section item-type="image">
@@ -2680,19 +3012,6 @@ if(!!window.IntersectionObserver){
 	</form>
 </section>
  
-
-
-
-
-
-
-
-
-
-
-
-
- 
  
 <section item-type="background" >
     <h1>Background</h1> 
@@ -2732,14 +3051,6 @@ if(!!window.IntersectionObserver){
 	</form>
 </section>
  
-
-
-
-
-
-
-
-
 <section item-type="button">
     <h1>Button</h1> 
     <form class="add-common-form-elements">
@@ -2814,9 +3125,6 @@ if(!!window.IntersectionObserver){
  
 </section>
  
- 
- 
- 
 
 <section item-type="icon">
     <h1>Icon</h1> 
@@ -2862,11 +3170,8 @@ if(!!window.IntersectionObserver){
   
 </section>
 
-
-
-
 <section item-type="svg-icon">
-    <h1>SVG Icon <sup style="font-size: 11px" class="fa fa-question-circle" title="These icons are inline SVG code, for best performance."></sup></h1> 
+    <h1>SVG Icon</h1> 
     <form class="add-common-form-elements">
 		
 
@@ -2884,7 +3189,7 @@ if(!!window.IntersectionObserver){
 			
 			
 		
-			 <input value="8" type="range" name="size" min="1" max="40" step="1">
+			 <input value="8" type="range" name="size" min="1" max="40" step="0.1">
 		</div>
 					
 		<div>
@@ -2968,12 +3273,11 @@ if(!!window.IntersectionObserver){
   
 </section>
 
- 
 <section item-type="video-embed">
-   <h1>Video Embed</h1> 
+   <h1>Embed iframe / video</h1> 
    <form class="add-common-form-elements">
-		<!--
-	 	<div id="embed-samples" class="sidepanel-secondary-part" hidden="">			 
+		 
+	 	<div id="embed-samples" class="sidepanel-secondary-part" hidden >			 
 			
 			<label>  Sample Embeds</label>
 			<select class="form-control" name="embed_presets">
@@ -2986,21 +3290,18 @@ if(!!window.IntersectionObserver){
 			</select>
 				
 		</div>
-		-->
-		
-		
-		
-	   <div>
+		 
+	    <div>
 		   <label>  Embed Source  </label>
 		   
-		   <input class="zoomable" type="text" name="src_url" value="" placeholder="Enter  URL of Youtube / Vimeo page">
+		   <input class="zoomable" type="text" name="src_url" value="" placeholder="Youtube / Vimeo page URL">
 		   <!-- <button id="vembed-submit-button" type="submit" hidden></button>  -->
-	   </div>
+	    </div>
 	   
 	   <div>
-		   <label>  iFrame SRC  </label>
+		   <label>  Iframe Src URL </label>
 		   
-		   <input class="zoomable" type="text" name="iframe_src" value="" placeholder="iFrame raw resource URL">
+		   <input class="zoomable" type="text" name="iframe_src" value="" placeholder="Iframe content URL">
 		   <!-- <button id="vembed-submit-button" type="submit" hidden></button>  -->
 	   </div>
 
@@ -3101,10 +3402,6 @@ if(!!window.IntersectionObserver){
 	   
    </form>	
 </section>
-
-
-
-
 
 
 <section item-type="shortcode">
@@ -3243,26 +3540,43 @@ if(!!window.IntersectionObserver){
 
 			<div hidden class="lc-post-output-tabcontent">
 			 
-				
+				<!-- output_view -->
 				<div>
-					<label>Layout</label>
-					<div>
-						
-						<select class="form-control" name="output_view">
-								<option value="" selected="selected">Default (Plain)</option>
-								<option value="lc_get_posts_listing_view">Listing (Links only)</option> 
+					<label>Layout <a hidden style="float:right;text-decoration: underline" class="open-dynamic-templates" href="#">Dynamic Templates...</a></label>
+					 
+					<select class="form-control" name="output_view">
+							<optgroup label="LC Built-in Views">
+								<option value="" selected="selected">Plain</option>
+								<option value="lc_get_posts_listing_view">Listing (Links only)</option>
+                                <option value="lc_get_posts_media_object_view">Basic (Media Object)</option>
 								<option value="lc_get_posts_card_view">Cards</option> 
-								<option value="lc_get_posts_collapsible_view_bs5">Collapsible</option> 
-								<option value="lc_get_posts_mycustom_view" >Custom Callback</option>
+								<option value="lc_get_posts_collapsible_view_bs5">Collapsible</option>
+							</optgroup>
+							<optgroup label="Advanced Views">
+                                <option value="lc_get_posts_dynamic_view">Dynamic Template </option>
+                                <option value="lc_get_posts_mycustom_view">PHP Callback </option>
+                                <option value="lc_get_posts_theme_loop_view">Theme Partial File </option>
+                            </optgroup>
 
-		
-						</select>
+					</select>
 						
-					</div>
+					 
 				</div>
 
+				<!-- output_theme_loop_name -->
+				<div hidden id="output_theme_loop_name_wrap">
+					<label> Partial File Name <br>(without extension, in /loops folder)</label>
+					<input type="text" name="output_theme_loop_name"  value="" placeholder="cards">	
+				</div>
+
+                <!-- output_dynamic_view_id -->
+                <div hidden id="output_dynamic_view_id_wrap">
+                    <label> Dynamic Template ID (Optional)</label>
+                    <input type="text" name="output_dynamic_view_id" value="" placeholder="Default">
+                </div>
+
+
 				<!-- output_number_of_columns -->
-				
 				<div>
 					<label>Number of Columns</label>
 					<select class="form-control" name="output_number_of_columns">
@@ -3275,22 +3589,33 @@ if(!!window.IntersectionObserver){
 					</select>
 				</div>
 				
+                <!-- output_no_results_message -->
+                <div>
+                    <label>Message in case of No Results </label>
+                    <input type="text" name="output_no_results_message" value="" placeholder="No results found">
+                </div>
 				
 				<!-- output_wrapper_class -->
 				<div>
-					<label>Output wrapper class </label>
+					<label>Output Wrapper Class[es] </label>
 					<input type="text" name="output_wrapper_class"  value="">	
 				</div>
+
+                <!-- output_article_wrapper_class -->
+                <div>
+                    <label>Output Article Wrapper Class[es] </label>
+                    <input type="text" name="output_article_wrapper_class" value="" placeholder="mb-3 mb-md-4">
+                </div>
 							
 				<!-- output_article_class -->
 				<div>
-					<label>Output article class </label>
+					<label>Output Article Class[es] </label>
 					<input type="text" name="output_article_class"  value="">	
 				</div>
 							
 				<!-- hide_elements --> 
 				<div>
-					<label>Hide Elements <small style="float: right"><a onclick="$(this).closest('section').find('[name=output_hide_elements]').val('Author, Date, FeaturedImage, Excerpt, Category, Comments').change();">All</a></small></label>
+					<label>Hide Elements (list) <small style="float: right"><a onclick="$(this).closest('section').find('[name=output_hide_elements]').val('Author, Date, FeaturedImage, Excerpt, Category, Comments').change();">All</a></small></label>
 					<input type="text" name="output_hide_elements" rows="3" value="" placeholder="Title, Author, Date, FeaturedImage, Excerpt, Category, Comments">	
 				</div>
 				
@@ -3324,9 +3649,9 @@ if(!!window.IntersectionObserver){
 					</select>
 				</div>
 
-				<!-- output_link_class -->
+				<!-- output_link_classes -->
 				<div>
-					<label>Output Link Class </label>
+					<label>Output Link Class[es] </label>
 					<input type="text" name="output_link_class" value="">	
 				</div>
 				
@@ -3344,7 +3669,7 @@ if(!!window.IntersectionObserver){
 			
 			
 				<div>
-					<label>Featured Image  Format</label>
+					<label>Featured Image Format</label>
 					<select class="form-control" name="output_featured_image_format">
 						<option value="" selected="selected">Choose...</option>
 						<option value="thumbnail">thumbnail</option>
@@ -3356,7 +3681,7 @@ if(!!window.IntersectionObserver){
 				
 				
 				<div>
-					<label>Featured Image Class</label>
+					<label>Featured Image Class[es]</label>
 					<input type="text" name="output_featured_image_class" value="">		
 				</div>
 			</div> <!-- /.lc-post-output-tabcontent -->

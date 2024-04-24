@@ -1,37 +1,5 @@
 <?php
-
-/* ********************** TEMPLATING SHORTCODES: HELPER FUNCTIONS ********************** */
-//grab a class from a html element
-function lc_filter_html_by_class($class, $html, $keep_wrapper=TRUE){
-    
-    $dom = new DomDocument();
-
-	//@ $dom->loadHTML($html);
-	@$dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
-
-	$xpath = new DOMXpath($dom);
-	
-	//https://devhints.io/xpath
-	$matching_nodes = $xpath->query("//*[contains(@class, '". $class ."')]");
-
-	@$node = $matching_nodes[0];
-	
-	if (!$node) return;
  
-    //default case, return the element with its wrapper DIV
-	if($keep_wrapper) return $node->ownerDocument->saveHTML($node); 
-
-    //grab inner node
-    $innerHTML= ''; 
-    $children = $node->childNodes;
-    foreach ($children as $child) {
-        $innerHTML .= $child->ownerDocument->saveXML( $child );
-    } 
-    
-    return $innerHTML;
- 
-}
-
 
 /* ********************** TEMPLATING SHORTCODES ********************** */
 
@@ -93,13 +61,20 @@ add_shortcode( 'lc_the_id', function( $atts ) {
 });
 
 add_shortcode( 'lc_the_date', function( $atts ) {	
+	$attributes = shortcode_atts( array(	  
+		'format' => '',
+	), $atts );	
+
 	global $post;		
-	return get_the_date();
+	return get_the_date($attributes['format']);
 });
 
 add_shortcode( 'lc_the_time', function( $atts ) {	
+	$attributes = shortcode_atts( array(	  
+		'format' => '',
+	), $atts );
 	global $post;		
-	return get_the_time();
+	return get_the_time($attributes['format']);
 });
 
 add_shortcode( 'lc_the_author', function( $atts ) {	
@@ -108,7 +83,13 @@ add_shortcode( 'lc_the_author', function( $atts ) {
 		'field' => 'display_name', 
 	), $atts );
 	$author_id = $post->post_author;
-	return get_the_author_meta( 'display_name', $author_id );
+	$author_meta =  get_the_author_meta( $attributes['field'], $author_id );
+
+    // Apply filters to preserve HTML and paragraphs
+    $author_meta = apply_filters( 'the_content', $author_meta );
+    $author_meta = wpautop( $author_meta );
+
+    return $author_meta;
 });
 
 add_shortcode( 'lc_the_avatar', function( $atts ) {	
@@ -124,7 +105,7 @@ add_shortcode( 'lc_the_avatar', function( $atts ) {
 					$attributes['size'], 
 					$attributes['placeholder_url'],
 					get_the_author_meta( 'display_name', $author_id ),
-					array('class' => $attributes['class'], 'loading' => 'lazy'),
+					array('class' => $attributes['class'], 'loading' => 'lazy')
 				);
 });
 
@@ -321,7 +302,7 @@ add_shortcode( 'lc_the_thumbnail_url', function($atts){
 
 	global $post;
 
-	$out = get_the_post_thumbnail_url($post->ID, $attributes['size'],   );
+	$out = get_the_post_thumbnail_url($post->ID, $attributes['size']);
 
 	if ($attributes['placeholder']!=0):
 		$placeholder_url = 'https://via.placeholder.com/1500x1500.png?text=Placeholder';
@@ -581,26 +562,30 @@ add_shortcode( 'lc_loop',  function ($atts = array(), $enclosed_content = null) 
 });
 
 add_shortcode( 'lc_the_excerpt', function( $atts ) {
-	
+     
 	$attributes = shortcode_atts( array(
-		'link' => 1,	   
-		'length' => 0
+		'length' => 10,
+		'read_more_text' => 'Read more...',
+		'read_more_link' => 1,
+		'read_more_link_class' => ''
 	), $atts );
-	
+
+	extract($attributes); //assign as variables
+		
 	global $post;
 
-	if($attributes['link']==0){
-		remove_filter( 'wp_trim_excerpt', 'picostrap_all_excerpts_get_more_link' );
-	}
+	remove_filter( 'wp_trim_excerpt', 'picostrap_all_excerpts_get_more_link' ); //remove the read more from excerpt
+ 
+	$text = (has_excerpt( $post->ID )) ? get_the_excerpt() : wp_strip_all_tags( $post->post_content);
 
-	if($attributes['length']!=0){
-		remove_all_filters( 'excerpt_length');
-		global $excerpt_length;
-		$excerpt_length=$attributes['length'];
-		add_filter("excerpt_length",function($in){global $excerpt_length; return $excerpt_length;});
-	}
+	$read_more_text = __( $read_more_text, 'livecanvas' );
 
-	return get_the_excerpt();		 
+	$read_more = ($read_more_link == 0) ? $read_more_text : ' <a class="' . $read_more_link_class .'" href="'.get_permalink($post->ID).'">'.$read_more_text.'</a>';
+
+	$output = '<p>'.wp_trim_words($text, $length, $read_more).'</p>';
+
+	return $output;
+				
 });
 
 add_shortcode( 'lc_the_archive_title', function( $atts ) {
@@ -624,6 +609,51 @@ add_shortcode( 'lc_the_archive_title', function( $atts ) {
 add_shortcode( 'lc_the_archive_description', function( $atts ) {
 	global $post;		
 	return get_the_archive_description();		 
+});
+
+//DEFINE SHORTCODE FOR THE LOOP: ORDER BY
+add_shortcode( 'lc_the_orderby_widget',  function ( $atts ) {
+    $attributes = shortcode_atts( array(
+        'form_class' => 'd-grid d-md-flex gap-2 gap-md-3 mb-3 lc-post-ordering',
+        'select_class' => 'orderby form-select',
+    ), $atts );
+
+    // Generate options
+    $order_options = array(
+        'date' =>  _x('Order by date','shortcodes', 'livecanvas'),
+        'title' => _x('Order by title','shortcodes', 'livecanvas'),
+    );
+
+    $order_direction_options = array(
+        'ASC' => _x('Ascending','shortcodes', 'livecanvas'),
+        'DESC' => _x('Descending','shortcodes', 'livecanvas'),
+    );
+
+    // Check current ordering and direction
+    $current_order = isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : 'date';
+    $current_direction = isset($_GET['order']) ? strtoupper(sanitize_key($_GET['order'])) : 'DESC';
+
+    // Generate form output
+    $output_string = '<form class="' . esc_attr($attributes['form_class']) . '" method="get">';
+    $output_string .= '<div>';
+    $output_string .= '<select name="orderby" class="' . esc_attr($attributes['select_class']) . '" onchange="this.form.submit()">';
+    
+    foreach ($order_options as $value => $label) {
+        $output_string .= '<option value="' . esc_attr($value) . '"' . selected($current_order, $value, false) . '>' . esc_html($label) . '</option>';
+    }
+    
+    $output_string .= '</select></div>';
+
+    $output_string .= '<div>';
+    $output_string .= '<select name="order" class="' . esc_attr($attributes['select_class']) . '" onchange="this.form.submit()">';
+    
+    foreach ($order_direction_options as $value => $label) {
+        $output_string .= '<option value="' . esc_attr($value) . '"' . selected($current_direction, $value, false) . '>' . esc_html($label) . '</option>';
+    }
+    
+    $output_string .= '</select></div></form>';
+
+    return $output_string;
 });
 
 add_shortcode( 'lc_the_pagination', function( $atts ) {
@@ -704,31 +734,10 @@ add_shortcode( 'lc_the_permalink_tag', function( $atts, $enclosed_content = null
 */
 
 
-add_shortcode( 'lc_get_template_part',  function ( $atts ) {
-	$attributes = shortcode_atts( array(
-		'slug' => '' ,
-		'name' => NULL 
-	), $atts );
-	
-	ob_start();
-    get_template_part($attributes['slug'], $attributes['name'], $attributes);
-    $var = ob_get_contents();
-    ob_end_clean();
-    return $var;
-} );
 
 
-//THE LABELS SHORTCODE  [lc_label] ... [/lc_label]
-add_shortcode( 'lc_label', function( $atts ) {	
-	$attributes = shortcode_atts( array(
-		'text' => '',   
-		'domain' =>'default'
-	), $atts );
-	
-	return __($attributes['text'], $attributes['domain']);
-});
 
-
+/*
 // DEFINE SHORTCODE TO GRAB HTML FROM SHORTCODES    
 add_shortcode( 'lc_grab_html',  function ( $atts ) {
 	$attributes = shortcode_atts( array(
@@ -746,7 +755,7 @@ add_shortcode( 'lc_grab_html',  function ( $atts ) {
  
     return lc_filter_html_by_class($attributes['class'], $html, $attributes['inner']);
 } );
-
+*/
 
 
 

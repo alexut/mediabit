@@ -76,9 +76,8 @@ function lc_save_meta_box_data( $post_id ){
 			delete_post_meta( $post_id, '_wp_page_template'  );
 		}
 		
-		if ( get_post_meta($_REQUEST['post_ID'], '_lc_livecanvas_enabled', true) == '1' && $_REQUEST['livecanvas_enabled']==1 &&  get_post_type( $post_id ) == 'post'  ) { ///// CASE LC RADIO FROM ON TO ON /////////
-			
-			//this case takes care of wp resetting the page template for single posts upon updating the post from the backend. Thanks Bea
+		if ( get_post_meta($_REQUEST['post_ID'], '_lc_livecanvas_enabled', true) == '1' && $_REQUEST['livecanvas_enabled']==1 &&  !isset($_REQUEST['page_template']) ) { ///// CASE LC RADIO FROM ON TO ON /////////
+			//this case takes care of wp resetting the page template for single posts/cpts upon updating the post from the backend. Thanks Bea
 			//set the right template for LC
 			update_post_meta( $post_id, '_wp_page_template', "page-templates/empty.php" );
 		}
@@ -194,7 +193,7 @@ function lc_template_admin_notice_not_using_lc_yet(){
 							if ($("#lc-guten-trigger-editing").length==0) { 
 								//button is not there, but its needed: let's append it 
 								var lc_button_url="<?php echo get_site_url() ?>?lc_redirect_to_edit_post_id="+wp.data.select('core/editor').getCurrentPostId();  
-								var lc_button_html="<a id='lc-guten-trigger-editing' class='lc-add-editing-icon button button-primary button-large' href='"+lc_button_url+"' >Edit with LiveCanvas</a>";
+								var lc_button_html="<a id='lc-guten-trigger-editing' class='lc-add-editing-icon button button-primary button-large' href='"+lc_button_url+"' ><?php _e(( (!lc_plugin_option_is_set("whitelabel")) ?  'Edit with LiveCanvas': 'Edit in Frontend'), 'livecanvas') ?></a>";
 								
 								$(".edit-post-header-toolbar").append(lc_button_html);
 									
@@ -230,8 +229,8 @@ function lc_template_admin_notice_using_lc(){
 		jQuery( document ).ready(function() {
 			 
 			//no guten 
-			var lc_button_url="<?php echo esc_url( add_query_arg( array('lc_action_launch_editing'=> '1','from_page_edit' =>'1'), get_permalink($post->ID))) ?>"
-			jQuery("#titlediv").append("<br><a class='lc-add-editing-icon button button-primary button-hero' href='"+lc_button_url+"' >Edit with LiveCanvas</a>");
+			var lc_button_url="<?php echo esc_url( add_query_arg( array('lc_action_launch_editing' => '1', 'from_url' => lc_urlencode(lc_get_current_url()),'from_page_edit' =>'1'), get_permalink($post->ID))) ?>"
+			jQuery("#titlediv").append("<br><a class='lc-add-editing-icon button button-primary button-hero' href='"+lc_button_url+"' ><?php _e(( (!lc_plugin_option_is_set("whitelabel")) ?  'Edit with LiveCanvas': 'Edit in Frontend'), 'livecanvas') ?></a>");
 		});
 		 
 	</script>

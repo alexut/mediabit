@@ -12,6 +12,11 @@ function lc_alter_content_filters() {
 	//IF PAGE IS NOT USING LIVECANVAS, and isnt a lc cpt,  EXIT FUNCTION
 	$page_id = get_queried_object_id();  
 	if (!lc_post_is_using_livecanvas($page_id))	return;
+
+    //add class to body
+    add_filter( 'body_class', function( $classes ) {
+        return array_merge( $classes, array( 'is-using-livecanvas' ) );
+    } );
 	
 	//CHECK IF WE ARE IN EDITING MODE
 	if (isset($_GET['lc_page_editing_mode']) && current_user_can("edit_pages") ) {

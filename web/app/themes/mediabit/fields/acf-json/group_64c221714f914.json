@@ -1,0 +1,185 @@
+{
+    "key": "group_64c221714f914",
+    "title": "Annex Fields",
+    "fields": [
+        {
+            "key": "field_64c2219ed2588",
+            "label": "Contract",
+            "name": "contract",
+            "type": "post_object",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_field_group_condition": 0,
+            "post_type": [
+                "contract"
+            ],
+            "taxonomy": "",
+            "return_format": "id",
+            "multiple": 0,
+            "max": "",
+            "acfe_add_post": 0,
+            "acfe_edit_post": 0,
+            "save_custom": 0,
+            "save_post_status": "publish",
+            "acfe_bidirectional": {
+                "acfe_bidirectional_enabled": false,
+                "acfe_bidirectional_related": false
+            },
+            "allow_null": 0,
+            "ui": 1
+        },
+        {
+            "key": "field_64c22eefb6918",
+            "label": "Workflow",
+            "name": "workflow",
+            "type": "post_object",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_field_group_condition": 0,
+            "post_type": [
+                "workflow"
+            ],
+            "taxonomy": "",
+            "return_format": "id",
+            "multiple": 0,
+            "max": "",
+            "acfe_add_post": 0,
+            "acfe_edit_post": 0,
+            "save_custom": 0,
+            "save_post_status": "publish",
+            "acfe_bidirectional": {
+                "acfe_bidirectional_enabled": false,
+                "acfe_bidirectional_related": false
+            },
+            "allow_null": 0,
+            "ui": 1
+        },
+        {
+            "key": "field_64c23d11b9dd5",
+            "label": "Number",
+            "name": "annex_no",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_field_group_condition": 0,
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_64d6939201529",
+            "label": "Signed Annex",
+            "name": "signed_annex",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_field_group_condition": 0,
+            "message": "",
+            "default_value": 0,
+            "ui_on_text": "",
+            "ui_off_text": "",
+            "ui": 0
+        },
+        {
+            "key": "field_64c547341be78",
+            "label": "Annex PDF",
+            "name": "annex_pdf",
+            "type": "file",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_field_group_condition": 0,
+            "uploader": "wp",
+            "return_format": "array",
+            "preview_style": "default",
+            "library": "uploadedTo",
+            "upload_folder": "",
+            "button_label": "Add File",
+            "file_count": 0,
+            "multiple": 0,
+            "max": "",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": ""
+        },
+        {
+            "key": "field_64c53ddf8db94",
+            "label": "Generate PDF",
+            "name": "generate_pdf",
+            "type": "acfe_button",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_field_group_condition": 0,
+            "button_value": "Generate PDF",
+            "button_type": "submit",
+            "button_class": "hidden",
+            "button_id": "",
+            "button_before": "<a href=\"\/handler\/annex-generate-pdf\" class=\"button button-secondary\">Gennerate Annex PDF<\/a>\r\n<a href=\"\/handler\/invoice-create-post\" class=\"button button-secondary\">Create New Invoice<\/a>",
+            "button_after": "",
+            "button_ajax": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "annex"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "left",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "acfe_autosync": [
+        "json"
+    ],
+    "acfe_form": 0,
+    "acfe_display_title": "",
+    "acfe_meta": "",
+    "acfe_note": "",
+    "modified": 1691784115
+}

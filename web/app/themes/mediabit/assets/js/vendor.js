@@ -3277,6 +3277,3161 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
     return ie.$ === ce && (ie.$ = nn), e && ie.jQuery === ce && (ie.jQuery = tn), ce;
   }, "undefined" == typeof e && (ie.jQuery = ie.$ = ce), ce;
 });
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+/*!
+ * Splide.js
+ * Version  : 4.1.2
+ * License  : MIT
+ * Copyright: 2022 Naotoshi Fujita
+ */
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() : typeof define === 'function' && define.amd ? define(factory) : (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Splide = factory());
+})(this, function () {
+  'use strict';
+
+  var MEDIA_PREFERS_REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
+  var CREATED = 1;
+  var MOUNTED = 2;
+  var IDLE = 3;
+  var MOVING = 4;
+  var SCROLLING = 5;
+  var DRAGGING = 6;
+  var DESTROYED = 7;
+  var STATES = {
+    CREATED: CREATED,
+    MOUNTED: MOUNTED,
+    IDLE: IDLE,
+    MOVING: MOVING,
+    SCROLLING: SCROLLING,
+    DRAGGING: DRAGGING,
+    DESTROYED: DESTROYED
+  };
+
+  function empty(array) {
+    array.length = 0;
+  }
+
+  function slice(arrayLike, start, end) {
+    return Array.prototype.slice.call(arrayLike, start, end);
+  }
+
+  function apply(func) {
+    return func.bind.apply(func, [null].concat(slice(arguments, 1)));
+  }
+
+  var nextTick = setTimeout;
+
+  var noop = function noop() {};
+
+  function raf(func) {
+    return requestAnimationFrame(func);
+  }
+
+  function typeOf(type, subject) {
+    return typeof subject === type;
+  }
+
+  function isObject(subject) {
+    return !isNull(subject) && typeOf("object", subject);
+  }
+
+  var isArray = Array.isArray;
+  var isFunction = apply(typeOf, "function");
+  var isString = apply(typeOf, "string");
+  var isUndefined = apply(typeOf, "undefined");
+
+  function isNull(subject) {
+    return subject === null;
+  }
+
+  function isHTMLElement(subject) {
+    try {
+      return subject instanceof (subject.ownerDocument.defaultView || window).HTMLElement;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function toArray(value) {
+    return isArray(value) ? value : [value];
+  }
+
+  function forEach(values, iteratee) {
+    toArray(values).forEach(iteratee);
+  }
+
+  function includes(array, value) {
+    return array.indexOf(value) > -1;
+  }
+
+  function push(array, items) {
+    array.push.apply(array, toArray(items));
+    return array;
+  }
+
+  function toggleClass(elm, classes, add) {
+    if (elm) {
+      forEach(classes, function (name) {
+        if (name) {
+          elm.classList[add ? "add" : "remove"](name);
+        }
+      });
+    }
+  }
+
+  function addClass(elm, classes) {
+    toggleClass(elm, isString(classes) ? classes.split(" ") : classes, true);
+  }
+
+  function append(parent, children) {
+    forEach(children, parent.appendChild.bind(parent));
+  }
+
+  function before(nodes, ref) {
+    forEach(nodes, function (node) {
+      var parent = (ref || node).parentNode;
+
+      if (parent) {
+        parent.insertBefore(node, ref);
+      }
+    });
+  }
+
+  function matches(elm, selector) {
+    return isHTMLElement(elm) && (elm["msMatchesSelector"] || elm.matches).call(elm, selector);
+  }
+
+  function children(parent, selector) {
+    var children2 = parent ? slice(parent.children) : [];
+    return selector ? children2.filter(function (child) {
+      return matches(child, selector);
+    }) : children2;
+  }
+
+  function child(parent, selector) {
+    return selector ? children(parent, selector)[0] : parent.firstElementChild;
+  }
+
+  var ownKeys = Object.keys;
+
+  function forOwn(object, iteratee, right) {
+    if (object) {
+      (right ? ownKeys(object).reverse() : ownKeys(object)).forEach(function (key) {
+        key !== "__proto__" && iteratee(object[key], key);
+      });
+    }
+
+    return object;
+  }
+
+  function assign(object) {
+    slice(arguments, 1).forEach(function (source) {
+      forOwn(source, function (value, key) {
+        object[key] = source[key];
+      });
+    });
+    return object;
+  }
+
+  function merge(object) {
+    slice(arguments, 1).forEach(function (source) {
+      forOwn(source, function (value, key) {
+        if (isArray(value)) {
+          object[key] = value.slice();
+        } else if (isObject(value)) {
+          object[key] = merge({}, isObject(object[key]) ? object[key] : {}, value);
+        } else {
+          object[key] = value;
+        }
+      });
+    });
+    return object;
+  }
+
+  function omit(object, keys) {
+    forEach(keys || ownKeys(object), function (key) {
+      delete object[key];
+    });
+  }
+
+  function removeAttribute(elms, attrs) {
+    forEach(elms, function (elm) {
+      forEach(attrs, function (attr) {
+        elm && elm.removeAttribute(attr);
+      });
+    });
+  }
+
+  function setAttribute(elms, attrs, value) {
+    if (isObject(attrs)) {
+      forOwn(attrs, function (value2, name) {
+        setAttribute(elms, name, value2);
+      });
+    } else {
+      forEach(elms, function (elm) {
+        isNull(value) || value === "" ? removeAttribute(elm, attrs) : elm.setAttribute(attrs, String(value));
+      });
+    }
+  }
+
+  function create(tag, attrs, parent) {
+    var elm = document.createElement(tag);
+
+    if (attrs) {
+      isString(attrs) ? addClass(elm, attrs) : setAttribute(elm, attrs);
+    }
+
+    parent && append(parent, elm);
+    return elm;
+  }
+
+  function style(elm, prop, value) {
+    if (isUndefined(value)) {
+      return getComputedStyle(elm)[prop];
+    }
+
+    if (!isNull(value)) {
+      elm.style[prop] = "" + value;
+    }
+  }
+
+  function display(elm, display2) {
+    style(elm, "display", display2);
+  }
+
+  function focus(elm) {
+    elm["setActive"] && elm["setActive"]() || elm.focus({
+      preventScroll: true
+    });
+  }
+
+  function getAttribute(elm, attr) {
+    return elm.getAttribute(attr);
+  }
+
+  function hasClass(elm, className) {
+    return elm && elm.classList.contains(className);
+  }
+
+  function rect(target) {
+    return target.getBoundingClientRect();
+  }
+
+  function remove(nodes) {
+    forEach(nodes, function (node) {
+      if (node && node.parentNode) {
+        node.parentNode.removeChild(node);
+      }
+    });
+  }
+
+  function parseHtml(html) {
+    return child(new DOMParser().parseFromString(html, "text/html").body);
+  }
+
+  function prevent(e, stopPropagation) {
+    e.preventDefault();
+
+    if (stopPropagation) {
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    }
+  }
+
+  function query(parent, selector) {
+    return parent && parent.querySelector(selector);
+  }
+
+  function queryAll(parent, selector) {
+    return selector ? slice(parent.querySelectorAll(selector)) : [];
+  }
+
+  function removeClass(elm, classes) {
+    toggleClass(elm, classes, false);
+  }
+
+  function timeOf(e) {
+    return e.timeStamp;
+  }
+
+  function unit(value) {
+    return isString(value) ? value : value ? value + "px" : "";
+  }
+
+  var PROJECT_CODE = "splide";
+  var DATA_ATTRIBUTE = "data-" + PROJECT_CODE;
+
+  function assert(condition, message) {
+    if (!condition) {
+      throw new Error("[" + PROJECT_CODE + "] " + (message || ""));
+    }
+  }
+
+  var min = Math.min,
+      max = Math.max,
+      floor = Math.floor,
+      ceil = Math.ceil,
+      abs = Math.abs;
+
+  function approximatelyEqual(x, y, epsilon) {
+    return abs(x - y) < epsilon;
+  }
+
+  function between(number, x, y, exclusive) {
+    var minimum = min(x, y);
+    var maximum = max(x, y);
+    return exclusive ? minimum < number && number < maximum : minimum <= number && number <= maximum;
+  }
+
+  function clamp(number, x, y) {
+    var minimum = min(x, y);
+    var maximum = max(x, y);
+    return min(max(minimum, number), maximum);
+  }
+
+  function sign(x) {
+    return +(x > 0) - +(x < 0);
+  }
+
+  function format(string, replacements) {
+    forEach(replacements, function (replacement) {
+      string = string.replace("%s", "" + replacement);
+    });
+    return string;
+  }
+
+  function pad(number) {
+    return number < 10 ? "0" + number : "" + number;
+  }
+
+  var ids = {};
+
+  function uniqueId(prefix) {
+    return "" + prefix + pad(ids[prefix] = (ids[prefix] || 0) + 1);
+  }
+
+  function EventBinder() {
+    var listeners = [];
+
+    function bind(targets, events, callback, options) {
+      forEachEvent(targets, events, function (target, event, namespace) {
+        var isEventTarget = ("addEventListener" in target);
+        var remover = isEventTarget ? target.removeEventListener.bind(target, event, callback, options) : target["removeListener"].bind(target, callback);
+        isEventTarget ? target.addEventListener(event, callback, options) : target["addListener"](callback);
+        listeners.push([target, event, namespace, callback, remover]);
+      });
+    }
+
+    function unbind(targets, events, callback) {
+      forEachEvent(targets, events, function (target, event, namespace) {
+        listeners = listeners.filter(function (listener) {
+          if (listener[0] === target && listener[1] === event && listener[2] === namespace && (!callback || listener[3] === callback)) {
+            listener[4]();
+            return false;
+          }
+
+          return true;
+        });
+      });
+    }
+
+    function dispatch(target, type, detail) {
+      var e;
+      var bubbles = true;
+
+      if (typeof CustomEvent === "function") {
+        e = new CustomEvent(type, {
+          bubbles: bubbles,
+          detail: detail
+        });
+      } else {
+        e = document.createEvent("CustomEvent");
+        e.initCustomEvent(type, bubbles, false, detail);
+      }
+
+      target.dispatchEvent(e);
+      return e;
+    }
+
+    function forEachEvent(targets, events, iteratee) {
+      forEach(targets, function (target) {
+        target && forEach(events, function (events2) {
+          events2.split(" ").forEach(function (eventNS) {
+            var fragment = eventNS.split(".");
+            iteratee(target, fragment[0], fragment[1]);
+          });
+        });
+      });
+    }
+
+    function destroy() {
+      listeners.forEach(function (data) {
+        data[4]();
+      });
+      empty(listeners);
+    }
+
+    return {
+      bind: bind,
+      unbind: unbind,
+      dispatch: dispatch,
+      destroy: destroy
+    };
+  }
+
+  var EVENT_MOUNTED = "mounted";
+  var EVENT_READY = "ready";
+  var EVENT_MOVE = "move";
+  var EVENT_MOVED = "moved";
+  var EVENT_CLICK = "click";
+  var EVENT_ACTIVE = "active";
+  var EVENT_INACTIVE = "inactive";
+  var EVENT_VISIBLE = "visible";
+  var EVENT_HIDDEN = "hidden";
+  var EVENT_REFRESH = "refresh";
+  var EVENT_UPDATED = "updated";
+  var EVENT_RESIZE = "resize";
+  var EVENT_RESIZED = "resized";
+  var EVENT_DRAG = "drag";
+  var EVENT_DRAGGING = "dragging";
+  var EVENT_DRAGGED = "dragged";
+  var EVENT_SCROLL = "scroll";
+  var EVENT_SCROLLED = "scrolled";
+  var EVENT_OVERFLOW = "overflow";
+  var EVENT_DESTROY = "destroy";
+  var EVENT_ARROWS_MOUNTED = "arrows:mounted";
+  var EVENT_ARROWS_UPDATED = "arrows:updated";
+  var EVENT_PAGINATION_MOUNTED = "pagination:mounted";
+  var EVENT_PAGINATION_UPDATED = "pagination:updated";
+  var EVENT_NAVIGATION_MOUNTED = "navigation:mounted";
+  var EVENT_AUTOPLAY_PLAY = "autoplay:play";
+  var EVENT_AUTOPLAY_PLAYING = "autoplay:playing";
+  var EVENT_AUTOPLAY_PAUSE = "autoplay:pause";
+  var EVENT_LAZYLOAD_LOADED = "lazyload:loaded";
+  var EVENT_SLIDE_KEYDOWN = "sk";
+  var EVENT_SHIFTED = "sh";
+  var EVENT_END_INDEX_CHANGED = "ei";
+
+  function EventInterface(Splide2) {
+    var bus = Splide2 ? Splide2.event.bus : document.createDocumentFragment();
+    var binder = EventBinder();
+
+    function on(events, callback) {
+      binder.bind(bus, toArray(events).join(" "), function (e) {
+        callback.apply(callback, isArray(e.detail) ? e.detail : []);
+      });
+    }
+
+    function emit(event) {
+      binder.dispatch(bus, event, slice(arguments, 1));
+    }
+
+    if (Splide2) {
+      Splide2.event.on(EVENT_DESTROY, binder.destroy);
+    }
+
+    return assign(binder, {
+      bus: bus,
+      on: on,
+      off: apply(binder.unbind, bus),
+      emit: emit
+    });
+  }
+
+  function RequestInterval(interval, onInterval, onUpdate, limit) {
+    var now = Date.now;
+    var startTime;
+    var rate = 0;
+    var id;
+    var paused = true;
+    var count = 0;
+
+    function update() {
+      if (!paused) {
+        rate = interval ? min((now() - startTime) / interval, 1) : 1;
+        onUpdate && onUpdate(rate);
+
+        if (rate >= 1) {
+          onInterval();
+          startTime = now();
+
+          if (limit && ++count >= limit) {
+            return pause();
+          }
+        }
+
+        id = raf(update);
+      }
+    }
+
+    function start(resume) {
+      resume || cancel();
+      startTime = now() - (resume ? rate * interval : 0);
+      paused = false;
+      id = raf(update);
+    }
+
+    function pause() {
+      paused = true;
+    }
+
+    function rewind() {
+      startTime = now();
+      rate = 0;
+
+      if (onUpdate) {
+        onUpdate(rate);
+      }
+    }
+
+    function cancel() {
+      id && cancelAnimationFrame(id);
+      rate = 0;
+      id = 0;
+      paused = true;
+    }
+
+    function set(time) {
+      interval = time;
+    }
+
+    function isPaused() {
+      return paused;
+    }
+
+    return {
+      start: start,
+      rewind: rewind,
+      pause: pause,
+      cancel: cancel,
+      set: set,
+      isPaused: isPaused
+    };
+  }
+
+  function State(initialState) {
+    var state = initialState;
+
+    function set(value) {
+      state = value;
+    }
+
+    function is(states) {
+      return includes(toArray(states), state);
+    }
+
+    return {
+      set: set,
+      is: is
+    };
+  }
+
+  function Throttle(func, duration) {
+    var interval = RequestInterval(duration || 0, func, null, 1);
+    return function () {
+      interval.isPaused() && interval.start();
+    };
+  }
+
+  function Media(Splide2, Components2, options) {
+    var state = Splide2.state;
+    var breakpoints = options.breakpoints || {};
+    var reducedMotion = options.reducedMotion || {};
+    var binder = EventBinder();
+    var queries = [];
+
+    function setup() {
+      var isMin = options.mediaQuery === "min";
+      ownKeys(breakpoints).sort(function (n, m) {
+        return isMin ? +n - +m : +m - +n;
+      }).forEach(function (key) {
+        register(breakpoints[key], "(" + (isMin ? "min" : "max") + "-width:" + key + "px)");
+      });
+      register(reducedMotion, MEDIA_PREFERS_REDUCED_MOTION);
+      update();
+    }
+
+    function destroy(completely) {
+      if (completely) {
+        binder.destroy();
+      }
+    }
+
+    function register(options2, query) {
+      var queryList = matchMedia(query);
+      binder.bind(queryList, "change", update);
+      queries.push([options2, queryList]);
+    }
+
+    function update() {
+      var destroyed = state.is(DESTROYED);
+      var direction = options.direction;
+      var merged = queries.reduce(function (merged2, entry) {
+        return merge(merged2, entry[1].matches ? entry[0] : {});
+      }, {});
+      omit(options);
+      set(merged);
+
+      if (options.destroy) {
+        Splide2.destroy(options.destroy === "completely");
+      } else if (destroyed) {
+        destroy(true);
+        Splide2.mount();
+      } else {
+        direction !== options.direction && Splide2.refresh();
+      }
+    }
+
+    function reduce(enable) {
+      if (matchMedia(MEDIA_PREFERS_REDUCED_MOTION).matches) {
+        enable ? merge(options, reducedMotion) : omit(options, ownKeys(reducedMotion));
+      }
+    }
+
+    function set(opts, base, notify) {
+      merge(options, opts);
+      base && merge(Object.getPrototypeOf(options), opts);
+
+      if (notify || !state.is(CREATED)) {
+        Splide2.emit(EVENT_UPDATED, options);
+      }
+    }
+
+    return {
+      setup: setup,
+      destroy: destroy,
+      reduce: reduce,
+      set: set
+    };
+  }
+
+  var ARROW = "Arrow";
+  var ARROW_LEFT = ARROW + "Left";
+  var ARROW_RIGHT = ARROW + "Right";
+  var ARROW_UP = ARROW + "Up";
+  var ARROW_DOWN = ARROW + "Down";
+  var RTL = "rtl";
+  var TTB = "ttb";
+  var ORIENTATION_MAP = {
+    width: ["height"],
+    left: ["top", "right"],
+    right: ["bottom", "left"],
+    x: ["y"],
+    X: ["Y"],
+    Y: ["X"],
+    ArrowLeft: [ARROW_UP, ARROW_RIGHT],
+    ArrowRight: [ARROW_DOWN, ARROW_LEFT]
+  };
+
+  function Direction(Splide2, Components2, options) {
+    function resolve(prop, axisOnly, direction) {
+      direction = direction || options.direction;
+      var index = direction === RTL && !axisOnly ? 1 : direction === TTB ? 0 : -1;
+      return ORIENTATION_MAP[prop] && ORIENTATION_MAP[prop][index] || prop.replace(/width|left|right/i, function (match, offset) {
+        var replacement = ORIENTATION_MAP[match.toLowerCase()][index] || match;
+        return offset > 0 ? replacement.charAt(0).toUpperCase() + replacement.slice(1) : replacement;
+      });
+    }
+
+    function orient(value) {
+      return value * (options.direction === RTL ? 1 : -1);
+    }
+
+    return {
+      resolve: resolve,
+      orient: orient
+    };
+  }
+
+  var ROLE = "role";
+  var TAB_INDEX = "tabindex";
+  var DISABLED = "disabled";
+  var ARIA_PREFIX = "aria-";
+  var ARIA_CONTROLS = ARIA_PREFIX + "controls";
+  var ARIA_CURRENT = ARIA_PREFIX + "current";
+  var ARIA_SELECTED = ARIA_PREFIX + "selected";
+  var ARIA_LABEL = ARIA_PREFIX + "label";
+  var ARIA_LABELLEDBY = ARIA_PREFIX + "labelledby";
+  var ARIA_HIDDEN = ARIA_PREFIX + "hidden";
+  var ARIA_ORIENTATION = ARIA_PREFIX + "orientation";
+  var ARIA_ROLEDESCRIPTION = ARIA_PREFIX + "roledescription";
+  var ARIA_LIVE = ARIA_PREFIX + "live";
+  var ARIA_BUSY = ARIA_PREFIX + "busy";
+  var ARIA_ATOMIC = ARIA_PREFIX + "atomic";
+  var ALL_ATTRIBUTES = [ROLE, TAB_INDEX, DISABLED, ARIA_CONTROLS, ARIA_CURRENT, ARIA_LABEL, ARIA_LABELLEDBY, ARIA_HIDDEN, ARIA_ORIENTATION, ARIA_ROLEDESCRIPTION];
+  var CLASS_PREFIX = PROJECT_CODE + "__";
+  var STATUS_CLASS_PREFIX = "is-";
+  var CLASS_ROOT = PROJECT_CODE;
+  var CLASS_TRACK = CLASS_PREFIX + "track";
+  var CLASS_LIST = CLASS_PREFIX + "list";
+  var CLASS_SLIDE = CLASS_PREFIX + "slide";
+  var CLASS_CLONE = CLASS_SLIDE + "--clone";
+  var CLASS_CONTAINER = CLASS_SLIDE + "__container";
+  var CLASS_ARROWS = CLASS_PREFIX + "arrows";
+  var CLASS_ARROW = CLASS_PREFIX + "arrow";
+  var CLASS_ARROW_PREV = CLASS_ARROW + "--prev";
+  var CLASS_ARROW_NEXT = CLASS_ARROW + "--next";
+  var CLASS_PAGINATION = CLASS_PREFIX + "pagination";
+  var CLASS_PAGINATION_PAGE = CLASS_PAGINATION + "__page";
+  var CLASS_PROGRESS = CLASS_PREFIX + "progress";
+  var CLASS_PROGRESS_BAR = CLASS_PROGRESS + "__bar";
+  var CLASS_TOGGLE = CLASS_PREFIX + "toggle";
+  var CLASS_SPINNER = CLASS_PREFIX + "spinner";
+  var CLASS_SR = CLASS_PREFIX + "sr";
+  var CLASS_INITIALIZED = STATUS_CLASS_PREFIX + "initialized";
+  var CLASS_ACTIVE = STATUS_CLASS_PREFIX + "active";
+  var CLASS_PREV = STATUS_CLASS_PREFIX + "prev";
+  var CLASS_NEXT = STATUS_CLASS_PREFIX + "next";
+  var CLASS_VISIBLE = STATUS_CLASS_PREFIX + "visible";
+  var CLASS_LOADING = STATUS_CLASS_PREFIX + "loading";
+  var CLASS_FOCUS_IN = STATUS_CLASS_PREFIX + "focus-in";
+  var CLASS_OVERFLOW = STATUS_CLASS_PREFIX + "overflow";
+  var STATUS_CLASSES = [CLASS_ACTIVE, CLASS_VISIBLE, CLASS_PREV, CLASS_NEXT, CLASS_LOADING, CLASS_FOCUS_IN, CLASS_OVERFLOW];
+  var CLASSES = {
+    slide: CLASS_SLIDE,
+    clone: CLASS_CLONE,
+    arrows: CLASS_ARROWS,
+    arrow: CLASS_ARROW,
+    prev: CLASS_ARROW_PREV,
+    next: CLASS_ARROW_NEXT,
+    pagination: CLASS_PAGINATION,
+    page: CLASS_PAGINATION_PAGE,
+    spinner: CLASS_SPINNER
+  };
+
+  function closest(from, selector) {
+    if (isFunction(from.closest)) {
+      return from.closest(selector);
+    }
+
+    var elm = from;
+
+    while (elm && elm.nodeType === 1) {
+      if (matches(elm, selector)) {
+        break;
+      }
+
+      elm = elm.parentElement;
+    }
+
+    return elm;
+  }
+
+  var FRICTION = 5;
+  var LOG_INTERVAL = 200;
+  var POINTER_DOWN_EVENTS = "touchstart mousedown";
+  var POINTER_MOVE_EVENTS = "touchmove mousemove";
+  var POINTER_UP_EVENTS = "touchend touchcancel mouseup click";
+
+  function Elements(Splide2, Components2, options) {
+    var _EventInterface = EventInterface(Splide2),
+        on = _EventInterface.on,
+        bind = _EventInterface.bind;
+
+    var root = Splide2.root;
+    var i18n = options.i18n;
+    var elements = {};
+    var slides = [];
+    var rootClasses = [];
+    var trackClasses = [];
+    var track;
+    var list;
+    var isUsingKey;
+
+    function setup() {
+      collect();
+      init();
+      update();
+    }
+
+    function mount() {
+      on(EVENT_REFRESH, destroy);
+      on(EVENT_REFRESH, setup);
+      on(EVENT_UPDATED, update);
+      bind(document, POINTER_DOWN_EVENTS + " keydown", function (e) {
+        isUsingKey = e.type === "keydown";
+      }, {
+        capture: true
+      });
+      bind(root, "focusin", function () {
+        toggleClass(root, CLASS_FOCUS_IN, !!isUsingKey);
+      });
+    }
+
+    function destroy(completely) {
+      var attrs = ALL_ATTRIBUTES.concat("style");
+      empty(slides);
+      removeClass(root, rootClasses);
+      removeClass(track, trackClasses);
+      removeAttribute([track, list], attrs);
+      removeAttribute(root, completely ? attrs : ["style", ARIA_ROLEDESCRIPTION]);
+    }
+
+    function update() {
+      removeClass(root, rootClasses);
+      removeClass(track, trackClasses);
+      rootClasses = getClasses(CLASS_ROOT);
+      trackClasses = getClasses(CLASS_TRACK);
+      addClass(root, rootClasses);
+      addClass(track, trackClasses);
+      setAttribute(root, ARIA_LABEL, options.label);
+      setAttribute(root, ARIA_LABELLEDBY, options.labelledby);
+    }
+
+    function collect() {
+      track = find("." + CLASS_TRACK);
+      list = child(track, "." + CLASS_LIST);
+      assert(track && list, "A track/list element is missing.");
+      push(slides, children(list, "." + CLASS_SLIDE + ":not(." + CLASS_CLONE + ")"));
+      forOwn({
+        arrows: CLASS_ARROWS,
+        pagination: CLASS_PAGINATION,
+        prev: CLASS_ARROW_PREV,
+        next: CLASS_ARROW_NEXT,
+        bar: CLASS_PROGRESS_BAR,
+        toggle: CLASS_TOGGLE
+      }, function (className, key) {
+        elements[key] = find("." + className);
+      });
+      assign(elements, {
+        root: root,
+        track: track,
+        list: list,
+        slides: slides
+      });
+    }
+
+    function init() {
+      var id = root.id || uniqueId(PROJECT_CODE);
+      var role = options.role;
+      root.id = id;
+      track.id = track.id || id + "-track";
+      list.id = list.id || id + "-list";
+
+      if (!getAttribute(root, ROLE) && root.tagName !== "SECTION" && role) {
+        setAttribute(root, ROLE, role);
+      }
+
+      setAttribute(root, ARIA_ROLEDESCRIPTION, i18n.carousel);
+      setAttribute(list, ROLE, "presentation");
+    }
+
+    function find(selector) {
+      var elm = query(root, selector);
+      return elm && closest(elm, "." + CLASS_ROOT) === root ? elm : void 0;
+    }
+
+    function getClasses(base) {
+      return [base + "--" + options.type, base + "--" + options.direction, options.drag && base + "--draggable", options.isNavigation && base + "--nav", base === CLASS_ROOT && CLASS_ACTIVE];
+    }
+
+    return assign(elements, {
+      setup: setup,
+      mount: mount,
+      destroy: destroy
+    });
+  }
+
+  var SLIDE = "slide";
+  var LOOP = "loop";
+  var FADE = "fade";
+
+  function Slide$1(Splide2, index, slideIndex, slide) {
+    var event = EventInterface(Splide2);
+    var on = event.on,
+        emit = event.emit,
+        bind = event.bind;
+    var Components = Splide2.Components,
+        root = Splide2.root,
+        options = Splide2.options;
+    var isNavigation = options.isNavigation,
+        updateOnMove = options.updateOnMove,
+        i18n = options.i18n,
+        pagination = options.pagination,
+        slideFocus = options.slideFocus;
+    var resolve = Components.Direction.resolve;
+    var styles = getAttribute(slide, "style");
+    var label = getAttribute(slide, ARIA_LABEL);
+    var isClone = slideIndex > -1;
+    var container = child(slide, "." + CLASS_CONTAINER);
+    var destroyed;
+
+    function mount() {
+      if (!isClone) {
+        slide.id = root.id + "-slide" + pad(index + 1);
+        setAttribute(slide, ROLE, pagination ? "tabpanel" : "group");
+        setAttribute(slide, ARIA_ROLEDESCRIPTION, i18n.slide);
+        setAttribute(slide, ARIA_LABEL, label || format(i18n.slideLabel, [index + 1, Splide2.length]));
+      }
+
+      listen();
+    }
+
+    function listen() {
+      bind(slide, "click", apply(emit, EVENT_CLICK, self));
+      bind(slide, "keydown", apply(emit, EVENT_SLIDE_KEYDOWN, self));
+      on([EVENT_MOVED, EVENT_SHIFTED, EVENT_SCROLLED], update);
+      on(EVENT_NAVIGATION_MOUNTED, initNavigation);
+
+      if (updateOnMove) {
+        on(EVENT_MOVE, onMove);
+      }
+    }
+
+    function destroy() {
+      destroyed = true;
+      event.destroy();
+      removeClass(slide, STATUS_CLASSES);
+      removeAttribute(slide, ALL_ATTRIBUTES);
+      setAttribute(slide, "style", styles);
+      setAttribute(slide, ARIA_LABEL, label || "");
+    }
+
+    function initNavigation() {
+      var controls = Splide2.splides.map(function (target) {
+        var Slide2 = target.splide.Components.Slides.getAt(index);
+        return Slide2 ? Slide2.slide.id : "";
+      }).join(" ");
+      setAttribute(slide, ARIA_LABEL, format(i18n.slideX, (isClone ? slideIndex : index) + 1));
+      setAttribute(slide, ARIA_CONTROLS, controls);
+      setAttribute(slide, ROLE, slideFocus ? "button" : "");
+      slideFocus && removeAttribute(slide, ARIA_ROLEDESCRIPTION);
+    }
+
+    function onMove() {
+      if (!destroyed) {
+        update();
+      }
+    }
+
+    function update() {
+      if (!destroyed) {
+        var curr = Splide2.index;
+        updateActivity();
+        updateVisibility();
+        toggleClass(slide, CLASS_PREV, index === curr - 1);
+        toggleClass(slide, CLASS_NEXT, index === curr + 1);
+      }
+    }
+
+    function updateActivity() {
+      var active = isActive();
+
+      if (active !== hasClass(slide, CLASS_ACTIVE)) {
+        toggleClass(slide, CLASS_ACTIVE, active);
+        setAttribute(slide, ARIA_CURRENT, isNavigation && active || "");
+        emit(active ? EVENT_ACTIVE : EVENT_INACTIVE, self);
+      }
+    }
+
+    function updateVisibility() {
+      var visible = isVisible();
+      var hidden = !visible && (!isActive() || isClone);
+
+      if (!Splide2.state.is([MOVING, SCROLLING])) {
+        setAttribute(slide, ARIA_HIDDEN, hidden || "");
+      }
+
+      setAttribute(queryAll(slide, options.focusableNodes || ""), TAB_INDEX, hidden ? -1 : "");
+
+      if (slideFocus) {
+        setAttribute(slide, TAB_INDEX, hidden ? -1 : 0);
+      }
+
+      if (visible !== hasClass(slide, CLASS_VISIBLE)) {
+        toggleClass(slide, CLASS_VISIBLE, visible);
+        emit(visible ? EVENT_VISIBLE : EVENT_HIDDEN, self);
+      }
+
+      if (!visible && document.activeElement === slide) {
+        var Slide2 = Components.Slides.getAt(Splide2.index);
+        Slide2 && focus(Slide2.slide);
+      }
+    }
+
+    function style$1(prop, value, useContainer) {
+      style(useContainer && container || slide, prop, value);
+    }
+
+    function isActive() {
+      var curr = Splide2.index;
+      return curr === index || options.cloneStatus && curr === slideIndex;
+    }
+
+    function isVisible() {
+      if (Splide2.is(FADE)) {
+        return isActive();
+      }
+
+      var trackRect = rect(Components.Elements.track);
+      var slideRect = rect(slide);
+      var left = resolve("left", true);
+      var right = resolve("right", true);
+      return floor(trackRect[left]) <= ceil(slideRect[left]) && floor(slideRect[right]) <= ceil(trackRect[right]);
+    }
+
+    function isWithin(from, distance) {
+      var diff = abs(from - index);
+
+      if (!isClone && (options.rewind || Splide2.is(LOOP))) {
+        diff = min(diff, Splide2.length - diff);
+      }
+
+      return diff <= distance;
+    }
+
+    var self = {
+      index: index,
+      slideIndex: slideIndex,
+      slide: slide,
+      container: container,
+      isClone: isClone,
+      mount: mount,
+      destroy: destroy,
+      update: update,
+      style: style$1,
+      isWithin: isWithin
+    };
+    return self;
+  }
+
+  function Slides(Splide2, Components2, options) {
+    var _EventInterface2 = EventInterface(Splide2),
+        on = _EventInterface2.on,
+        emit = _EventInterface2.emit,
+        bind = _EventInterface2.bind;
+
+    var _Components2$Elements = Components2.Elements,
+        slides = _Components2$Elements.slides,
+        list = _Components2$Elements.list;
+    var Slides2 = [];
+
+    function mount() {
+      init();
+      on(EVENT_REFRESH, destroy);
+      on(EVENT_REFRESH, init);
+    }
+
+    function init() {
+      slides.forEach(function (slide, index) {
+        register(slide, index, -1);
+      });
+    }
+
+    function destroy() {
+      forEach$1(function (Slide2) {
+        Slide2.destroy();
+      });
+      empty(Slides2);
+    }
+
+    function update() {
+      forEach$1(function (Slide2) {
+        Slide2.update();
+      });
+    }
+
+    function register(slide, index, slideIndex) {
+      var object = Slide$1(Splide2, index, slideIndex, slide);
+      object.mount();
+      Slides2.push(object);
+      Slides2.sort(function (Slide1, Slide2) {
+        return Slide1.index - Slide2.index;
+      });
+    }
+
+    function get(excludeClones) {
+      return excludeClones ? filter(function (Slide2) {
+        return !Slide2.isClone;
+      }) : Slides2;
+    }
+
+    function getIn(page) {
+      var Controller = Components2.Controller;
+      var index = Controller.toIndex(page);
+      var max = Controller.hasFocus() ? 1 : options.perPage;
+      return filter(function (Slide2) {
+        return between(Slide2.index, index, index + max - 1);
+      });
+    }
+
+    function getAt(index) {
+      return filter(index)[0];
+    }
+
+    function add(items, index) {
+      forEach(items, function (slide) {
+        if (isString(slide)) {
+          slide = parseHtml(slide);
+        }
+
+        if (isHTMLElement(slide)) {
+          var ref = slides[index];
+          ref ? before(slide, ref) : append(list, slide);
+          addClass(slide, options.classes.slide);
+          observeImages(slide, apply(emit, EVENT_RESIZE));
+        }
+      });
+      emit(EVENT_REFRESH);
+    }
+
+    function remove$1(matcher) {
+      remove(filter(matcher).map(function (Slide2) {
+        return Slide2.slide;
+      }));
+      emit(EVENT_REFRESH);
+    }
+
+    function forEach$1(iteratee, excludeClones) {
+      get(excludeClones).forEach(iteratee);
+    }
+
+    function filter(matcher) {
+      return Slides2.filter(isFunction(matcher) ? matcher : function (Slide2) {
+        return isString(matcher) ? matches(Slide2.slide, matcher) : includes(toArray(matcher), Slide2.index);
+      });
+    }
+
+    function style(prop, value, useContainer) {
+      forEach$1(function (Slide2) {
+        Slide2.style(prop, value, useContainer);
+      });
+    }
+
+    function observeImages(elm, callback) {
+      var images = queryAll(elm, "img");
+      var length = images.length;
+
+      if (length) {
+        images.forEach(function (img) {
+          bind(img, "load error", function () {
+            if (! --length) {
+              callback();
+            }
+          });
+        });
+      } else {
+        callback();
+      }
+    }
+
+    function getLength(excludeClones) {
+      return excludeClones ? slides.length : Slides2.length;
+    }
+
+    function isEnough() {
+      return Slides2.length > options.perPage;
+    }
+
+    return {
+      mount: mount,
+      destroy: destroy,
+      update: update,
+      register: register,
+      get: get,
+      getIn: getIn,
+      getAt: getAt,
+      add: add,
+      remove: remove$1,
+      forEach: forEach$1,
+      filter: filter,
+      style: style,
+      getLength: getLength,
+      isEnough: isEnough
+    };
+  }
+
+  function Layout(Splide2, Components2, options) {
+    var _EventInterface3 = EventInterface(Splide2),
+        on = _EventInterface3.on,
+        bind = _EventInterface3.bind,
+        emit = _EventInterface3.emit;
+
+    var Slides = Components2.Slides;
+    var resolve = Components2.Direction.resolve;
+    var _Components2$Elements2 = Components2.Elements,
+        root = _Components2$Elements2.root,
+        track = _Components2$Elements2.track,
+        list = _Components2$Elements2.list;
+    var getAt = Slides.getAt,
+        styleSlides = Slides.style;
+    var vertical;
+    var rootRect;
+    var overflow;
+
+    function mount() {
+      init();
+      bind(window, "resize load", Throttle(apply(emit, EVENT_RESIZE)));
+      on([EVENT_UPDATED, EVENT_REFRESH], init);
+      on(EVENT_RESIZE, resize);
+    }
+
+    function init() {
+      vertical = options.direction === TTB;
+      style(root, "maxWidth", unit(options.width));
+      style(track, resolve("paddingLeft"), cssPadding(false));
+      style(track, resolve("paddingRight"), cssPadding(true));
+      resize(true);
+    }
+
+    function resize(force) {
+      var newRect = rect(root);
+
+      if (force || rootRect.width !== newRect.width || rootRect.height !== newRect.height) {
+        style(track, "height", cssTrackHeight());
+        styleSlides(resolve("marginRight"), unit(options.gap));
+        styleSlides("width", cssSlideWidth());
+        styleSlides("height", cssSlideHeight(), true);
+        rootRect = newRect;
+        emit(EVENT_RESIZED);
+
+        if (overflow !== (overflow = isOverflow())) {
+          toggleClass(root, CLASS_OVERFLOW, overflow);
+          emit(EVENT_OVERFLOW, overflow);
+        }
+      }
+    }
+
+    function cssPadding(right) {
+      var padding = options.padding;
+      var prop = resolve(right ? "right" : "left");
+      return padding && unit(padding[prop] || (isObject(padding) ? 0 : padding)) || "0px";
+    }
+
+    function cssTrackHeight() {
+      var height = "";
+
+      if (vertical) {
+        height = cssHeight();
+        assert(height, "height or heightRatio is missing.");
+        height = "calc(" + height + " - " + cssPadding(false) + " - " + cssPadding(true) + ")";
+      }
+
+      return height;
+    }
+
+    function cssHeight() {
+      return unit(options.height || rect(list).width * options.heightRatio);
+    }
+
+    function cssSlideWidth() {
+      return options.autoWidth ? null : unit(options.fixedWidth) || (vertical ? "" : cssSlideSize());
+    }
+
+    function cssSlideHeight() {
+      return unit(options.fixedHeight) || (vertical ? options.autoHeight ? null : cssSlideSize() : cssHeight());
+    }
+
+    function cssSlideSize() {
+      var gap = unit(options.gap);
+      return "calc((100%" + (gap && " + " + gap) + ")/" + (options.perPage || 1) + (gap && " - " + gap) + ")";
+    }
+
+    function listSize() {
+      return rect(list)[resolve("width")];
+    }
+
+    function slideSize(index, withoutGap) {
+      var Slide = getAt(index || 0);
+      return Slide ? rect(Slide.slide)[resolve("width")] + (withoutGap ? 0 : getGap()) : 0;
+    }
+
+    function totalSize(index, withoutGap) {
+      var Slide = getAt(index);
+
+      if (Slide) {
+        var right = rect(Slide.slide)[resolve("right")];
+        var left = rect(list)[resolve("left")];
+        return abs(right - left) + (withoutGap ? 0 : getGap());
+      }
+
+      return 0;
+    }
+
+    function sliderSize(withoutGap) {
+      return totalSize(Splide2.length - 1) - totalSize(0) + slideSize(0, withoutGap);
+    }
+
+    function getGap() {
+      var Slide = getAt(0);
+      return Slide && parseFloat(style(Slide.slide, resolve("marginRight"))) || 0;
+    }
+
+    function getPadding(right) {
+      return parseFloat(style(track, resolve("padding" + (right ? "Right" : "Left")))) || 0;
+    }
+
+    function isOverflow() {
+      return Splide2.is(FADE) || sliderSize(true) > listSize();
+    }
+
+    return {
+      mount: mount,
+      resize: resize,
+      listSize: listSize,
+      slideSize: slideSize,
+      sliderSize: sliderSize,
+      totalSize: totalSize,
+      getPadding: getPadding,
+      isOverflow: isOverflow
+    };
+  }
+
+  var MULTIPLIER = 2;
+
+  function Clones(Splide2, Components2, options) {
+    var event = EventInterface(Splide2);
+    var on = event.on;
+    var Elements = Components2.Elements,
+        Slides = Components2.Slides;
+    var resolve = Components2.Direction.resolve;
+    var clones = [];
+    var cloneCount;
+
+    function mount() {
+      on(EVENT_REFRESH, remount);
+      on([EVENT_UPDATED, EVENT_RESIZE], observe);
+
+      if (cloneCount = computeCloneCount()) {
+        generate(cloneCount);
+        Components2.Layout.resize(true);
+      }
+    }
+
+    function remount() {
+      destroy();
+      mount();
+    }
+
+    function destroy() {
+      remove(clones);
+      empty(clones);
+      event.destroy();
+    }
+
+    function observe() {
+      var count = computeCloneCount();
+
+      if (cloneCount !== count) {
+        if (cloneCount < count || !count) {
+          event.emit(EVENT_REFRESH);
+        }
+      }
+    }
+
+    function generate(count) {
+      var slides = Slides.get().slice();
+      var length = slides.length;
+
+      if (length) {
+        while (slides.length < count) {
+          push(slides, slides);
+        }
+
+        push(slides.slice(-count), slides.slice(0, count)).forEach(function (Slide, index) {
+          var isHead = index < count;
+          var clone = cloneDeep(Slide.slide, index);
+          isHead ? before(clone, slides[0].slide) : append(Elements.list, clone);
+          push(clones, clone);
+          Slides.register(clone, index - count + (isHead ? 0 : length), Slide.index);
+        });
+      }
+    }
+
+    function cloneDeep(elm, index) {
+      var clone = elm.cloneNode(true);
+      addClass(clone, options.classes.clone);
+      clone.id = Splide2.root.id + "-clone" + pad(index + 1);
+      return clone;
+    }
+
+    function computeCloneCount() {
+      var clones2 = options.clones;
+
+      if (!Splide2.is(LOOP)) {
+        clones2 = 0;
+      } else if (isUndefined(clones2)) {
+        var fixedSize = options[resolve("fixedWidth")] && Components2.Layout.slideSize(0);
+        var fixedCount = fixedSize && ceil(rect(Elements.track)[resolve("width")] / fixedSize);
+        clones2 = fixedCount || options[resolve("autoWidth")] && Splide2.length || options.perPage * MULTIPLIER;
+      }
+
+      return clones2;
+    }
+
+    return {
+      mount: mount,
+      destroy: destroy
+    };
+  }
+
+  function Move(Splide2, Components2, options) {
+    var _EventInterface4 = EventInterface(Splide2),
+        on = _EventInterface4.on,
+        emit = _EventInterface4.emit;
+
+    var set = Splide2.state.set;
+    var _Components2$Layout = Components2.Layout,
+        slideSize = _Components2$Layout.slideSize,
+        getPadding = _Components2$Layout.getPadding,
+        totalSize = _Components2$Layout.totalSize,
+        listSize = _Components2$Layout.listSize,
+        sliderSize = _Components2$Layout.sliderSize;
+    var _Components2$Directio = Components2.Direction,
+        resolve = _Components2$Directio.resolve,
+        orient = _Components2$Directio.orient;
+    var _Components2$Elements3 = Components2.Elements,
+        list = _Components2$Elements3.list,
+        track = _Components2$Elements3.track;
+    var Transition;
+
+    function mount() {
+      Transition = Components2.Transition;
+      on([EVENT_MOUNTED, EVENT_RESIZED, EVENT_UPDATED, EVENT_REFRESH], reposition);
+    }
+
+    function reposition() {
+      if (!Components2.Controller.isBusy()) {
+        Components2.Scroll.cancel();
+        jump(Splide2.index);
+        Components2.Slides.update();
+      }
+    }
+
+    function move(dest, index, prev, callback) {
+      if (dest !== index && canShift(dest > prev)) {
+        cancel();
+        translate(shift(getPosition(), dest > prev), true);
+      }
+
+      set(MOVING);
+      emit(EVENT_MOVE, index, prev, dest);
+      Transition.start(index, function () {
+        set(IDLE);
+        emit(EVENT_MOVED, index, prev, dest);
+        callback && callback();
+      });
+    }
+
+    function jump(index) {
+      translate(toPosition(index, true));
+    }
+
+    function translate(position, preventLoop) {
+      if (!Splide2.is(FADE)) {
+        var destination = preventLoop ? position : loop(position);
+        style(list, "transform", "translate" + resolve("X") + "(" + destination + "px)");
+        position !== destination && emit(EVENT_SHIFTED);
+      }
+    }
+
+    function loop(position) {
+      if (Splide2.is(LOOP)) {
+        var index = toIndex(position);
+        var exceededMax = index > Components2.Controller.getEnd();
+        var exceededMin = index < 0;
+
+        if (exceededMin || exceededMax) {
+          position = shift(position, exceededMax);
+        }
+      }
+
+      return position;
+    }
+
+    function shift(position, backwards) {
+      var excess = position - getLimit(backwards);
+      var size = sliderSize();
+      position -= orient(size * (ceil(abs(excess) / size) || 1)) * (backwards ? 1 : -1);
+      return position;
+    }
+
+    function cancel() {
+      translate(getPosition(), true);
+      Transition.cancel();
+    }
+
+    function toIndex(position) {
+      var Slides = Components2.Slides.get();
+      var index = 0;
+      var minDistance = Infinity;
+
+      for (var i = 0; i < Slides.length; i++) {
+        var slideIndex = Slides[i].index;
+        var distance = abs(toPosition(slideIndex, true) - position);
+
+        if (distance <= minDistance) {
+          minDistance = distance;
+          index = slideIndex;
+        } else {
+          break;
+        }
+      }
+
+      return index;
+    }
+
+    function toPosition(index, trimming) {
+      var position = orient(totalSize(index - 1) - offset(index));
+      return trimming ? trim(position) : position;
+    }
+
+    function getPosition() {
+      var left = resolve("left");
+      return rect(list)[left] - rect(track)[left] + orient(getPadding(false));
+    }
+
+    function trim(position) {
+      if (options.trimSpace && Splide2.is(SLIDE)) {
+        position = clamp(position, 0, orient(sliderSize(true) - listSize()));
+      }
+
+      return position;
+    }
+
+    function offset(index) {
+      var focus = options.focus;
+      return focus === "center" ? (listSize() - slideSize(index, true)) / 2 : +focus * slideSize(index) || 0;
+    }
+
+    function getLimit(max) {
+      return toPosition(max ? Components2.Controller.getEnd() : 0, !!options.trimSpace);
+    }
+
+    function canShift(backwards) {
+      var shifted = orient(shift(getPosition(), backwards));
+      return backwards ? shifted >= 0 : shifted <= list[resolve("scrollWidth")] - rect(track)[resolve("width")];
+    }
+
+    function exceededLimit(max, position) {
+      position = isUndefined(position) ? getPosition() : position;
+      var exceededMin = max !== true && orient(position) < orient(getLimit(false));
+      var exceededMax = max !== false && orient(position) > orient(getLimit(true));
+      return exceededMin || exceededMax;
+    }
+
+    return {
+      mount: mount,
+      move: move,
+      jump: jump,
+      translate: translate,
+      shift: shift,
+      cancel: cancel,
+      toIndex: toIndex,
+      toPosition: toPosition,
+      getPosition: getPosition,
+      getLimit: getLimit,
+      exceededLimit: exceededLimit,
+      reposition: reposition
+    };
+  }
+
+  function Controller(Splide2, Components2, options) {
+    var _EventInterface5 = EventInterface(Splide2),
+        on = _EventInterface5.on,
+        emit = _EventInterface5.emit;
+
+    var Move = Components2.Move;
+    var getPosition = Move.getPosition,
+        getLimit = Move.getLimit,
+        toPosition = Move.toPosition;
+    var _Components2$Slides = Components2.Slides,
+        isEnough = _Components2$Slides.isEnough,
+        getLength = _Components2$Slides.getLength;
+    var omitEnd = options.omitEnd;
+    var isLoop = Splide2.is(LOOP);
+    var isSlide = Splide2.is(SLIDE);
+    var getNext = apply(getAdjacent, false);
+    var getPrev = apply(getAdjacent, true);
+    var currIndex = options.start || 0;
+    var endIndex;
+    var prevIndex = currIndex;
+    var slideCount;
+    var perMove;
+    var perPage;
+
+    function mount() {
+      init();
+      on([EVENT_UPDATED, EVENT_REFRESH, EVENT_END_INDEX_CHANGED], init);
+      on(EVENT_RESIZED, onResized);
+    }
+
+    function init() {
+      slideCount = getLength(true);
+      perMove = options.perMove;
+      perPage = options.perPage;
+      endIndex = getEnd();
+      var index = clamp(currIndex, 0, omitEnd ? endIndex : slideCount - 1);
+
+      if (index !== currIndex) {
+        currIndex = index;
+        Move.reposition();
+      }
+    }
+
+    function onResized() {
+      if (endIndex !== getEnd()) {
+        emit(EVENT_END_INDEX_CHANGED);
+      }
+    }
+
+    function go(control, allowSameIndex, callback) {
+      if (!isBusy()) {
+        var dest = parse(control);
+        var index = loop(dest);
+
+        if (index > -1 && (allowSameIndex || index !== currIndex)) {
+          setIndex(index);
+          Move.move(dest, index, prevIndex, callback);
+        }
+      }
+    }
+
+    function scroll(destination, duration, snap, callback) {
+      Components2.Scroll.scroll(destination, duration, snap, function () {
+        var index = loop(Move.toIndex(getPosition()));
+        setIndex(omitEnd ? min(index, endIndex) : index);
+        callback && callback();
+      });
+    }
+
+    function parse(control) {
+      var index = currIndex;
+
+      if (isString(control)) {
+        var _ref = control.match(/([+\-<>])(\d+)?/) || [],
+            indicator = _ref[1],
+            number = _ref[2];
+
+        if (indicator === "+" || indicator === "-") {
+          index = computeDestIndex(currIndex + +("" + indicator + (+number || 1)), currIndex);
+        } else if (indicator === ">") {
+          index = number ? toIndex(+number) : getNext(true);
+        } else if (indicator === "<") {
+          index = getPrev(true);
+        }
+      } else {
+        index = isLoop ? control : clamp(control, 0, endIndex);
+      }
+
+      return index;
+    }
+
+    function getAdjacent(prev, destination) {
+      var number = perMove || (hasFocus() ? 1 : perPage);
+      var dest = computeDestIndex(currIndex + number * (prev ? -1 : 1), currIndex, !(perMove || hasFocus()));
+
+      if (dest === -1 && isSlide) {
+        if (!approximatelyEqual(getPosition(), getLimit(!prev), 1)) {
+          return prev ? 0 : endIndex;
+        }
+      }
+
+      return destination ? dest : loop(dest);
+    }
+
+    function computeDestIndex(dest, from, snapPage) {
+      if (isEnough() || hasFocus()) {
+        var index = computeMovableDestIndex(dest);
+
+        if (index !== dest) {
+          from = dest;
+          dest = index;
+          snapPage = false;
+        }
+
+        if (dest < 0 || dest > endIndex) {
+          if (!perMove && (between(0, dest, from, true) || between(endIndex, from, dest, true))) {
+            dest = toIndex(toPage(dest));
+          } else {
+            if (isLoop) {
+              dest = snapPage ? dest < 0 ? -(slideCount % perPage || perPage) : slideCount : dest;
+            } else if (options.rewind) {
+              dest = dest < 0 ? endIndex : 0;
+            } else {
+              dest = -1;
+            }
+          }
+        } else {
+          if (snapPage && dest !== from) {
+            dest = toIndex(toPage(from) + (dest < from ? -1 : 1));
+          }
+        }
+      } else {
+        dest = -1;
+      }
+
+      return dest;
+    }
+
+    function computeMovableDestIndex(dest) {
+      if (isSlide && options.trimSpace === "move" && dest !== currIndex) {
+        var position = getPosition();
+
+        while (position === toPosition(dest, true) && between(dest, 0, Splide2.length - 1, !options.rewind)) {
+          dest < currIndex ? --dest : ++dest;
+        }
+      }
+
+      return dest;
+    }
+
+    function loop(index) {
+      return isLoop ? (index + slideCount) % slideCount || 0 : index;
+    }
+
+    function getEnd() {
+      var end = slideCount - (hasFocus() || isLoop && perMove ? 1 : perPage);
+
+      while (omitEnd && end-- > 0) {
+        if (toPosition(slideCount - 1, true) !== toPosition(end, true)) {
+          end++;
+          break;
+        }
+      }
+
+      return clamp(end, 0, slideCount - 1);
+    }
+
+    function toIndex(page) {
+      return clamp(hasFocus() ? page : perPage * page, 0, endIndex);
+    }
+
+    function toPage(index) {
+      return hasFocus() ? min(index, endIndex) : floor((index >= endIndex ? slideCount - 1 : index) / perPage);
+    }
+
+    function toDest(destination) {
+      var closest = Move.toIndex(destination);
+      return isSlide ? clamp(closest, 0, endIndex) : closest;
+    }
+
+    function setIndex(index) {
+      if (index !== currIndex) {
+        prevIndex = currIndex;
+        currIndex = index;
+      }
+    }
+
+    function getIndex(prev) {
+      return prev ? prevIndex : currIndex;
+    }
+
+    function hasFocus() {
+      return !isUndefined(options.focus) || options.isNavigation;
+    }
+
+    function isBusy() {
+      return Splide2.state.is([MOVING, SCROLLING]) && !!options.waitForTransition;
+    }
+
+    return {
+      mount: mount,
+      go: go,
+      scroll: scroll,
+      getNext: getNext,
+      getPrev: getPrev,
+      getAdjacent: getAdjacent,
+      getEnd: getEnd,
+      setIndex: setIndex,
+      getIndex: getIndex,
+      toIndex: toIndex,
+      toPage: toPage,
+      toDest: toDest,
+      hasFocus: hasFocus,
+      isBusy: isBusy
+    };
+  }
+
+  var XML_NAME_SPACE = "http://www.w3.org/2000/svg";
+  var PATH = "m15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z";
+  var SIZE = 40;
+
+  function Arrows(Splide2, Components2, options) {
+    var event = EventInterface(Splide2);
+    var on = event.on,
+        bind = event.bind,
+        emit = event.emit;
+    var classes = options.classes,
+        i18n = options.i18n;
+    var Elements = Components2.Elements,
+        Controller = Components2.Controller;
+    var placeholder = Elements.arrows,
+        track = Elements.track;
+    var wrapper = placeholder;
+    var prev = Elements.prev;
+    var next = Elements.next;
+    var created;
+    var wrapperClasses;
+    var arrows = {};
+
+    function mount() {
+      init();
+      on(EVENT_UPDATED, remount);
+    }
+
+    function remount() {
+      destroy();
+      mount();
+    }
+
+    function init() {
+      var enabled = options.arrows;
+
+      if (enabled && !(prev && next)) {
+        createArrows();
+      }
+
+      if (prev && next) {
+        assign(arrows, {
+          prev: prev,
+          next: next
+        });
+        display(wrapper, enabled ? "" : "none");
+        addClass(wrapper, wrapperClasses = CLASS_ARROWS + "--" + options.direction);
+
+        if (enabled) {
+          listen();
+          update();
+          setAttribute([prev, next], ARIA_CONTROLS, track.id);
+          emit(EVENT_ARROWS_MOUNTED, prev, next);
+        }
+      }
+    }
+
+    function destroy() {
+      event.destroy();
+      removeClass(wrapper, wrapperClasses);
+
+      if (created) {
+        remove(placeholder ? [prev, next] : wrapper);
+        prev = next = null;
+      } else {
+        removeAttribute([prev, next], ALL_ATTRIBUTES);
+      }
+    }
+
+    function listen() {
+      on([EVENT_MOUNTED, EVENT_MOVED, EVENT_REFRESH, EVENT_SCROLLED, EVENT_END_INDEX_CHANGED], update);
+      bind(next, "click", apply(go, ">"));
+      bind(prev, "click", apply(go, "<"));
+    }
+
+    function go(control) {
+      Controller.go(control, true);
+    }
+
+    function createArrows() {
+      wrapper = placeholder || create("div", classes.arrows);
+      prev = createArrow(true);
+      next = createArrow(false);
+      created = true;
+      append(wrapper, [prev, next]);
+      !placeholder && before(wrapper, track);
+    }
+
+    function createArrow(prev2) {
+      var arrow = "<button class=\"" + classes.arrow + " " + (prev2 ? classes.prev : classes.next) + "\" type=\"button\"><svg xmlns=\"" + XML_NAME_SPACE + "\" viewBox=\"0 0 " + SIZE + " " + SIZE + "\" width=\"" + SIZE + "\" height=\"" + SIZE + "\" focusable=\"false\"><path d=\"" + (options.arrowPath || PATH) + "\" />";
+      return parseHtml(arrow);
+    }
+
+    function update() {
+      if (prev && next) {
+        var index = Splide2.index;
+        var prevIndex = Controller.getPrev();
+        var nextIndex = Controller.getNext();
+        var prevLabel = prevIndex > -1 && index < prevIndex ? i18n.last : i18n.prev;
+        var nextLabel = nextIndex > -1 && index > nextIndex ? i18n.first : i18n.next;
+        prev.disabled = prevIndex < 0;
+        next.disabled = nextIndex < 0;
+        setAttribute(prev, ARIA_LABEL, prevLabel);
+        setAttribute(next, ARIA_LABEL, nextLabel);
+        emit(EVENT_ARROWS_UPDATED, prev, next, prevIndex, nextIndex);
+      }
+    }
+
+    return {
+      arrows: arrows,
+      mount: mount,
+      destroy: destroy,
+      update: update
+    };
+  }
+
+  var INTERVAL_DATA_ATTRIBUTE = DATA_ATTRIBUTE + "-interval";
+
+  function Autoplay(Splide2, Components2, options) {
+    var _EventInterface6 = EventInterface(Splide2),
+        on = _EventInterface6.on,
+        bind = _EventInterface6.bind,
+        emit = _EventInterface6.emit;
+
+    var interval = RequestInterval(options.interval, Splide2.go.bind(Splide2, ">"), onAnimationFrame);
+    var isPaused = interval.isPaused;
+    var Elements = Components2.Elements,
+        _Components2$Elements4 = Components2.Elements,
+        root = _Components2$Elements4.root,
+        toggle = _Components2$Elements4.toggle;
+    var autoplay = options.autoplay;
+    var hovered;
+    var focused;
+    var stopped = autoplay === "pause";
+
+    function mount() {
+      if (autoplay) {
+        listen();
+        toggle && setAttribute(toggle, ARIA_CONTROLS, Elements.track.id);
+        stopped || play();
+        update();
+      }
+    }
+
+    function listen() {
+      if (options.pauseOnHover) {
+        bind(root, "mouseenter mouseleave", function (e) {
+          hovered = e.type === "mouseenter";
+          autoToggle();
+        });
+      }
+
+      if (options.pauseOnFocus) {
+        bind(root, "focusin focusout", function (e) {
+          focused = e.type === "focusin";
+          autoToggle();
+        });
+      }
+
+      if (toggle) {
+        bind(toggle, "click", function () {
+          stopped ? play() : pause(true);
+        });
+      }
+
+      on([EVENT_MOVE, EVENT_SCROLL, EVENT_REFRESH], interval.rewind);
+      on(EVENT_MOVE, onMove);
+    }
+
+    function play() {
+      if (isPaused() && Components2.Slides.isEnough()) {
+        interval.start(!options.resetProgress);
+        focused = hovered = stopped = false;
+        update();
+        emit(EVENT_AUTOPLAY_PLAY);
+      }
+    }
+
+    function pause(stop) {
+      if (stop === void 0) {
+        stop = true;
+      }
+
+      stopped = !!stop;
+      update();
+
+      if (!isPaused()) {
+        interval.pause();
+        emit(EVENT_AUTOPLAY_PAUSE);
+      }
+    }
+
+    function autoToggle() {
+      if (!stopped) {
+        hovered || focused ? pause(false) : play();
+      }
+    }
+
+    function update() {
+      if (toggle) {
+        toggleClass(toggle, CLASS_ACTIVE, !stopped);
+        setAttribute(toggle, ARIA_LABEL, options.i18n[stopped ? "play" : "pause"]);
+      }
+    }
+
+    function onAnimationFrame(rate) {
+      var bar = Elements.bar;
+      bar && style(bar, "width", rate * 100 + "%");
+      emit(EVENT_AUTOPLAY_PLAYING, rate);
+    }
+
+    function onMove(index) {
+      var Slide = Components2.Slides.getAt(index);
+      interval.set(Slide && +getAttribute(Slide.slide, INTERVAL_DATA_ATTRIBUTE) || options.interval);
+    }
+
+    return {
+      mount: mount,
+      destroy: interval.cancel,
+      play: play,
+      pause: pause,
+      isPaused: isPaused
+    };
+  }
+
+  function Cover(Splide2, Components2, options) {
+    var _EventInterface7 = EventInterface(Splide2),
+        on = _EventInterface7.on;
+
+    function mount() {
+      if (options.cover) {
+        on(EVENT_LAZYLOAD_LOADED, apply(toggle, true));
+        on([EVENT_MOUNTED, EVENT_UPDATED, EVENT_REFRESH], apply(cover, true));
+      }
+    }
+
+    function cover(cover2) {
+      Components2.Slides.forEach(function (Slide) {
+        var img = child(Slide.container || Slide.slide, "img");
+
+        if (img && img.src) {
+          toggle(cover2, img, Slide);
+        }
+      });
+    }
+
+    function toggle(cover2, img, Slide) {
+      Slide.style("background", cover2 ? "center/cover no-repeat url(\"" + img.src + "\")" : "", true);
+      display(img, cover2 ? "none" : "");
+    }
+
+    return {
+      mount: mount,
+      destroy: apply(cover, false)
+    };
+  }
+
+  var BOUNCE_DIFF_THRESHOLD = 10;
+  var BOUNCE_DURATION = 600;
+  var FRICTION_FACTOR = 0.6;
+  var BASE_VELOCITY = 1.5;
+  var MIN_DURATION = 800;
+
+  function Scroll(Splide2, Components2, options) {
+    var _EventInterface8 = EventInterface(Splide2),
+        on = _EventInterface8.on,
+        emit = _EventInterface8.emit;
+
+    var set = Splide2.state.set;
+    var Move = Components2.Move;
+    var getPosition = Move.getPosition,
+        getLimit = Move.getLimit,
+        exceededLimit = Move.exceededLimit,
+        translate = Move.translate;
+    var isSlide = Splide2.is(SLIDE);
+    var interval;
+    var callback;
+    var friction = 1;
+
+    function mount() {
+      on(EVENT_MOVE, clear);
+      on([EVENT_UPDATED, EVENT_REFRESH], cancel);
+    }
+
+    function scroll(destination, duration, snap, onScrolled, noConstrain) {
+      var from = getPosition();
+      clear();
+
+      if (snap && (!isSlide || !exceededLimit())) {
+        var size = Components2.Layout.sliderSize();
+        var offset = sign(destination) * size * floor(abs(destination) / size) || 0;
+        destination = Move.toPosition(Components2.Controller.toDest(destination % size)) + offset;
+      }
+
+      var noDistance = approximatelyEqual(from, destination, 1);
+      friction = 1;
+      duration = noDistance ? 0 : duration || max(abs(destination - from) / BASE_VELOCITY, MIN_DURATION);
+      callback = onScrolled;
+      interval = RequestInterval(duration, onEnd, apply(update, from, destination, noConstrain), 1);
+      set(SCROLLING);
+      emit(EVENT_SCROLL);
+      interval.start();
+    }
+
+    function onEnd() {
+      set(IDLE);
+      callback && callback();
+      emit(EVENT_SCROLLED);
+    }
+
+    function update(from, to, noConstrain, rate) {
+      var position = getPosition();
+      var target = from + (to - from) * easing(rate);
+      var diff = (target - position) * friction;
+      translate(position + diff);
+
+      if (isSlide && !noConstrain && exceededLimit()) {
+        friction *= FRICTION_FACTOR;
+
+        if (abs(diff) < BOUNCE_DIFF_THRESHOLD) {
+          scroll(getLimit(exceededLimit(true)), BOUNCE_DURATION, false, callback, true);
+        }
+      }
+    }
+
+    function clear() {
+      if (interval) {
+        interval.cancel();
+      }
+    }
+
+    function cancel() {
+      if (interval && !interval.isPaused()) {
+        clear();
+        onEnd();
+      }
+    }
+
+    function easing(t) {
+      var easingFunc = options.easingFunc;
+      return easingFunc ? easingFunc(t) : 1 - Math.pow(1 - t, 4);
+    }
+
+    return {
+      mount: mount,
+      destroy: clear,
+      scroll: scroll,
+      cancel: cancel
+    };
+  }
+
+  var SCROLL_LISTENER_OPTIONS = {
+    passive: false,
+    capture: true
+  };
+
+  function Drag(Splide2, Components2, options) {
+    var _EventInterface9 = EventInterface(Splide2),
+        on = _EventInterface9.on,
+        emit = _EventInterface9.emit,
+        bind = _EventInterface9.bind,
+        unbind = _EventInterface9.unbind;
+
+    var state = Splide2.state;
+    var Move = Components2.Move,
+        Scroll = Components2.Scroll,
+        Controller = Components2.Controller,
+        track = Components2.Elements.track,
+        reduce = Components2.Media.reduce;
+    var _Components2$Directio2 = Components2.Direction,
+        resolve = _Components2$Directio2.resolve,
+        orient = _Components2$Directio2.orient;
+    var getPosition = Move.getPosition,
+        exceededLimit = Move.exceededLimit;
+    var basePosition;
+    var baseEvent;
+    var prevBaseEvent;
+    var isFree;
+    var dragging;
+    var exceeded = false;
+    var clickPrevented;
+    var disabled;
+    var target;
+
+    function mount() {
+      bind(track, POINTER_MOVE_EVENTS, noop, SCROLL_LISTENER_OPTIONS);
+      bind(track, POINTER_UP_EVENTS, noop, SCROLL_LISTENER_OPTIONS);
+      bind(track, POINTER_DOWN_EVENTS, onPointerDown, SCROLL_LISTENER_OPTIONS);
+      bind(track, "click", onClick, {
+        capture: true
+      });
+      bind(track, "dragstart", prevent);
+      on([EVENT_MOUNTED, EVENT_UPDATED], init);
+    }
+
+    function init() {
+      var drag = options.drag;
+      disable(!drag);
+      isFree = drag === "free";
+    }
+
+    function onPointerDown(e) {
+      clickPrevented = false;
+
+      if (!disabled) {
+        var isTouch = isTouchEvent(e);
+
+        if (isDraggable(e.target) && (isTouch || !e.button)) {
+          if (!Controller.isBusy()) {
+            target = isTouch ? track : window;
+            dragging = state.is([MOVING, SCROLLING]);
+            prevBaseEvent = null;
+            bind(target, POINTER_MOVE_EVENTS, onPointerMove, SCROLL_LISTENER_OPTIONS);
+            bind(target, POINTER_UP_EVENTS, onPointerUp, SCROLL_LISTENER_OPTIONS);
+            Move.cancel();
+            Scroll.cancel();
+            save(e);
+          } else {
+            prevent(e, true);
+          }
+        }
+      }
+    }
+
+    function onPointerMove(e) {
+      if (!state.is(DRAGGING)) {
+        state.set(DRAGGING);
+        emit(EVENT_DRAG);
+      }
+
+      if (e.cancelable) {
+        if (dragging) {
+          Move.translate(basePosition + constrain(diffCoord(e)));
+          var expired = diffTime(e) > LOG_INTERVAL;
+          var hasExceeded = exceeded !== (exceeded = exceededLimit());
+
+          if (expired || hasExceeded) {
+            save(e);
+          }
+
+          clickPrevented = true;
+          emit(EVENT_DRAGGING);
+          prevent(e);
+        } else if (isSliderDirection(e)) {
+          dragging = shouldStart(e);
+          prevent(e);
+        }
+      }
+    }
+
+    function onPointerUp(e) {
+      if (state.is(DRAGGING)) {
+        state.set(IDLE);
+        emit(EVENT_DRAGGED);
+      }
+
+      if (dragging) {
+        move(e);
+        prevent(e);
+      }
+
+      unbind(target, POINTER_MOVE_EVENTS, onPointerMove);
+      unbind(target, POINTER_UP_EVENTS, onPointerUp);
+      dragging = false;
+    }
+
+    function onClick(e) {
+      if (!disabled && clickPrevented) {
+        prevent(e, true);
+      }
+    }
+
+    function save(e) {
+      prevBaseEvent = baseEvent;
+      baseEvent = e;
+      basePosition = getPosition();
+    }
+
+    function move(e) {
+      var velocity = computeVelocity(e);
+      var destination = computeDestination(velocity);
+      var rewind = options.rewind && options.rewindByDrag;
+      reduce(false);
+
+      if (isFree) {
+        Controller.scroll(destination, 0, options.snap);
+      } else if (Splide2.is(FADE)) {
+        Controller.go(orient(sign(velocity)) < 0 ? rewind ? "<" : "-" : rewind ? ">" : "+");
+      } else if (Splide2.is(SLIDE) && exceeded && rewind) {
+        Controller.go(exceededLimit(true) ? ">" : "<");
+      } else {
+        Controller.go(Controller.toDest(destination), true);
+      }
+
+      reduce(true);
+    }
+
+    function shouldStart(e) {
+      var thresholds = options.dragMinThreshold;
+      var isObj = isObject(thresholds);
+      var mouse = isObj && thresholds.mouse || 0;
+      var touch = (isObj ? thresholds.touch : +thresholds) || 10;
+      return abs(diffCoord(e)) > (isTouchEvent(e) ? touch : mouse);
+    }
+
+    function isSliderDirection(e) {
+      return abs(diffCoord(e)) > abs(diffCoord(e, true));
+    }
+
+    function computeVelocity(e) {
+      if (Splide2.is(LOOP) || !exceeded) {
+        var time = diffTime(e);
+
+        if (time && time < LOG_INTERVAL) {
+          return diffCoord(e) / time;
+        }
+      }
+
+      return 0;
+    }
+
+    function computeDestination(velocity) {
+      return getPosition() + sign(velocity) * min(abs(velocity) * (options.flickPower || 600), isFree ? Infinity : Components2.Layout.listSize() * (options.flickMaxPages || 1));
+    }
+
+    function diffCoord(e, orthogonal) {
+      return coordOf(e, orthogonal) - coordOf(getBaseEvent(e), orthogonal);
+    }
+
+    function diffTime(e) {
+      return timeOf(e) - timeOf(getBaseEvent(e));
+    }
+
+    function getBaseEvent(e) {
+      return baseEvent === e && prevBaseEvent || baseEvent;
+    }
+
+    function coordOf(e, orthogonal) {
+      return (isTouchEvent(e) ? e.changedTouches[0] : e)["page" + resolve(orthogonal ? "Y" : "X")];
+    }
+
+    function constrain(diff) {
+      return diff / (exceeded && Splide2.is(SLIDE) ? FRICTION : 1);
+    }
+
+    function isDraggable(target2) {
+      var noDrag = options.noDrag;
+      return !matches(target2, "." + CLASS_PAGINATION_PAGE + ", ." + CLASS_ARROW) && (!noDrag || !matches(target2, noDrag));
+    }
+
+    function isTouchEvent(e) {
+      return typeof TouchEvent !== "undefined" && e instanceof TouchEvent;
+    }
+
+    function isDragging() {
+      return dragging;
+    }
+
+    function disable(value) {
+      disabled = value;
+    }
+
+    return {
+      mount: mount,
+      disable: disable,
+      isDragging: isDragging
+    };
+  }
+
+  var NORMALIZATION_MAP = {
+    Spacebar: " ",
+    Right: ARROW_RIGHT,
+    Left: ARROW_LEFT,
+    Up: ARROW_UP,
+    Down: ARROW_DOWN
+  };
+
+  function normalizeKey(key) {
+    key = isString(key) ? key : key.key;
+    return NORMALIZATION_MAP[key] || key;
+  }
+
+  var KEYBOARD_EVENT = "keydown";
+
+  function Keyboard(Splide2, Components2, options) {
+    var _EventInterface10 = EventInterface(Splide2),
+        on = _EventInterface10.on,
+        bind = _EventInterface10.bind,
+        unbind = _EventInterface10.unbind;
+
+    var root = Splide2.root;
+    var resolve = Components2.Direction.resolve;
+    var target;
+    var disabled;
+
+    function mount() {
+      init();
+      on(EVENT_UPDATED, destroy);
+      on(EVENT_UPDATED, init);
+      on(EVENT_MOVE, onMove);
+    }
+
+    function init() {
+      var keyboard = options.keyboard;
+
+      if (keyboard) {
+        target = keyboard === "global" ? window : root;
+        bind(target, KEYBOARD_EVENT, onKeydown);
+      }
+    }
+
+    function destroy() {
+      unbind(target, KEYBOARD_EVENT);
+    }
+
+    function disable(value) {
+      disabled = value;
+    }
+
+    function onMove() {
+      var _disabled = disabled;
+      disabled = true;
+      nextTick(function () {
+        disabled = _disabled;
+      });
+    }
+
+    function onKeydown(e) {
+      if (!disabled) {
+        var key = normalizeKey(e);
+
+        if (key === resolve(ARROW_LEFT)) {
+          Splide2.go("<");
+        } else if (key === resolve(ARROW_RIGHT)) {
+          Splide2.go(">");
+        }
+      }
+    }
+
+    return {
+      mount: mount,
+      destroy: destroy,
+      disable: disable
+    };
+  }
+
+  var SRC_DATA_ATTRIBUTE = DATA_ATTRIBUTE + "-lazy";
+  var SRCSET_DATA_ATTRIBUTE = SRC_DATA_ATTRIBUTE + "-srcset";
+  var IMAGE_SELECTOR = "[" + SRC_DATA_ATTRIBUTE + "], [" + SRCSET_DATA_ATTRIBUTE + "]";
+
+  function LazyLoad(Splide2, Components2, options) {
+    var _EventInterface11 = EventInterface(Splide2),
+        on = _EventInterface11.on,
+        off = _EventInterface11.off,
+        bind = _EventInterface11.bind,
+        emit = _EventInterface11.emit;
+
+    var isSequential = options.lazyLoad === "sequential";
+    var events = [EVENT_MOVED, EVENT_SCROLLED];
+    var entries = [];
+
+    function mount() {
+      if (options.lazyLoad) {
+        init();
+        on(EVENT_REFRESH, init);
+      }
+    }
+
+    function init() {
+      empty(entries);
+      register();
+
+      if (isSequential) {
+        loadNext();
+      } else {
+        off(events);
+        on(events, check);
+        check();
+      }
+    }
+
+    function register() {
+      Components2.Slides.forEach(function (Slide) {
+        queryAll(Slide.slide, IMAGE_SELECTOR).forEach(function (img) {
+          var src = getAttribute(img, SRC_DATA_ATTRIBUTE);
+          var srcset = getAttribute(img, SRCSET_DATA_ATTRIBUTE);
+
+          if (src !== img.src || srcset !== img.srcset) {
+            var className = options.classes.spinner;
+            var parent = img.parentElement;
+            var spinner = child(parent, "." + className) || create("span", className, parent);
+            entries.push([img, Slide, spinner]);
+            img.src || display(img, "none");
+          }
+        });
+      });
+    }
+
+    function check() {
+      entries = entries.filter(function (data) {
+        var distance = options.perPage * ((options.preloadPages || 1) + 1) - 1;
+        return data[1].isWithin(Splide2.index, distance) ? load(data) : true;
+      });
+      entries.length || off(events);
+    }
+
+    function load(data) {
+      var img = data[0];
+      addClass(data[1].slide, CLASS_LOADING);
+      bind(img, "load error", apply(onLoad, data));
+      setAttribute(img, "src", getAttribute(img, SRC_DATA_ATTRIBUTE));
+      setAttribute(img, "srcset", getAttribute(img, SRCSET_DATA_ATTRIBUTE));
+      removeAttribute(img, SRC_DATA_ATTRIBUTE);
+      removeAttribute(img, SRCSET_DATA_ATTRIBUTE);
+    }
+
+    function onLoad(data, e) {
+      var img = data[0],
+          Slide = data[1];
+      removeClass(Slide.slide, CLASS_LOADING);
+
+      if (e.type !== "error") {
+        remove(data[2]);
+        display(img, "");
+        emit(EVENT_LAZYLOAD_LOADED, img, Slide);
+        emit(EVENT_RESIZE);
+      }
+
+      isSequential && loadNext();
+    }
+
+    function loadNext() {
+      entries.length && load(entries.shift());
+    }
+
+    return {
+      mount: mount,
+      destroy: apply(empty, entries),
+      check: check
+    };
+  }
+
+  function Pagination(Splide2, Components2, options) {
+    var event = EventInterface(Splide2);
+    var on = event.on,
+        emit = event.emit,
+        bind = event.bind;
+    var Slides = Components2.Slides,
+        Elements = Components2.Elements,
+        Controller = Components2.Controller;
+    var hasFocus = Controller.hasFocus,
+        getIndex = Controller.getIndex,
+        go = Controller.go;
+    var resolve = Components2.Direction.resolve;
+    var placeholder = Elements.pagination;
+    var items = [];
+    var list;
+    var paginationClasses;
+
+    function mount() {
+      destroy();
+      on([EVENT_UPDATED, EVENT_REFRESH, EVENT_END_INDEX_CHANGED], mount);
+      var enabled = options.pagination;
+      placeholder && display(placeholder, enabled ? "" : "none");
+
+      if (enabled) {
+        on([EVENT_MOVE, EVENT_SCROLL, EVENT_SCROLLED], update);
+        createPagination();
+        update();
+        emit(EVENT_PAGINATION_MOUNTED, {
+          list: list,
+          items: items
+        }, getAt(Splide2.index));
+      }
+    }
+
+    function destroy() {
+      if (list) {
+        remove(placeholder ? slice(list.children) : list);
+        removeClass(list, paginationClasses);
+        empty(items);
+        list = null;
+      }
+
+      event.destroy();
+    }
+
+    function createPagination() {
+      var length = Splide2.length;
+      var classes = options.classes,
+          i18n = options.i18n,
+          perPage = options.perPage;
+      var max = hasFocus() ? Controller.getEnd() + 1 : ceil(length / perPage);
+      list = placeholder || create("ul", classes.pagination, Elements.track.parentElement);
+      addClass(list, paginationClasses = CLASS_PAGINATION + "--" + getDirection());
+      setAttribute(list, ROLE, "tablist");
+      setAttribute(list, ARIA_LABEL, i18n.select);
+      setAttribute(list, ARIA_ORIENTATION, getDirection() === TTB ? "vertical" : "");
+
+      for (var i = 0; i < max; i++) {
+        var li = create("li", null, list);
+        var button = create("button", {
+          class: classes.page,
+          type: "button"
+        }, li);
+        var controls = Slides.getIn(i).map(function (Slide) {
+          return Slide.slide.id;
+        });
+        var text = !hasFocus() && perPage > 1 ? i18n.pageX : i18n.slideX;
+        bind(button, "click", apply(onClick, i));
+
+        if (options.paginationKeyboard) {
+          bind(button, "keydown", apply(onKeydown, i));
+        }
+
+        setAttribute(li, ROLE, "presentation");
+        setAttribute(button, ROLE, "tab");
+        setAttribute(button, ARIA_CONTROLS, controls.join(" "));
+        setAttribute(button, ARIA_LABEL, format(text, i + 1));
+        setAttribute(button, TAB_INDEX, -1);
+        items.push({
+          li: li,
+          button: button,
+          page: i
+        });
+      }
+    }
+
+    function onClick(page) {
+      go(">" + page, true);
+    }
+
+    function onKeydown(page, e) {
+      var length = items.length;
+      var key = normalizeKey(e);
+      var dir = getDirection();
+      var nextPage = -1;
+
+      if (key === resolve(ARROW_RIGHT, false, dir)) {
+        nextPage = ++page % length;
+      } else if (key === resolve(ARROW_LEFT, false, dir)) {
+        nextPage = (--page + length) % length;
+      } else if (key === "Home") {
+        nextPage = 0;
+      } else if (key === "End") {
+        nextPage = length - 1;
+      }
+
+      var item = items[nextPage];
+
+      if (item) {
+        focus(item.button);
+        go(">" + nextPage);
+        prevent(e, true);
+      }
+    }
+
+    function getDirection() {
+      return options.paginationDirection || options.direction;
+    }
+
+    function getAt(index) {
+      return items[Controller.toPage(index)];
+    }
+
+    function update() {
+      var prev = getAt(getIndex(true));
+      var curr = getAt(getIndex());
+
+      if (prev) {
+        var button = prev.button;
+        removeClass(button, CLASS_ACTIVE);
+        removeAttribute(button, ARIA_SELECTED);
+        setAttribute(button, TAB_INDEX, -1);
+      }
+
+      if (curr) {
+        var _button = curr.button;
+        addClass(_button, CLASS_ACTIVE);
+        setAttribute(_button, ARIA_SELECTED, true);
+        setAttribute(_button, TAB_INDEX, "");
+      }
+
+      emit(EVENT_PAGINATION_UPDATED, {
+        list: list,
+        items: items
+      }, prev, curr);
+    }
+
+    return {
+      items: items,
+      mount: mount,
+      destroy: destroy,
+      getAt: getAt,
+      update: update
+    };
+  }
+
+  var TRIGGER_KEYS = [" ", "Enter"];
+
+  function Sync(Splide2, Components2, options) {
+    var isNavigation = options.isNavigation,
+        slideFocus = options.slideFocus;
+    var events = [];
+
+    function mount() {
+      Splide2.splides.forEach(function (target) {
+        if (!target.isParent) {
+          sync(Splide2, target.splide);
+          sync(target.splide, Splide2);
+        }
+      });
+
+      if (isNavigation) {
+        navigate();
+      }
+    }
+
+    function destroy() {
+      events.forEach(function (event) {
+        event.destroy();
+      });
+      empty(events);
+    }
+
+    function remount() {
+      destroy();
+      mount();
+    }
+
+    function sync(splide, target) {
+      var event = EventInterface(splide);
+      event.on(EVENT_MOVE, function (index, prev, dest) {
+        target.go(target.is(LOOP) ? dest : index);
+      });
+      events.push(event);
+    }
+
+    function navigate() {
+      var event = EventInterface(Splide2);
+      var on = event.on;
+      on(EVENT_CLICK, onClick);
+      on(EVENT_SLIDE_KEYDOWN, onKeydown);
+      on([EVENT_MOUNTED, EVENT_UPDATED], update);
+      events.push(event);
+      event.emit(EVENT_NAVIGATION_MOUNTED, Splide2.splides);
+    }
+
+    function update() {
+      setAttribute(Components2.Elements.list, ARIA_ORIENTATION, options.direction === TTB ? "vertical" : "");
+    }
+
+    function onClick(Slide) {
+      Splide2.go(Slide.index);
+    }
+
+    function onKeydown(Slide, e) {
+      if (includes(TRIGGER_KEYS, normalizeKey(e))) {
+        onClick(Slide);
+        prevent(e);
+      }
+    }
+
+    return {
+      setup: apply(Components2.Media.set, {
+        slideFocus: isUndefined(slideFocus) ? isNavigation : slideFocus
+      }, true),
+      mount: mount,
+      destroy: destroy,
+      remount: remount
+    };
+  }
+
+  function Wheel(Splide2, Components2, options) {
+    var _EventInterface12 = EventInterface(Splide2),
+        bind = _EventInterface12.bind;
+
+    var lastTime = 0;
+
+    function mount() {
+      if (options.wheel) {
+        bind(Components2.Elements.track, "wheel", onWheel, SCROLL_LISTENER_OPTIONS);
+      }
+    }
+
+    function onWheel(e) {
+      if (e.cancelable) {
+        var deltaY = e.deltaY;
+        var backwards = deltaY < 0;
+        var timeStamp = timeOf(e);
+
+        var _min = options.wheelMinThreshold || 0;
+
+        var sleep = options.wheelSleep || 0;
+
+        if (abs(deltaY) > _min && timeStamp - lastTime > sleep) {
+          Splide2.go(backwards ? "<" : ">");
+          lastTime = timeStamp;
+        }
+
+        shouldPrevent(backwards) && prevent(e);
+      }
+    }
+
+    function shouldPrevent(backwards) {
+      return !options.releaseWheel || Splide2.state.is(MOVING) || Components2.Controller.getAdjacent(backwards) !== -1;
+    }
+
+    return {
+      mount: mount
+    };
+  }
+
+  var SR_REMOVAL_DELAY = 90;
+
+  function Live(Splide2, Components2, options) {
+    var _EventInterface13 = EventInterface(Splide2),
+        on = _EventInterface13.on;
+
+    var track = Components2.Elements.track;
+    var enabled = options.live && !options.isNavigation;
+    var sr = create("span", CLASS_SR);
+    var interval = RequestInterval(SR_REMOVAL_DELAY, apply(toggle, false));
+
+    function mount() {
+      if (enabled) {
+        disable(!Components2.Autoplay.isPaused());
+        setAttribute(track, ARIA_ATOMIC, true);
+        sr.textContent = "\u2026";
+        on(EVENT_AUTOPLAY_PLAY, apply(disable, true));
+        on(EVENT_AUTOPLAY_PAUSE, apply(disable, false));
+        on([EVENT_MOVED, EVENT_SCROLLED], apply(toggle, true));
+      }
+    }
+
+    function toggle(active) {
+      setAttribute(track, ARIA_BUSY, active);
+
+      if (active) {
+        append(track, sr);
+        interval.start();
+      } else {
+        remove(sr);
+        interval.cancel();
+      }
+    }
+
+    function destroy() {
+      removeAttribute(track, [ARIA_LIVE, ARIA_ATOMIC, ARIA_BUSY]);
+      remove(sr);
+    }
+
+    function disable(disabled) {
+      if (enabled) {
+        setAttribute(track, ARIA_LIVE, disabled ? "off" : "polite");
+      }
+    }
+
+    return {
+      mount: mount,
+      disable: disable,
+      destroy: destroy
+    };
+  }
+
+  var ComponentConstructors = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    Media: Media,
+    Direction: Direction,
+    Elements: Elements,
+    Slides: Slides,
+    Layout: Layout,
+    Clones: Clones,
+    Move: Move,
+    Controller: Controller,
+    Arrows: Arrows,
+    Autoplay: Autoplay,
+    Cover: Cover,
+    Scroll: Scroll,
+    Drag: Drag,
+    Keyboard: Keyboard,
+    LazyLoad: LazyLoad,
+    Pagination: Pagination,
+    Sync: Sync,
+    Wheel: Wheel,
+    Live: Live
+  });
+  var I18N = {
+    prev: "Previous slide",
+    next: "Next slide",
+    first: "Go to first slide",
+    last: "Go to last slide",
+    slideX: "Go to slide %s",
+    pageX: "Go to page %s",
+    play: "Start autoplay",
+    pause: "Pause autoplay",
+    carousel: "carousel",
+    slide: "slide",
+    select: "Select a slide to show",
+    slideLabel: "%s of %s"
+  };
+  var DEFAULTS = {
+    type: "slide",
+    role: "region",
+    speed: 400,
+    perPage: 1,
+    cloneStatus: true,
+    arrows: true,
+    pagination: true,
+    paginationKeyboard: true,
+    interval: 5e3,
+    pauseOnHover: true,
+    pauseOnFocus: true,
+    resetProgress: true,
+    easing: "cubic-bezier(0.25, 1, 0.5, 1)",
+    drag: true,
+    direction: "ltr",
+    trimSpace: true,
+    focusableNodes: "a, button, textarea, input, select, iframe",
+    live: true,
+    classes: CLASSES,
+    i18n: I18N,
+    reducedMotion: {
+      speed: 0,
+      rewindSpeed: 0,
+      autoplay: "pause"
+    }
+  };
+
+  function Fade(Splide2, Components2, options) {
+    var Slides = Components2.Slides;
+
+    function mount() {
+      EventInterface(Splide2).on([EVENT_MOUNTED, EVENT_REFRESH], init);
+    }
+
+    function init() {
+      Slides.forEach(function (Slide) {
+        Slide.style("transform", "translateX(-" + 100 * Slide.index + "%)");
+      });
+    }
+
+    function start(index, done) {
+      Slides.style("transition", "opacity " + options.speed + "ms " + options.easing);
+      nextTick(done);
+    }
+
+    return {
+      mount: mount,
+      start: start,
+      cancel: noop
+    };
+  }
+
+  function Slide(Splide2, Components2, options) {
+    var Move = Components2.Move,
+        Controller = Components2.Controller,
+        Scroll = Components2.Scroll;
+    var list = Components2.Elements.list;
+    var transition = apply(style, list, "transition");
+    var endCallback;
+
+    function mount() {
+      EventInterface(Splide2).bind(list, "transitionend", function (e) {
+        if (e.target === list && endCallback) {
+          cancel();
+          endCallback();
+        }
+      });
+    }
+
+    function start(index, done) {
+      var destination = Move.toPosition(index, true);
+      var position = Move.getPosition();
+      var speed = getSpeed(index);
+
+      if (abs(destination - position) >= 1 && speed >= 1) {
+        if (options.useScroll) {
+          Scroll.scroll(destination, speed, false, done);
+        } else {
+          transition("transform " + speed + "ms " + options.easing);
+          Move.translate(destination, true);
+          endCallback = done;
+        }
+      } else {
+        Move.jump(index);
+        done();
+      }
+    }
+
+    function cancel() {
+      transition("");
+      Scroll.cancel();
+    }
+
+    function getSpeed(index) {
+      var rewindSpeed = options.rewindSpeed;
+
+      if (Splide2.is(SLIDE) && rewindSpeed) {
+        var prev = Controller.getIndex(true);
+        var end = Controller.getEnd();
+
+        if (prev === 0 && index >= end || prev >= end && index === 0) {
+          return rewindSpeed;
+        }
+      }
+
+      return options.speed;
+    }
+
+    return {
+      mount: mount,
+      start: start,
+      cancel: cancel
+    };
+  }
+
+  var _Splide = /*#__PURE__*/function () {
+    function _Splide(target, options) {
+      this.event = EventInterface();
+      this.Components = {};
+      this.state = State(CREATED);
+      this.splides = [];
+      this._o = {};
+      this._E = {};
+      var root = isString(target) ? query(document, target) : target;
+      assert(root, root + " is invalid.");
+      this.root = root;
+      options = merge({
+        label: getAttribute(root, ARIA_LABEL) || "",
+        labelledby: getAttribute(root, ARIA_LABELLEDBY) || ""
+      }, DEFAULTS, _Splide.defaults, options || {});
+
+      try {
+        merge(options, JSON.parse(getAttribute(root, DATA_ATTRIBUTE)));
+      } catch (e) {
+        assert(false, "Invalid JSON");
+      }
+
+      this._o = Object.create(merge({}, options));
+    }
+
+    var _proto = _Splide.prototype;
+
+    _proto.mount = function mount(Extensions, Transition) {
+      var _this = this;
+
+      var state = this.state,
+          Components2 = this.Components;
+      assert(state.is([CREATED, DESTROYED]), "Already mounted!");
+      state.set(CREATED);
+      this._C = Components2;
+      this._T = Transition || this._T || (this.is(FADE) ? Fade : Slide);
+      this._E = Extensions || this._E;
+      var Constructors = assign({}, ComponentConstructors, this._E, {
+        Transition: this._T
+      });
+      forOwn(Constructors, function (Component, key) {
+        var component = Component(_this, Components2, _this._o);
+        Components2[key] = component;
+        component.setup && component.setup();
+      });
+      forOwn(Components2, function (component) {
+        component.mount && component.mount();
+      });
+      this.emit(EVENT_MOUNTED);
+      addClass(this.root, CLASS_INITIALIZED);
+      state.set(IDLE);
+      this.emit(EVENT_READY);
+      return this;
+    };
+
+    _proto.sync = function sync(splide) {
+      this.splides.push({
+        splide: splide
+      });
+      splide.splides.push({
+        splide: this,
+        isParent: true
+      });
+
+      if (this.state.is(IDLE)) {
+        this._C.Sync.remount();
+
+        splide.Components.Sync.remount();
+      }
+
+      return this;
+    };
+
+    _proto.go = function go(control) {
+      this._C.Controller.go(control);
+
+      return this;
+    };
+
+    _proto.on = function on(events, callback) {
+      this.event.on(events, callback);
+      return this;
+    };
+
+    _proto.off = function off(events) {
+      this.event.off(events);
+      return this;
+    };
+
+    _proto.emit = function emit(event) {
+      var _this$event;
+
+      (_this$event = this.event).emit.apply(_this$event, [event].concat(slice(arguments, 1)));
+
+      return this;
+    };
+
+    _proto.add = function add(slides, index) {
+      this._C.Slides.add(slides, index);
+
+      return this;
+    };
+
+    _proto.remove = function remove(matcher) {
+      this._C.Slides.remove(matcher);
+
+      return this;
+    };
+
+    _proto.is = function is(type) {
+      return this._o.type === type;
+    };
+
+    _proto.refresh = function refresh() {
+      this.emit(EVENT_REFRESH);
+      return this;
+    };
+
+    _proto.destroy = function destroy(completely) {
+      if (completely === void 0) {
+        completely = true;
+      }
+
+      var event = this.event,
+          state = this.state;
+
+      if (state.is(CREATED)) {
+        EventInterface(this).on(EVENT_READY, this.destroy.bind(this, completely));
+      } else {
+        forOwn(this._C, function (component) {
+          component.destroy && component.destroy(completely);
+        }, true);
+        event.emit(EVENT_DESTROY);
+        event.destroy();
+        completely && empty(this.splides);
+        state.set(DESTROYED);
+      }
+
+      return this;
+    };
+
+    _createClass(_Splide, [{
+      key: "options",
+      get: function get() {
+        return this._o;
+      },
+      set: function set(options) {
+        this._C.Media.set(options, true, true);
+      }
+    }, {
+      key: "length",
+      get: function get() {
+        return this._C.Slides.getLength(true);
+      }
+    }, {
+      key: "index",
+      get: function get() {
+        return this._C.Controller.getIndex();
+      }
+    }]);
+
+    return _Splide;
+  }();
+
+  var Splide = _Splide;
+  Splide.defaults = {};
+  Splide.STATES = STATES;
+  return Splide;
+});
+
 "use strict";
 
 function _get() { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get.bind(); } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(arguments.length < 3 ? target : receiver); } return desc.value; }; } return _get.apply(this, arguments); }
@@ -10378,6642 +13533,162 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
   };
   return index_umd;
 });
-//AMD insanity
-(function (root, factory) {
-    //@ts-ignore
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        //@ts-ignore
-        define([], factory);
-    } else {
-        // Browser globals
-        root.htmx = root.htmx || factory();
-    }
-}(typeof self !== 'undefined' ? self : this, function () {
-return (function () {
-        'use strict';
-
-        // Public API
-        //** @type {import("./htmx").HtmxApi} */
-        // TODO: list all methods in public API
-        var htmx = {
-            onLoad: onLoadHelper,
-            process: processNode,
-            on: addEventListenerImpl,
-            off: removeEventListenerImpl,
-            trigger : triggerEvent,
-            ajax : ajaxHelper,
-            find : find,
-            findAll : findAll,
-            closest : closest,
-            values : function(elt, type){
-                var inputValues = getInputValues(elt, type || "post");
-                return inputValues.values;
-            },
-            remove : removeElement,
-            addClass : addClassToElement,
-            removeClass : removeClassFromElement,
-            toggleClass : toggleClassOnElement,
-            takeClass : takeClassForElement,
-            defineExtension : defineExtension,
-            removeExtension : removeExtension,
-            logAll : logAll,
-            logger : null,
-            config : {
-                historyEnabled:true,
-                historyCacheSize:10,
-                refreshOnHistoryMiss:false,
-                defaultSwapStyle:'innerHTML',
-                defaultSwapDelay:0,
-                defaultSettleDelay:20,
-                includeIndicatorStyles:true,
-                indicatorClass:'htmx-indicator',
-                requestClass:'htmx-request',
-                addedClass:'htmx-added',
-                settlingClass:'htmx-settling',
-                swappingClass:'htmx-swapping',
-                allowEval:true,
-                inlineScriptNonce:'',
-                attributesToSettle:["class", "style", "width", "height"],
-                withCredentials:false,
-                timeout:0,
-                wsReconnectDelay: 'full-jitter',
-                disableSelector: "[hx-disable], [data-hx-disable]",
-                useTemplateFragments: false,
-                scrollBehavior: 'smooth',
-                defaultFocusScroll: false,
-            },
-            parseInterval:parseInterval,
-            _:internalEval,
-            createEventSource: function(url){
-                return new EventSource(url, {withCredentials:true})
-            },
-            createWebSocket: function(url){
-                return new WebSocket(url, []);
-            },
-            version: "1.8.4"
-        };
-
-        /** @type {import("./htmx").HtmxInternalApi} */
-        var internalAPI = {
-            addTriggerHandler: addTriggerHandler,
-            bodyContains: bodyContains,
-            canAccessLocalStorage: canAccessLocalStorage,
-            filterValues: filterValues,
-            hasAttribute: hasAttribute,
-            getAttributeValue: getAttributeValue,
-            getClosestMatch: getClosestMatch,
-            getExpressionVars: getExpressionVars,
-            getHeaders: getHeaders,
-            getInputValues: getInputValues,
-            getInternalData: getInternalData,
-            getSwapSpecification: getSwapSpecification,
-            getTriggerSpecs: getTriggerSpecs,
-            getTarget: getTarget,
-            makeFragment: makeFragment,
-            mergeObjects: mergeObjects,
-            makeSettleInfo: makeSettleInfo,
-            oobSwap: oobSwap,
-            selectAndSwap: selectAndSwap,
-            settleImmediately: settleImmediately,
-            shouldCancel: shouldCancel,
-            triggerEvent: triggerEvent,
-            triggerErrorEvent: triggerErrorEvent,
-            withExtensions: withExtensions,
-        }
-
-        var VERBS = ['get', 'post', 'put', 'delete', 'patch'];
-        var VERB_SELECTOR = VERBS.map(function(verb){
-            return "[hx-" + verb + "], [data-hx-" + verb + "]"
-        }).join(", ");
-
-        //====================================================================
-        // Utilities
-        //====================================================================
-
-        function parseInterval(str) {
-            if (str == undefined)  {
-                return undefined
-            }
-            if (str.slice(-2) == "ms") {
-                return parseFloat(str.slice(0,-2)) || undefined
-            }
-            if (str.slice(-1) == "s") {
-                return (parseFloat(str.slice(0,-1)) * 1000) || undefined
-            }
-            if (str.slice(-1) == "m") {
-                return (parseFloat(str.slice(0,-1)) * 1000 * 60) || undefined
-            }
-            return parseFloat(str) || undefined
-        }
-
-        /**
-         * @param {HTMLElement} elt
-         * @param {string} name
-         * @returns {(string | null)}
-         */
-        function getRawAttribute(elt, name) {
-            return elt.getAttribute && elt.getAttribute(name);
-        }
-
-        // resolve with both hx and data-hx prefixes
-        function hasAttribute(elt, qualifiedName) {
-            return elt.hasAttribute && (elt.hasAttribute(qualifiedName) ||
-                elt.hasAttribute("data-" + qualifiedName));
-        }
-
-        /**
-         *
-         * @param {HTMLElement} elt
-         * @param {string} qualifiedName
-         * @returns {(string | null)}
-         */
-        function getAttributeValue(elt, qualifiedName) {
-            return getRawAttribute(elt, qualifiedName) || getRawAttribute(elt, "data-" + qualifiedName);
-        }
-
-        /**
-         * @param {HTMLElement} elt
-         * @returns {HTMLElement | null}
-         */
-        function parentElt(elt) {
-            return elt.parentElement;
-        }
-
-        /**
-         * @returns {Document}
-         */
-        function getDocument() {
-            return document;
-        }
-
-        /**
-         * @param {HTMLElement} elt
-         * @param {(e:HTMLElement) => boolean} condition
-         * @returns {HTMLElement | null}
-         */
-        function getClosestMatch(elt, condition) {
-            while (elt && !condition(elt)) {
-                elt = parentElt(elt);
-            }
-
-            return elt ? elt : null;
-        }
-
-        function getAttributeValueWithDisinheritance(initialElement, ancestor, attributeName){
-            var attributeValue = getAttributeValue(ancestor, attributeName);
-            var disinherit = getAttributeValue(ancestor, "hx-disinherit");
-            if (initialElement !== ancestor && disinherit && (disinherit === "*" || disinherit.split(" ").indexOf(attributeName) >= 0)) {
-                return "unset";
-            } else {
-                return attributeValue
-            }
-        }
-
-        /**
-         * @param {HTMLElement} elt
-         * @param {string} attributeName
-         * @returns {string | null}
-         */
-        function getClosestAttributeValue(elt, attributeName) {
-            var closestAttr = null;
-            getClosestMatch(elt, function (e) {
-                return closestAttr = getAttributeValueWithDisinheritance(elt, e, attributeName);
-            });
-            if (closestAttr !== "unset") {
-                return closestAttr;
-            }
-        }
-
-        /**
-         * @param {HTMLElement} elt
-         * @param {string} selector
-         * @returns {boolean}
-         */
-        function matches(elt, selector) {
-            // @ts-ignore: non-standard properties for browser compatability
-            // noinspection JSUnresolvedVariable
-            var matchesFunction = elt.matches || elt.matchesSelector || elt.msMatchesSelector || elt.mozMatchesSelector || elt.webkitMatchesSelector || elt.oMatchesSelector;
-            return matchesFunction && matchesFunction.call(elt, selector);
-        }
-
-        /**
-         * @param {string} str
-         * @returns {string}
-         */
-        function getStartTag(str) {
-            var tagMatcher = /<([a-z][^\/\0>\x20\t\r\n\f]*)/i
-            var match = tagMatcher.exec( str );
-            if (match) {
-                return match[1].toLowerCase();
-            } else {
-                return "";
-            }
-        }
-
-        /**
-         *
-         * @param {string} resp
-         * @param {number} depth
-         * @returns {Element}
-         */
-        function parseHTML(resp, depth) {
-            var parser = new DOMParser();
-            var responseDoc = parser.parseFromString(resp, "text/html");
-
-            /** @type {Element} */
-            var responseNode = responseDoc.body;
-            while (depth > 0) {
-                depth--;
-                // @ts-ignore
-                responseNode = responseNode.firstChild;
-            }
-            if (responseNode == null) {
-                // @ts-ignore
-                responseNode = getDocument().createDocumentFragment();
-            }
-            return responseNode;
-        }
-
-        /**
-         *
-         * @param {string} resp
-         * @returns {Element}
-         */
-        function makeFragment(resp) {
-            if (htmx.config.useTemplateFragments) {
-                var documentFragment = parseHTML("<body><template>" + resp + "</template></body>", 0);
-                // @ts-ignore type mismatch between DocumentFragment and Element.
-                // TODO: Are these close enough for htmx to use interchangably?
-                return documentFragment.querySelector('template').content;
-            } else {
-                var startTag = getStartTag(resp);
-                switch (startTag) {
-                    case "thead":
-                    case "tbody":
-                    case "tfoot":
-                    case "colgroup":
-                    case "caption":
-                        return parseHTML("<table>" + resp + "</table>", 1);
-                    case "col":
-                        return parseHTML("<table><colgroup>" + resp + "</colgroup></table>", 2);
-                    case "tr":
-                        return parseHTML("<table><tbody>" + resp + "</tbody></table>", 2);
-                    case "td":
-                    case "th":
-                        return parseHTML("<table><tbody><tr>" + resp + "</tr></tbody></table>", 3);
-                    case "script":
-                        return parseHTML("<div>" + resp + "</div>", 1);
-                    default:
-                        return parseHTML(resp, 0);
-                }
-            }
-        }
-
-        /**
-         * @param {Function} func
-         */
-        function maybeCall(func){
-            if(func) {
-                func();
-            }
-        }
-
-        /**
-         * @param {any} o
-         * @param {string} type
-         * @returns
-         */
-        function isType(o, type) {
-            return Object.prototype.toString.call(o) === "[object " + type + "]";
-        }
-
-        /**
-         * @param {*} o
-         * @returns {o is Function}
-         */
-        function isFunction(o) {
-            return isType(o, "Function");
-        }
-
-        /**
-         * @param {*} o
-         * @returns {o is Object}
-         */
-        function isRawObject(o) {
-            return isType(o, "Object");
-        }
-
-        /**
-         * getInternalData retrieves "private" data stored by htmx within an element
-         * @param {HTMLElement} elt
-         * @returns {*}
-         */
-        function getInternalData(elt) {
-            var dataProp = 'htmx-internal-data';
-            var data = elt[dataProp];
-            if (!data) {
-                data = elt[dataProp] = {};
-            }
-            return data;
-        }
-
-        /**
-         * toArray converts an ArrayLike object into a real array.
-         * @param {ArrayLike} arr
-         * @returns {any[]}
-         */
-        function toArray(arr) {
-            var returnArr = [];
-            if (arr) {
-                for (var i = 0; i < arr.length; i++) {
-                    returnArr.push(arr[i]);
-                }
-            }
-            return returnArr
-        }
-
-        function forEach(arr, func) {
-            if (arr) {
-                for (var i = 0; i < arr.length; i++) {
-                    func(arr[i]);
-                }
-            }
-        }
-
-        function isScrolledIntoView(el) {
-            var rect = el.getBoundingClientRect();
-            var elemTop = rect.top;
-            var elemBottom = rect.bottom;
-            return elemTop < window.innerHeight && elemBottom >= 0;
-        }
-
-        function bodyContains(elt) {
-            // IE Fix
-            if (elt.getRootNode && elt.getRootNode() instanceof ShadowRoot) {
-                return getDocument().body.contains(elt.getRootNode().host);
-            } else {
-                return getDocument().body.contains(elt);
-            }
-        }
-
-        function splitOnWhitespace(trigger) {
-            return trigger.trim().split(/\s+/);
-        }
-
-        /**
-         * mergeObjects takes all of the keys from
-         * obj2 and duplicates them into obj1
-         * @param {Object} obj1
-         * @param {Object} obj2
-         * @returns {Object}
-         */
-        function mergeObjects(obj1, obj2) {
-            for (var key in obj2) {
-                if (obj2.hasOwnProperty(key)) {
-                    obj1[key] = obj2[key];
-                }
-            }
-            return obj1;
-        }
-
-        function parseJSON(jString) {
-            try {
-                return JSON.parse(jString);
-            } catch(error) {
-                logError(error);
-                return null;
-            }
-        }
-
-        function canAccessLocalStorage() {
-            var test = 'htmx:localStorageTest';
-            try {
-                localStorage.setItem(test, test);
-                localStorage.removeItem(test);
-                return true;
-            } catch(e) {
-                return false;
-            }
-        }
-
-        //==========================================================================================
-        // public API
-        //==========================================================================================
-
-        function internalEval(str){
-            return maybeEval(getDocument().body, function () {
-                return eval(str);
-            });
-        }
-
-        function onLoadHelper(callback) {
-            var value = htmx.on("htmx:load", function(evt) {
-                callback(evt.detail.elt);
-            });
-            return value;
-        }
-
-        function logAll(){
-            htmx.logger = function(elt, event, data) {
-                if(console) {
-                    console.log(event, elt, data);
-                }
-            }
-        }
-
-        function find(eltOrSelector, selector) {
-            if (selector) {
-                return eltOrSelector.querySelector(selector);
-            } else {
-                return find(getDocument(), eltOrSelector);
-            }
-        }
-
-        function findAll(eltOrSelector, selector) {
-            if (selector) {
-                return eltOrSelector.querySelectorAll(selector);
-            } else {
-                return findAll(getDocument(), eltOrSelector);
-            }
-        }
-
-        function removeElement(elt, delay) {
-            elt = resolveTarget(elt);
-            if (delay) {
-                setTimeout(function(){removeElement(elt);}, delay)
-            } else {
-                elt.parentElement.removeChild(elt);
-            }
-        }
-
-        function addClassToElement(elt, clazz, delay) {
-            elt = resolveTarget(elt);
-            if (delay) {
-                setTimeout(function(){addClassToElement(elt, clazz);}, delay)
-            } else {
-                elt.classList && elt.classList.add(clazz);
-            }
-        }
-
-        function removeClassFromElement(elt, clazz, delay) {
-            elt = resolveTarget(elt);
-            if (delay) {
-                setTimeout(function(){removeClassFromElement(elt, clazz);}, delay)
-            } else {
-                if (elt.classList) {
-                    elt.classList.remove(clazz);
-                    // if there are no classes left, remove the class attribute
-                    if (elt.classList.length === 0) {
-                        elt.removeAttribute("class");
-                    }
-                }
-            }
-        }
-
-        function toggleClassOnElement(elt, clazz) {
-            elt = resolveTarget(elt);
-            elt.classList.toggle(clazz);
-        }
-
-        function takeClassForElement(elt, clazz) {
-            elt = resolveTarget(elt);
-            forEach(elt.parentElement.children, function(child){
-                removeClassFromElement(child, clazz);
-            })
-            addClassToElement(elt, clazz);
-        }
-
-        function closest(elt, selector) {
-            elt = resolveTarget(elt);
-            if (elt.closest) {
-                return elt.closest(selector);
-            } else {
-                do{
-                    if (elt == null || matches(elt, selector)){
-                        return elt;
-                    }
-                }
-                while (elt = elt && parentElt(elt));
-            }
-        }
-
-        function querySelectorAllExt(elt, selector) {
-            if (selector.indexOf("closest ") === 0) {
-                return [closest(elt, selector.substr(8))];
-            } else if (selector.indexOf("find ") === 0) {
-                return [find(elt, selector.substr(5))];
-            } else if (selector.indexOf("next ") === 0) {
-                return [scanForwardQuery(elt, selector.substr(5))];
-            } else if (selector.indexOf("previous ") === 0) {
-                return [scanBackwardsQuery(elt, selector.substr(9))];
-            } else if (selector === 'document') {
-                return [document];
-            } else if (selector === 'window') {
-                return [window];
-            } else {
-                return getDocument().querySelectorAll(selector);
-            }
-        }
-
-        var scanForwardQuery = function(start, match) {
-            var results = getDocument().querySelectorAll(match);
-            for (var i = 0; i < results.length; i++) {
-                var elt = results[i];
-                if (elt.compareDocumentPosition(start) === Node.DOCUMENT_POSITION_PRECEDING) {
-                    return elt;
-                }
-            }
-        }
-
-        var scanBackwardsQuery = function(start, match) {
-            var results = getDocument().querySelectorAll(match);
-            for (var i = results.length - 1; i >= 0; i--) {
-                var elt = results[i];
-                if (elt.compareDocumentPosition(start) === Node.DOCUMENT_POSITION_FOLLOWING) {
-                    return elt;
-                }
-            }
-        }
-
-        function querySelectorExt(eltOrSelector, selector) {
-            if (selector) {
-                return querySelectorAllExt(eltOrSelector, selector)[0];
-            } else {
-                return querySelectorAllExt(getDocument().body, eltOrSelector)[0];
-            }
-        }
-
-        function resolveTarget(arg2) {
-            if (isType(arg2, 'String')) {
-                return find(arg2);
-            } else {
-                return arg2;
-            }
-        }
-
-        function processEventArgs(arg1, arg2, arg3) {
-            if (isFunction(arg2)) {
-                return {
-                    target: getDocument().body,
-                    event: arg1,
-                    listener: arg2
-                }
-            } else {
-                return {
-                    target: resolveTarget(arg1),
-                    event: arg2,
-                    listener: arg3
-                }
-            }
-
-        }
-
-        function addEventListenerImpl(arg1, arg2, arg3) {
-            ready(function(){
-                var eventArgs = processEventArgs(arg1, arg2, arg3);
-                eventArgs.target.addEventListener(eventArgs.event, eventArgs.listener);
-            })
-            var b = isFunction(arg2);
-            return b ? arg2 : arg3;
-        }
-
-        function removeEventListenerImpl(arg1, arg2, arg3) {
-            ready(function(){
-                var eventArgs = processEventArgs(arg1, arg2, arg3);
-                eventArgs.target.removeEventListener(eventArgs.event, eventArgs.listener);
-            })
-            return isFunction(arg2) ? arg2 : arg3;
-        }
-
-        //====================================================================
-        // Node processing
-        //====================================================================
-
-        var DUMMY_ELT = getDocument().createElement("output"); // dummy element for bad selectors
-        function findAttributeTargets(elt, attrName) {
-            var attrTarget = getClosestAttributeValue(elt, attrName);
-            if (attrTarget) {
-                if (attrTarget === "this") {
-                    return [findThisElement(elt, attrName)];
-                } else {
-                    var result = querySelectorAllExt(elt, attrTarget);
-                    if (result.length === 0) {
-                        logError('The selector "' + attrTarget + '" on ' + attrName + " returned no matches!");
-                        return [DUMMY_ELT]
-                    } else {
-                        return result;
-                    }
-                }
-            }
-        }
-
-        function findThisElement(elt, attribute){
-            return getClosestMatch(elt, function (elt) {
-                return getAttributeValue(elt, attribute) != null;
-            })
-        }
-
-        function getTarget(elt) {
-            var targetStr = getClosestAttributeValue(elt, "hx-target");
-            if (targetStr) {
-                if (targetStr === "this") {
-                    return findThisElement(elt,'hx-target');
-                } else {
-                    return querySelectorExt(elt, targetStr)
-                }
-            } else {
-                var data = getInternalData(elt);
-                if (data.boosted) {
-                    return getDocument().body;
-                } else {
-                    return elt;
-                }
-            }
-        }
-
-        function shouldSettleAttribute(name) {
-            var attributesToSettle = htmx.config.attributesToSettle;
-            for (var i = 0; i < attributesToSettle.length; i++) {
-                if (name === attributesToSettle[i]) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        function cloneAttributes(mergeTo, mergeFrom) {
-            forEach(mergeTo.attributes, function (attr) {
-                if (!mergeFrom.hasAttribute(attr.name) && shouldSettleAttribute(attr.name)) {
-                    mergeTo.removeAttribute(attr.name)
-                }
-            });
-            forEach(mergeFrom.attributes, function (attr) {
-                if (shouldSettleAttribute(attr.name)) {
-                    mergeTo.setAttribute(attr.name, attr.value);
-                }
-            });
-        }
-
-        function isInlineSwap(swapStyle, target) {
-            var extensions = getExtensions(target);
-            for (var i = 0; i < extensions.length; i++) {
-                var extension = extensions[i];
-                try {
-                    if (extension.isInlineSwap(swapStyle)) {
-                        return true;
-                    }
-                } catch(e) {
-                    logError(e);
-                }
-            }
-            return swapStyle === "outerHTML";
-        }
-
-        /**
-         *
-         * @param {string} oobValue
-         * @param {HTMLElement} oobElement
-         * @param {*} settleInfo
-         * @returns
-         */
-        function oobSwap(oobValue, oobElement, settleInfo) {
-            var selector = "#" + oobElement.id;
-            var swapStyle = "outerHTML";
-            if (oobValue === "true") {
-                // do nothing
-            } else if (oobValue.indexOf(":") > 0) {
-                swapStyle = oobValue.substr(0, oobValue.indexOf(":"));
-                selector  = oobValue.substr(oobValue.indexOf(":") + 1, oobValue.length);
-            } else {
-                swapStyle = oobValue;
-            }
-
-            var targets = getDocument().querySelectorAll(selector);
-            if (targets) {
-                forEach(
-                    targets,
-                    function (target) {
-                        var fragment;
-                        var oobElementClone = oobElement.cloneNode(true);
-                        fragment = getDocument().createDocumentFragment();
-                        fragment.appendChild(oobElementClone);
-                        if (!isInlineSwap(swapStyle, target)) {
-                            fragment = oobElementClone; // if this is not an inline swap, we use the content of the node, not the node itself
-                        }
-
-                        var beforeSwapDetails = {shouldSwap: true, target: target, fragment:fragment };
-                        if (!triggerEvent(target, 'htmx:oobBeforeSwap', beforeSwapDetails)) return;
-
-                        target = beforeSwapDetails.target; // allow re-targeting
-                        if (beforeSwapDetails['shouldSwap']){
-                            swap(swapStyle, target, target, fragment, settleInfo);
-                        }
-                        forEach(settleInfo.elts, function (elt) {
-                            triggerEvent(elt, 'htmx:oobAfterSwap', beforeSwapDetails);
-                        });
-                    }
-                );
-                oobElement.parentNode.removeChild(oobElement);
-            } else {
-                oobElement.parentNode.removeChild(oobElement);
-                triggerErrorEvent(getDocument().body, "htmx:oobErrorNoTarget", {content: oobElement});
-            }
-            return oobValue;
-        }
-
-        function handleOutOfBandSwaps(elt, fragment, settleInfo) {
-            var oobSelects = getClosestAttributeValue(elt, "hx-select-oob");
-            if (oobSelects) {
-                var oobSelectValues = oobSelects.split(",");
-                for (let i = 0; i < oobSelectValues.length; i++) {
-                    var oobSelectValue = oobSelectValues[i].split(":", 2);
-                    var id = oobSelectValue[0];
-                    if (id.indexOf("#") === 0) {
-                        id = id.substring(1);
-                    }
-                    var oobValue = oobSelectValue[1] || "true";
-                    var oobElement = fragment.querySelector("#" + id);
-                    if (oobElement) {
-                        oobSwap(oobValue, oobElement, settleInfo);
-                    }
-                }
-            }
-            forEach(findAll(fragment, '[hx-swap-oob], [data-hx-swap-oob]'), function (oobElement) {
-                var oobValue = getAttributeValue(oobElement, "hx-swap-oob");
-                if (oobValue != null) {
-                    oobSwap(oobValue, oobElement, settleInfo);
-                }
-            });
-        }
-
-        function handlePreservedElements(fragment) {
-            forEach(findAll(fragment, '[hx-preserve], [data-hx-preserve]'), function (preservedElt) {
-                var id = getAttributeValue(preservedElt, "id");
-                var oldElt = getDocument().getElementById(id);
-                if (oldElt != null) {
-                    preservedElt.parentNode.replaceChild(oldElt, preservedElt);
-                }
-            });
-        }
-
-        function handleAttributes(parentNode, fragment, settleInfo) {
-            forEach(fragment.querySelectorAll("[id]"), function (newNode) {
-                if (newNode.id && newNode.id.length > 0) {
-                    var oldNode = parentNode.querySelector(newNode.tagName + "[id='" + newNode.id + "']");
-                    if (oldNode && oldNode !== parentNode) {
-                        var newAttributes = newNode.cloneNode();
-                        cloneAttributes(newNode, oldNode);
-                        settleInfo.tasks.push(function () {
-                            cloneAttributes(newNode, newAttributes);
-                        });
-                    }
-                }
-            });
-        }
-
-        function makeAjaxLoadTask(child) {
-            return function () {
-                removeClassFromElement(child, htmx.config.addedClass);
-                processNode(child);
-                processScripts(child);
-                processFocus(child)
-                triggerEvent(child, 'htmx:load');
-            };
-        }
-
-        function processFocus(child) {
-            var autofocus = "[autofocus]";
-            var autoFocusedElt = matches(child, autofocus) ? child : child.querySelector(autofocus)
-            if (autoFocusedElt != null) {
-                autoFocusedElt.focus();
-            }
-        }
-
-        function insertNodesBefore(parentNode, insertBefore, fragment, settleInfo) {
-            handleAttributes(parentNode, fragment, settleInfo);
-            while(fragment.childNodes.length > 0){
-                var child = fragment.firstChild;
-                addClassToElement(child, htmx.config.addedClass);
-                parentNode.insertBefore(child, insertBefore);
-                if (child.nodeType !== Node.TEXT_NODE && child.nodeType !== Node.COMMENT_NODE) {
-                    settleInfo.tasks.push(makeAjaxLoadTask(child));
-                }
-            }
-        }
-
-        // based on https://gist.github.com/hyamamoto/fd435505d29ebfa3d9716fd2be8d42f0,
-        // derived from Java's string hashcode implementation
-        function stringHash(string, hash) {
-            var char = 0;
-            while (char < string.length){
-                hash = (hash << 5) - hash + string.charCodeAt(char++) | 0; // bitwise or ensures we have a 32-bit int
-            }
-            return hash;
-        }
-
-        function attributeHash(elt) {
-            var hash = 0;
-            for (var i = 0; i < elt.attributes.length; i++) {
-                var attribute = elt.attributes[i];
-                if(attribute.value){ // only include attributes w/ actual values (empty is same as non-existent)
-                    hash = stringHash(attribute.name, hash);
-                    hash = stringHash(attribute.value, hash);
-                }
-            }
-            return hash;
-        }
-
-        function deInitNode(element) {
-            var internalData = getInternalData(element);
-            if (internalData.webSocket) {
-                internalData.webSocket.close();
-            }
-            if (internalData.sseEventSource) {
-                internalData.sseEventSource.close();
-            }
-            if (internalData.listenerInfos) {
-                forEach(internalData.listenerInfos, function (info) {
-                    if (info.on) {
-                        info.on.removeEventListener(info.trigger, info.listener);
-                    }
-                });
-            }
-        }
-
-        function cleanUpElement(element) {
-            triggerEvent(element, "htmx:beforeCleanupElement")
-            deInitNode(element);
-            if (element.children) { // IE
-                forEach(element.children, function(child) { cleanUpElement(child) });
-            }
-        }
-
-        function swapOuterHTML(target, fragment, settleInfo) {
-            if (target.tagName === "BODY") {
-                return swapInnerHTML(target, fragment, settleInfo);
-            } else {
-                // @type {HTMLElement}
-                var newElt
-                var eltBeforeNewContent = target.previousSibling;
-                insertNodesBefore(parentElt(target), target, fragment, settleInfo);
-                if (eltBeforeNewContent == null) {
-                    newElt = parentElt(target).firstChild;
-                } else {
-                    newElt = eltBeforeNewContent.nextSibling;
-                }
-                getInternalData(target).replacedWith = newElt; // tuck away so we can fire events on it later
-                settleInfo.elts = [] // clear existing elements
-                while(newElt && newElt !== target) {
-                    if (newElt.nodeType === Node.ELEMENT_NODE) {
-                        settleInfo.elts.push(newElt);
-                    }
-                    newElt = newElt.nextElementSibling;
-                }
-                cleanUpElement(target);
-                parentElt(target).removeChild(target);
-            }
-        }
-
-        function swapAfterBegin(target, fragment, settleInfo) {
-            return insertNodesBefore(target, target.firstChild, fragment, settleInfo);
-        }
-
-        function swapBeforeBegin(target, fragment, settleInfo) {
-            return insertNodesBefore(parentElt(target), target, fragment, settleInfo);
-        }
-
-        function swapBeforeEnd(target, fragment, settleInfo) {
-            return insertNodesBefore(target, null, fragment, settleInfo);
-        }
-
-        function swapAfterEnd(target, fragment, settleInfo) {
-            return insertNodesBefore(parentElt(target), target.nextSibling, fragment, settleInfo);
-        }
-        function swapDelete(target, fragment, settleInfo) {
-            cleanUpElement(target);
-            return parentElt(target).removeChild(target);
-        }
-
-        function swapInnerHTML(target, fragment, settleInfo) {
-            var firstChild = target.firstChild;
-            insertNodesBefore(target, firstChild, fragment, settleInfo);
-            if (firstChild) {
-                while (firstChild.nextSibling) {
-                    cleanUpElement(firstChild.nextSibling)
-                    target.removeChild(firstChild.nextSibling);
-                }
-                cleanUpElement(firstChild)
-                target.removeChild(firstChild);
-            }
-        }
-
-        function maybeSelectFromResponse(elt, fragment) {
-            var selector = getClosestAttributeValue(elt, "hx-select");
-            if (selector) {
-                var newFragment = getDocument().createDocumentFragment();
-                forEach(fragment.querySelectorAll(selector), function (node) {
-                    newFragment.appendChild(node);
-                });
-                fragment = newFragment;
-            }
-            return fragment;
-        }
-
-        function swap(swapStyle, elt, target, fragment, settleInfo) {
-            switch (swapStyle) {
-                case "none":
-                    return;
-                case "outerHTML":
-                    swapOuterHTML(target, fragment, settleInfo);
-                    return;
-                case "afterbegin":
-                    swapAfterBegin(target, fragment, settleInfo);
-                    return;
-                case "beforebegin":
-                    swapBeforeBegin(target, fragment, settleInfo);
-                    return;
-                case "beforeend":
-                    swapBeforeEnd(target, fragment, settleInfo);
-                    return;
-                case "afterend":
-                    swapAfterEnd(target, fragment, settleInfo);
-                    return;
-                case "delete":
-                    swapDelete(target, fragment, settleInfo);
-                    return;
-                default:
-                    var extensions = getExtensions(elt);
-                    for (var i = 0; i < extensions.length; i++) {
-                        var ext = extensions[i];
-                        try {
-                            var newElements = ext.handleSwap(swapStyle, target, fragment, settleInfo);
-                            if (newElements) {
-                                if (typeof newElements.length !== 'undefined') {
-                                    // if handleSwap returns an array (like) of elements, we handle them
-                                    for (var j = 0; j < newElements.length; j++) {
-                                        var child = newElements[j];
-                                        if (child.nodeType !== Node.TEXT_NODE && child.nodeType !== Node.COMMENT_NODE) {
-                                            settleInfo.tasks.push(makeAjaxLoadTask(child));
-                                        }
-                                    }
-                                }
-                                return;
-                            }
-                        } catch (e) {
-                            logError(e);
-                        }
-                    }
-                    if (swapStyle === "innerHTML") {
-                        swapInnerHTML(target, fragment, settleInfo);
-                    } else {
-                        swap(htmx.config.defaultSwapStyle, elt, target, fragment, settleInfo);
-                    }
-            }
-        }
-
-        function findTitle(content) {
-            if (content.indexOf('<title') > -1) {
-                var contentWithSvgsRemoved = content.replace(/<svg(\s[^>]*>|>)([\s\S]*?)<\/svg>/gim, '');
-                var result = contentWithSvgsRemoved.match(/<title(\s[^>]*>|>)([\s\S]*?)<\/title>/im);
-
-                if (result) {
-                    return result[2];
-                }
-            }
-        }
-
-        function selectAndSwap(swapStyle, target, elt, responseText, settleInfo) {
-            settleInfo.title = findTitle(responseText);
-            var fragment = makeFragment(responseText);
-            if (fragment) {
-                handleOutOfBandSwaps(elt, fragment, settleInfo);
-                fragment = maybeSelectFromResponse(elt, fragment);
-                handlePreservedElements(fragment);
-                return swap(swapStyle, elt, target, fragment, settleInfo);
-            }
-        }
-
-        function handleTrigger(xhr, header, elt) {
-            var triggerBody = xhr.getResponseHeader(header);
-            if (triggerBody.indexOf("{") === 0) {
-                var triggers = parseJSON(triggerBody);
-                for (var eventName in triggers) {
-                    if (triggers.hasOwnProperty(eventName)) {
-                        var detail = triggers[eventName];
-                        if (!isRawObject(detail)) {
-                            detail = {"value": detail}
-                        }
-                        triggerEvent(elt, eventName, detail);
-                    }
-                }
-            } else {
-                triggerEvent(elt, triggerBody, []);
-            }
-        }
-
-        var WHITESPACE = /\s/;
-        var WHITESPACE_OR_COMMA = /[\s,]/;
-        var SYMBOL_START = /[_$a-zA-Z]/;
-        var SYMBOL_CONT = /[_$a-zA-Z0-9]/;
-        var STRINGISH_START = ['"', "'", "/"];
-        var NOT_WHITESPACE = /[^\s]/;
-        function tokenizeString(str) {
-            var tokens = [];
-            var position = 0;
-            while (position < str.length) {
-                if(SYMBOL_START.exec(str.charAt(position))) {
-                    var startPosition = position;
-                    while (SYMBOL_CONT.exec(str.charAt(position + 1))) {
-                        position++;
-                    }
-                    tokens.push(str.substr(startPosition, position - startPosition + 1));
-                } else if (STRINGISH_START.indexOf(str.charAt(position)) !== -1) {
-                    var startChar = str.charAt(position);
-                    var startPosition = position;
-                    position++;
-                    while (position < str.length && str.charAt(position) !== startChar ) {
-                        if (str.charAt(position) === "\\") {
-                            position++;
-                        }
-                        position++;
-                    }
-                    tokens.push(str.substr(startPosition, position - startPosition + 1));
-                } else {
-                    var symbol = str.charAt(position);
-                    tokens.push(symbol);
-                }
-                position++;
-            }
-            return tokens;
-        }
-
-        function isPossibleRelativeReference(token, last, paramName) {
-            return SYMBOL_START.exec(token.charAt(0)) &&
-                token !== "true" &&
-                token !== "false" &&
-                token !== "this" &&
-                token !== paramName &&
-                last !== ".";
-        }
-
-        function maybeGenerateConditional(elt, tokens, paramName) {
-            if (tokens[0] === '[') {
-                tokens.shift();
-                var bracketCount = 1;
-                var conditionalSource = " return (function(" + paramName + "){ return (";
-                var last = null;
-                while (tokens.length > 0) {
-                    var token = tokens[0];
-                    if (token === "]") {
-                        bracketCount--;
-                        if (bracketCount === 0) {
-                            if (last === null) {
-                                conditionalSource = conditionalSource + "true";
-                            }
-                            tokens.shift();
-                            conditionalSource += ")})";
-                            try {
-                                var conditionFunction = maybeEval(elt,function () {
-                                    return Function(conditionalSource)();
-                                    },
-                                    function(){return true})
-                                conditionFunction.source = conditionalSource;
-                                return conditionFunction;
-                            } catch (e) {
-                                triggerErrorEvent(getDocument().body, "htmx:syntax:error", {error:e, source:conditionalSource})
-                                return null;
-                            }
-                        }
-                    } else if (token === "[") {
-                        bracketCount++;
-                    }
-                    if (isPossibleRelativeReference(token, last, paramName)) {
-                            conditionalSource += "((" + paramName + "." + token + ") ? (" + paramName + "." + token + ") : (window." + token + "))";
-                    } else {
-                        conditionalSource = conditionalSource + token;
-                    }
-                    last = tokens.shift();
-                }
-            }
-        }
-
-        function consumeUntil(tokens, match) {
-            var result = "";
-            while (tokens.length > 0 && !tokens[0].match(match)) {
-                result += tokens.shift();
-            }
-            return result;
-        }
-
-        var INPUT_SELECTOR = 'input, textarea, select';
-
-        /**
-         * @param {HTMLElement} elt
-         * @returns {import("./htmx").HtmxTriggerSpecification[]}
-         */
-        function getTriggerSpecs(elt) {
-            var explicitTrigger = getAttributeValue(elt, 'hx-trigger');
-            var triggerSpecs = [];
-            if (explicitTrigger) {
-                var tokens = tokenizeString(explicitTrigger);
-                do {
-                    consumeUntil(tokens, NOT_WHITESPACE);
-                    var initialLength = tokens.length;
-                    var trigger = consumeUntil(tokens, /[,\[\s]/);
-                    if (trigger !== "") {
-                        if (trigger === "every") {
-                            var every = {trigger: 'every'};
-                            consumeUntil(tokens, NOT_WHITESPACE);
-                            every.pollInterval = parseInterval(consumeUntil(tokens, /[,\[\s]/));
-                            consumeUntil(tokens, NOT_WHITESPACE);
-                            var eventFilter = maybeGenerateConditional(elt, tokens, "event");
-                            if (eventFilter) {
-                                every.eventFilter = eventFilter;
-                            }
-                            triggerSpecs.push(every);
-                        } else if (trigger.indexOf("sse:") === 0) {
-                            triggerSpecs.push({trigger: 'sse', sseEvent: trigger.substr(4)});
-                        } else {
-                            var triggerSpec = {trigger: trigger};
-                            var eventFilter = maybeGenerateConditional(elt, tokens, "event");
-                            if (eventFilter) {
-                                triggerSpec.eventFilter = eventFilter;
-                            }
-                            while (tokens.length > 0 && tokens[0] !== ",") {
-                                consumeUntil(tokens, NOT_WHITESPACE)
-                                var token = tokens.shift();
-                                if (token === "changed") {
-                                    triggerSpec.changed = true;
-                                } else if (token === "once") {
-                                    triggerSpec.once = true;
-                                } else if (token === "consume") {
-                                    triggerSpec.consume = true;
-                                } else if (token === "delay" && tokens[0] === ":") {
-                                    tokens.shift();
-                                    triggerSpec.delay = parseInterval(consumeUntil(tokens, WHITESPACE_OR_COMMA));
-                                } else if (token === "from" && tokens[0] === ":") {
-                                    tokens.shift();
-                                    var from_arg = consumeUntil(tokens, WHITESPACE_OR_COMMA);
-                                    if (from_arg === "closest" || from_arg === "find" || from_arg === "next" || from_arg === "previous") {
-                                        tokens.shift();
-                                        from_arg +=
-                                            " " +
-                                            consumeUntil(
-                                                tokens,
-                                                WHITESPACE_OR_COMMA
-                                            );
-                                    }
-                                    triggerSpec.from = from_arg;
-                                } else if (token === "target" && tokens[0] === ":") {
-                                    tokens.shift();
-                                    triggerSpec.target = consumeUntil(tokens, WHITESPACE_OR_COMMA);
-                                } else if (token === "throttle" && tokens[0] === ":") {
-                                    tokens.shift();
-                                    triggerSpec.throttle = parseInterval(consumeUntil(tokens, WHITESPACE_OR_COMMA));
-                                } else if (token === "queue" && tokens[0] === ":") {
-                                    tokens.shift();
-                                    triggerSpec.queue = consumeUntil(tokens, WHITESPACE_OR_COMMA);
-                                } else if ((token === "root" || token === "threshold") && tokens[0] === ":") {
-                                    tokens.shift();
-                                    triggerSpec[token] = consumeUntil(tokens, WHITESPACE_OR_COMMA);
-                                } else {
-                                    triggerErrorEvent(elt, "htmx:syntax:error", {token:tokens.shift()});
-                                }
-                            }
-                            triggerSpecs.push(triggerSpec);
-                        }
-                    }
-                    if (tokens.length === initialLength) {
-                        triggerErrorEvent(elt, "htmx:syntax:error", {token:tokens.shift()});
-                    }
-                    consumeUntil(tokens, NOT_WHITESPACE);
-                } while (tokens[0] === "," && tokens.shift())
-            }
-
-            if (triggerSpecs.length > 0) {
-                return triggerSpecs;
-            } else if (matches(elt, 'form')) {
-                return [{trigger: 'submit'}];
-            } else if (matches(elt, 'input[type="button"]')){
-                return [{trigger: 'click'}];
-            } else if (matches(elt, INPUT_SELECTOR)) {
-                return [{trigger: 'change'}];
-            } else {
-                return [{trigger: 'click'}];
-            }
-        }
-
-        function cancelPolling(elt) {
-            getInternalData(elt).cancelled = true;
-        }
-
-        function processPolling(elt, handler, spec) {
-            var nodeData = getInternalData(elt);
-            nodeData.timeout = setTimeout(function () {
-                if (bodyContains(elt) && nodeData.cancelled !== true) {
-                    if (!maybeFilterEvent(spec, makeEvent('hx:poll:trigger', {triggerSpec:spec, target:elt}))) {
-                        handler(elt);
-                    }
-                    processPolling(elt, handler, spec);
-                }
-            }, spec.pollInterval);
-        }
-
-        function isLocalLink(elt) {
-            return location.hostname === elt.hostname &&
-                getRawAttribute(elt,'href') &&
-                getRawAttribute(elt,'href').indexOf("#") !== 0;
-        }
-
-        function boostElement(elt, nodeData, triggerSpecs) {
-            if ((elt.tagName === "A" && isLocalLink(elt) && (elt.target === "" || elt.target === "_self")) || elt.tagName === "FORM") {
-                nodeData.boosted = true;
-                var verb, path;
-                if (elt.tagName === "A") {
-                    verb = "get";
-                    path = getRawAttribute(elt, 'href');
-                } else {
-                    var rawAttribute = getRawAttribute(elt, "method");
-                    verb = rawAttribute ? rawAttribute.toLowerCase() : "get";
-                    if (verb === "get") {
-                    }
-                    path = getRawAttribute(elt, 'action');
-                }
-                triggerSpecs.forEach(function(triggerSpec) {
-                    addEventListener(elt, function(evt) {
-                        issueAjaxRequest(verb, path, elt, evt)
-                    }, nodeData, triggerSpec, true);
-                });
-            }
-        }
-
-        /**
-         *
-         * @param {Event} evt
-         * @param {HTMLElement} elt
-         * @returns
-         */
-        function shouldCancel(evt, elt) {
-            if (evt.type === "submit" || evt.type === "click") {
-                if (elt.tagName === "FORM") {
-                    return true;
-                }
-                if (matches(elt, 'input[type="submit"], button') && closest(elt, 'form') !== null) {
-                    return true;
-                }
-                if (elt.tagName === "A" && elt.href &&
-                    (elt.getAttribute('href') === '#' || elt.getAttribute('href').indexOf("#") !== 0)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        function ignoreBoostedAnchorCtrlClick(elt, evt) {
-            return getInternalData(elt).boosted && elt.tagName === "A" && evt.type === "click" && (evt.ctrlKey || evt.metaKey);
-        }
-
-        function maybeFilterEvent(triggerSpec, evt) {
-            var eventFilter = triggerSpec.eventFilter;
-            if(eventFilter){
-                try {
-                    return eventFilter(evt) !== true;
-                } catch(e) {
-                    triggerErrorEvent(getDocument().body, "htmx:eventFilter:error", {error: e, source:eventFilter.source});
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        function addEventListener(elt, handler, nodeData, triggerSpec, explicitCancel) {
-            var eltsToListenOn;
-            if (triggerSpec.from) {
-                eltsToListenOn = querySelectorAllExt(elt, triggerSpec.from);
-            } else {
-                eltsToListenOn = [elt];
-            }
-            forEach(eltsToListenOn, function (eltToListenOn) {
-                var eventListener = function (evt) {
-                    if (!bodyContains(elt)) {
-                        eltToListenOn.removeEventListener(triggerSpec.trigger, eventListener);
-                        return;
-                    }
-                    if (ignoreBoostedAnchorCtrlClick(elt, evt)) {
-                        return;
-                    }
-                    if (explicitCancel || shouldCancel(evt, elt)) {
-                        evt.preventDefault();
-                    }
-                    if (maybeFilterEvent(triggerSpec, evt)) {
-                        return;
-                    }
-                    var eventData = getInternalData(evt);
-                    eventData.triggerSpec = triggerSpec;
-                    if (eventData.handledFor == null) {
-                        eventData.handledFor = [];
-                    }
-                    var elementData = getInternalData(elt);
-                    if (eventData.handledFor.indexOf(elt) < 0) {
-                        eventData.handledFor.push(elt);
-                        if (triggerSpec.consume) {
-                            evt.stopPropagation();
-                        }
-                        if (triggerSpec.target && evt.target) {
-                            if (!matches(evt.target, triggerSpec.target)) {
-                                return;
-                            }
-                        }
-                        if (triggerSpec.once) {
-                            if (elementData.triggeredOnce) {
-                                return;
-                            } else {
-                                elementData.triggeredOnce = true;
-                            }
-                        }
-                        if (triggerSpec.changed) {
-                            if (elementData.lastValue === elt.value) {
-                                return;
-                            } else {
-                                elementData.lastValue = elt.value;
-                            }
-                        }
-                        if (elementData.delayed) {
-                            clearTimeout(elementData.delayed);
-                        }
-                        if (elementData.throttle) {
-                            return;
-                        }
-
-                        if (triggerSpec.throttle) {
-                            if (!elementData.throttle) {
-                                handler(elt, evt);
-                                elementData.throttle = setTimeout(function () {
-                                    elementData.throttle = null;
-                                }, triggerSpec.throttle);
-                            }
-                        } else if (triggerSpec.delay) {
-                            elementData.delayed = setTimeout(function() { handler(elt, evt) }, triggerSpec.delay);
-                        } else {
-                            handler(elt, evt);
-                        }
-                    }
-                };
-                if (nodeData.listenerInfos == null) {
-                    nodeData.listenerInfos = [];
-                }
-                nodeData.listenerInfos.push({
-                    trigger: triggerSpec.trigger,
-                    listener: eventListener,
-                    on: eltToListenOn
-                })
-                eltToListenOn.addEventListener(triggerSpec.trigger, eventListener);
-            })
-        }
-
-        var windowIsScrolling = false // used by initScrollHandler
-        var scrollHandler = null;
-        function initScrollHandler() {
-            if (!scrollHandler) {
-                scrollHandler = function() {
-                    windowIsScrolling = true
-                };
-                window.addEventListener("scroll", scrollHandler)
-                setInterval(function() {
-                    if (windowIsScrolling) {
-                        windowIsScrolling = false;
-                        forEach(getDocument().querySelectorAll("[hx-trigger='revealed'],[data-hx-trigger='revealed']"), function (elt) {
-                            maybeReveal(elt);
-                        })
-                    }
-                }, 200);
-            }
-        }
-
-        function maybeReveal(elt) {
-            if (!hasAttribute(elt,'data-hx-revealed') && isScrolledIntoView(elt)) {
-                elt.setAttribute('data-hx-revealed', 'true');
-                var nodeData = getInternalData(elt);
-                if (nodeData.initHash) {
-                    triggerEvent(elt, 'revealed');
-                } else {
-                    // if the node isn't initialized, wait for it before triggering the request
-                    elt.addEventListener("htmx:afterProcessNode", function(evt) { triggerEvent(elt, 'revealed') }, {once: true});
-                }
-            }
-        }
-
-        //====================================================================
-        // Web Sockets
-        //====================================================================
-
-        function processWebSocketInfo(elt, nodeData, info) {
-            var values = splitOnWhitespace(info);
-            for (var i = 0; i < values.length; i++) {
-                var value = values[i].split(/:(.+)/);
-                if (value[0] === "connect") {
-                    ensureWebSocket(elt, value[1], 0);
-                }
-                if (value[0] === "send") {
-                    processWebSocketSend(elt);
-                }
-            }
-        }
-
-        function ensureWebSocket(elt, wssSource, retryCount) {
-            if (!bodyContains(elt)) {
-                return;  // stop ensuring websocket connection when socket bearing element ceases to exist
-            }
-
-            if (wssSource.indexOf("/") == 0) {  // complete absolute paths only
-                var base_part = location.hostname + (location.port ? ':'+location.port: '');
-                if (location.protocol == 'https:') {
-                    wssSource = "wss://" + base_part + wssSource;
-                } else if (location.protocol == 'http:') {
-                    wssSource = "ws://" + base_part + wssSource;
-                }
-            }
-            var socket = htmx.createWebSocket(wssSource);
-            socket.onerror = function (e) {
-                triggerErrorEvent(elt, "htmx:wsError", {error:e, socket:socket});
-                maybeCloseWebSocketSource(elt);
-            };
-
-            socket.onclose = function (e) {
-                if ([1006, 1012, 1013].indexOf(e.code) >= 0) {  // Abnormal Closure/Service Restart/Try Again Later
-                    var delay = getWebSocketReconnectDelay(retryCount);
-                    setTimeout(function() {
-                        ensureWebSocket(elt, wssSource, retryCount+1);  // creates a websocket with a new timeout
-                    }, delay);
-                }
-            };
-            socket.onopen = function (e) {
-                retryCount = 0;
-            }
-
-            getInternalData(elt).webSocket = socket;
-            socket.addEventListener('message', function (event) {
-                if (maybeCloseWebSocketSource(elt)) {
-                    return;
-                }
-
-                var response = event.data;
-                withExtensions(elt, function(extension){
-                    response = extension.transformResponse(response, null, elt);
-                });
-
-                var settleInfo = makeSettleInfo(elt);
-                var fragment = makeFragment(response);
-                var children = toArray(fragment.children);
-                for (var i = 0; i < children.length; i++) {
-                    var child = children[i];
-                    oobSwap(getAttributeValue(child, "hx-swap-oob") || "true", child, settleInfo);
-                }
-
-                settleImmediately(settleInfo.tasks);
-            });
-        }
-
-        function maybeCloseWebSocketSource(elt) {
-            if (!bodyContains(elt)) {
-                getInternalData(elt).webSocket.close();
-                return true;
-            }
-        }
-
-        function processWebSocketSend(elt) {
-            var webSocketSourceElt = getClosestMatch(elt, function (parent) {
-                return getInternalData(parent).webSocket != null;
-            });
-            if (webSocketSourceElt) {
-                elt.addEventListener(getTriggerSpecs(elt)[0].trigger, function (evt) {
-                    var webSocket = getInternalData(webSocketSourceElt).webSocket;
-                    var headers = getHeaders(elt, webSocketSourceElt);
-                    var results = getInputValues(elt, 'post');
-                    var errors = results.errors;
-                    var rawParameters = results.values;
-                    var expressionVars = getExpressionVars(elt);
-                    var allParameters = mergeObjects(rawParameters, expressionVars);
-                    var filteredParameters = filterValues(allParameters, elt);
-                    filteredParameters['HEADERS'] = headers;
-                    if (errors && errors.length > 0) {
-                        triggerEvent(elt, 'htmx:validation:halted', errors);
-                        return;
-                    }
-                    webSocket.send(JSON.stringify(filteredParameters));
-                    if(shouldCancel(evt, elt)){
-                        evt.preventDefault();
-                    }
-                });
-            } else {
-                triggerErrorEvent(elt, "htmx:noWebSocketSourceError");
-            }
-        }
-
-        function getWebSocketReconnectDelay(retryCount) {
-            var delay = htmx.config.wsReconnectDelay;
-            if (typeof delay === 'function') {
-                // @ts-ignore
-                return delay(retryCount);
-            }
-            if (delay === 'full-jitter') {
-                var exp = Math.min(retryCount, 6);
-                var maxDelay = 1000 * Math.pow(2, exp);
-                return maxDelay * Math.random();
-            }
-            logError('htmx.config.wsReconnectDelay must either be a function or the string "full-jitter"');
-        }
-
-        //====================================================================
-        // Server Sent Events
-        //====================================================================
-
-        function processSSEInfo(elt, nodeData, info) {
-            var values = splitOnWhitespace(info);
-            for (var i = 0; i < values.length; i++) {
-                var value = values[i].split(/:(.+)/);
-                if (value[0] === "connect") {
-                    processSSESource(elt, value[1]);
-                }
-
-                if ((value[0] === "swap")) {
-                    processSSESwap(elt, value[1])
-                }
-            }
-        }
-
-        function processSSESource(elt, sseSrc) {
-            var source = htmx.createEventSource(sseSrc);
-            source.onerror = function (e) {
-                triggerErrorEvent(elt, "htmx:sseError", {error:e, source:source});
-                maybeCloseSSESource(elt);
-            };
-            getInternalData(elt).sseEventSource = source;
-        }
-
-        function processSSESwap(elt, sseEventName) {
-            var sseSourceElt = getClosestMatch(elt, hasEventSource);
-            if (sseSourceElt) {
-                var sseEventSource = getInternalData(sseSourceElt).sseEventSource;
-                var sseListener = function (event) {
-                    if (maybeCloseSSESource(sseSourceElt)) {
-                        sseEventSource.removeEventListener(sseEventName, sseListener);
-                        return;
-                    }
-
-                    ///////////////////////////
-                    // TODO: merge this code with AJAX and WebSockets code in the future.
-
-                    var response = event.data;
-                    withExtensions(elt, function(extension){
-                        response = extension.transformResponse(response, null, elt);
-                    });
-
-                    var swapSpec = getSwapSpecification(elt)
-                    var target = getTarget(elt)
-                    var settleInfo = makeSettleInfo(elt);
-
-                    selectAndSwap(swapSpec.swapStyle, elt, target, response, settleInfo)
-                    settleImmediately(settleInfo.tasks)
-                    triggerEvent(elt, "htmx:sseMessage", event)
-                };
-
-                getInternalData(elt).sseListener = sseListener;
-                sseEventSource.addEventListener(sseEventName, sseListener);
-            } else {
-                triggerErrorEvent(elt, "htmx:noSSESourceError");
-            }
-        }
-
-        function processSSETrigger(elt, handler, sseEventName) {
-            var sseSourceElt = getClosestMatch(elt, hasEventSource);
-            if (sseSourceElt) {
-                var sseEventSource = getInternalData(sseSourceElt).sseEventSource;
-                var sseListener = function () {
-                    if (!maybeCloseSSESource(sseSourceElt)) {
-                        if (bodyContains(elt)) {
-                            handler(elt);
-                        } else {
-                            sseEventSource.removeEventListener(sseEventName, sseListener);
-                        }
-                    }
-                };
-                getInternalData(elt).sseListener = sseListener;
-                sseEventSource.addEventListener(sseEventName, sseListener);
-            } else {
-                triggerErrorEvent(elt, "htmx:noSSESourceError");
-            }
-        }
-
-        function maybeCloseSSESource(elt) {
-            if (!bodyContains(elt)) {
-                getInternalData(elt).sseEventSource.close();
-                return true;
-            }
-        }
-
-        function hasEventSource(node) {
-            return getInternalData(node).sseEventSource != null;
-        }
-
-        //====================================================================
-
-        function loadImmediately(elt, handler, nodeData, delay) {
-            var load = function(){
-                if (!nodeData.loaded) {
-                    nodeData.loaded = true;
-                    handler(elt);
-                }
-            }
-            if (delay) {
-                setTimeout(load, delay);
-            } else {
-                load();
-            }
-        }
-
-        function processVerbs(elt, nodeData, triggerSpecs) {
-            var explicitAction = false;
-            forEach(VERBS, function (verb) {
-                if (hasAttribute(elt,'hx-' + verb)) {
-                    var path = getAttributeValue(elt, 'hx-' + verb);
-                    explicitAction = true;
-                    nodeData.path = path;
-                    nodeData.verb = verb;
-                    triggerSpecs.forEach(function(triggerSpec) {
-                        addTriggerHandler(elt, triggerSpec, nodeData, function (elt, evt) {
-                            issueAjaxRequest(verb, path, elt, evt)
-                        })
-                    });
-                }
-            });
-            return explicitAction;
-        }
-
-        function addTriggerHandler(elt, triggerSpec, nodeData, handler) {
-            if (triggerSpec.sseEvent) {
-                processSSETrigger(elt, handler, triggerSpec.sseEvent);
-            } else if (triggerSpec.trigger === "revealed") {
-                initScrollHandler();
-                addEventListener(elt, handler, nodeData, triggerSpec);
-                maybeReveal(elt);
-            } else if (triggerSpec.trigger === "intersect") {
-                var observerOptions = {};
-                if (triggerSpec.root) {
-                    observerOptions.root = querySelectorExt(elt, triggerSpec.root)
-                }
-                if (triggerSpec.threshold) {
-                    observerOptions.threshold = parseFloat(triggerSpec.threshold);
-                }
-                var observer = new IntersectionObserver(function (entries) {
-                    for (var i = 0; i < entries.length; i++) {
-                        var entry = entries[i];
-                        if (entry.isIntersecting) {
-                            triggerEvent(elt, "intersect");
-                            break;
-                        }
-                    }
-                }, observerOptions);
-                observer.observe(elt);
-                addEventListener(elt, handler, nodeData, triggerSpec);
-            } else if (triggerSpec.trigger === "load") {
-                if (!maybeFilterEvent(triggerSpec, makeEvent("load", {elt:elt}))) {
-                                loadImmediately(elt, handler, nodeData, triggerSpec.delay);
-                            }
-            } else if (triggerSpec.pollInterval) {
-                nodeData.polling = true;
-                processPolling(elt, handler, triggerSpec);
-            } else {
-                addEventListener(elt, handler, nodeData, triggerSpec);
-            }
-        }
-
-        function evalScript(script) {
-            if (script.type === "text/javascript" || script.type === "module" || script.type === "") {
-                var newScript = getDocument().createElement("script");
-                forEach(script.attributes, function (attr) {
-                    newScript.setAttribute(attr.name, attr.value);
-                });
-                newScript.textContent = script.textContent;
-                newScript.async = false;
-                if (htmx.config.inlineScriptNonce) {
-                    newScript.nonce = htmx.config.inlineScriptNonce;
-                }
-                var parent = script.parentElement;
-
-                try {
-                    parent.insertBefore(newScript, script);
-                } catch (e) {
-                    logError(e);
-                } finally {
-                    parent.removeChild(script);
-                }
-            }
-        }
-
-        function processScripts(elt) {
-            if (matches(elt, "script")) {
-                evalScript(elt);
-            }
-            forEach(findAll(elt, "script"), function (script) {
-                evalScript(script);
-            });
-        }
-
-        function hasChanceOfBeingBoosted() {
-            return document.querySelector("[hx-boost], [data-hx-boost]");
-        }
-
-        function findElementsToProcess(elt) {
-            if (elt.querySelectorAll) {
-                var boostedElts = hasChanceOfBeingBoosted() ? ", a, form" : "";
-                var results = elt.querySelectorAll(VERB_SELECTOR + boostedElts + ", [hx-sse], [data-hx-sse], [hx-ws]," +
-                    " [data-hx-ws], [hx-ext], [data-hx-ext]");
-                return results;
-            } else {
-                return [];
-            }
-        }
-
-        function initButtonTracking(form){
-            var maybeSetLastButtonClicked = function(evt){
-                if (matches(evt.target, "button, input[type='submit']")) {
-                    var internalData = getInternalData(form);
-                    internalData.lastButtonClicked = evt.target;
-                }
-            };
-
-            // need to handle both click and focus in:
-            //   focusin - in case someone tabs in to a button and hits the space bar
-            //   click - on OSX buttons do not focus on click see https://bugs.webkit.org/show_bug.cgi?id=13724
-
-            form.addEventListener('click', maybeSetLastButtonClicked)
-            form.addEventListener('focusin', maybeSetLastButtonClicked)
-            form.addEventListener('focusout', function(evt){
-                var internalData = getInternalData(form);
-                internalData.lastButtonClicked = null;
-            })
-        }
-
-        function initNode(elt) {
-            if (elt.closest && elt.closest(htmx.config.disableSelector)) {
-                return;
-            }
-            var nodeData = getInternalData(elt);
-            if (nodeData.initHash !== attributeHash(elt)) {
-
-                nodeData.initHash = attributeHash(elt);
-
-                // clean up any previously processed info
-                deInitNode(elt);
-
-                triggerEvent(elt, "htmx:beforeProcessNode")
-
-                if (elt.value) {
-                    nodeData.lastValue = elt.value;
-                }
-
-                var triggerSpecs = getTriggerSpecs(elt);
-                var explicitAction = processVerbs(elt, nodeData, triggerSpecs);
-
-                if (!explicitAction && getClosestAttributeValue(elt, "hx-boost") === "true") {
-                    boostElement(elt, nodeData, triggerSpecs);
-                }
-
-                if (elt.tagName === "FORM") {
-                    initButtonTracking(elt);
-                }
-
-                var sseInfo = getAttributeValue(elt, 'hx-sse');
-                if (sseInfo) {
-                    processSSEInfo(elt, nodeData, sseInfo);
-                }
-
-                var wsInfo = getAttributeValue(elt, 'hx-ws');
-                if (wsInfo) {
-                    processWebSocketInfo(elt, nodeData, wsInfo);
-                }
-                triggerEvent(elt, "htmx:afterProcessNode");
-            }
-        }
-
-        function processNode(elt) {
-            elt = resolveTarget(elt);
-            initNode(elt);
-            forEach(findElementsToProcess(elt), function(child) { initNode(child) });
-        }
-
-        //====================================================================
-        // Event/Log Support
-        //====================================================================
-
-        function kebabEventName(str) {
-            return str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
-        }
-
-        function makeEvent(eventName, detail) {
-            var evt;
-            if (window.CustomEvent && typeof window.CustomEvent === 'function') {
-                evt = new CustomEvent(eventName, {bubbles: true, cancelable: true, detail: detail});
-            } else {
-                evt = getDocument().createEvent('CustomEvent');
-                evt.initCustomEvent(eventName, true, true, detail);
-            }
-            return evt;
-        }
-
-        function triggerErrorEvent(elt, eventName, detail) {
-            triggerEvent(elt, eventName, mergeObjects({error:eventName}, detail));
-        }
-
-        function ignoreEventForLogging(eventName) {
-            return eventName === "htmx:afterProcessNode"
-        }
-
-        /**
-         * `withExtensions` locates all active extensions for a provided element, then
-         * executes the provided function using each of the active extensions.  It should
-         * be called internally at every extendable execution point in htmx.
-         *
-         * @param {HTMLElement} elt
-         * @param {(extension:import("./htmx").HtmxExtension) => void} toDo
-         * @returns void
-         */
-        function withExtensions(elt, toDo) {
-            forEach(getExtensions(elt), function(extension){
-                try {
-                    toDo(extension);
-                } catch (e) {
-                    logError(e);
-                }
-            });
-        }
-
-        function logError(msg) {
-            if(console.error) {
-                console.error(msg);
-            } else if (console.log) {
-                console.log("ERROR: ", msg);
-            }
-        }
-
-        function triggerEvent(elt, eventName, detail) {
-            elt = resolveTarget(elt);
-            if (detail == null) {
-                detail = {};
-            }
-            detail["elt"] = elt;
-            var event = makeEvent(eventName, detail);
-            if (htmx.logger && !ignoreEventForLogging(eventName)) {
-                htmx.logger(elt, eventName, detail);
-            }
-            if (detail.error) {
-                logError(detail.error);
-                triggerEvent(elt, "htmx:error", {errorInfo:detail})
-            }
-            var eventResult = elt.dispatchEvent(event);
-            var kebabName = kebabEventName(eventName);
-            if (eventResult && kebabName !== eventName) {
-                var kebabedEvent = makeEvent(kebabName, event.detail);
-                eventResult = eventResult && elt.dispatchEvent(kebabedEvent)
-            }
-            withExtensions(elt, function (extension) {
-                eventResult = eventResult && (extension.onEvent(eventName, event) !== false)
-            });
-            return eventResult;
-        }
-
-        //====================================================================
-        // History Support
-        //====================================================================
-        var currentPathForHistory = location.pathname+location.search;
-
-        function getHistoryElement() {
-            var historyElt = getDocument().querySelector('[hx-history-elt],[data-hx-history-elt]');
-            return historyElt || getDocument().body;
-        }
-
-        function saveToHistoryCache(url, content, title, scroll) {
-            if (!canAccessLocalStorage()) {
-                return;
-            }
-
-            var historyCache = parseJSON(localStorage.getItem("htmx-history-cache")) || [];
-            for (var i = 0; i < historyCache.length; i++) {
-                if (historyCache[i].url === url) {
-                    historyCache.splice(i, 1);
-                    break;
-                }
-            }
-            var newHistoryItem = {url:url, content: content, title:title, scroll:scroll};
-            triggerEvent(getDocument().body, "htmx:historyItemCreated", {item:newHistoryItem, cache: historyCache})
-            historyCache.push(newHistoryItem)
-            while (historyCache.length > htmx.config.historyCacheSize) {
-                historyCache.shift();
-            }
-            while(historyCache.length > 0){
-                try {
-                    localStorage.setItem("htmx-history-cache", JSON.stringify(historyCache));
-                    break;
-                } catch (e) {
-                    triggerErrorEvent(getDocument().body, "htmx:historyCacheError", {cause:e, cache: historyCache})
-                    historyCache.shift(); // shrink the cache and retry
-                }
-            }
-        }
-
-        function getCachedHistory(url) {
-            if (!canAccessLocalStorage()) {
-                return null;
-            }
-
-            var historyCache = parseJSON(localStorage.getItem("htmx-history-cache")) || [];
-            for (var i = 0; i < historyCache.length; i++) {
-                if (historyCache[i].url === url) {
-                    return historyCache[i];
-                }
-            }
-            return null;
-        }
-
-        function cleanInnerHtmlForHistory(elt) {
-            var className = htmx.config.requestClass;
-            var clone = elt.cloneNode(true);
-            forEach(findAll(clone, "." + className), function(child){
-                removeClassFromElement(child, className);
-            });
-            return clone.innerHTML;
-        }
-
-        function saveCurrentPageToHistory() {
-            var elt = getHistoryElement();
-            var path = currentPathForHistory || location.pathname+location.search;
-            triggerEvent(getDocument().body, "htmx:beforeHistorySave", {path:path, historyElt:elt});
-            if(htmx.config.historyEnabled) history.replaceState({htmx:true}, getDocument().title, window.location.href);
-            saveToHistoryCache(path, cleanInnerHtmlForHistory(elt), getDocument().title, window.scrollY);
-        }
-
-        function pushUrlIntoHistory(path) {
-            if(htmx.config.historyEnabled)  history.pushState({htmx:true}, "", path);
-            currentPathForHistory = path;
-        }
-
-        function replaceUrlInHistory(path) {
-            if(htmx.config.historyEnabled)  history.replaceState({htmx:true}, "", path);
-            currentPathForHistory = path;
-        }
-
-        function settleImmediately(tasks) {
-            forEach(tasks, function (task) {
-                task.call();
-            });
-        }
-
-        function loadHistoryFromServer(path) {
-            var request = new XMLHttpRequest();
-            var details = {path: path, xhr:request};
-            triggerEvent(getDocument().body, "htmx:historyCacheMiss", details);
-            request.open('GET', path, true);
-            request.setRequestHeader("HX-History-Restore-Request", "true");
-            request.onload = function () {
-                if (this.status >= 200 && this.status < 400) {
-                    triggerEvent(getDocument().body, "htmx:historyCacheMissLoad", details);
-                    var fragment = makeFragment(this.response);
-                    // @ts-ignore
-                    fragment = fragment.querySelector('[hx-history-elt],[data-hx-history-elt]') || fragment;
-                    var historyElement = getHistoryElement();
-                    var settleInfo = makeSettleInfo(historyElement);
-                    var title = findTitle(this.response);
-                    if (title) {
-                        var titleElt = find("title");
-                        if (titleElt) {
-                            titleElt.innerHTML = title;
-                        } else {
-                            window.document.title = title;
-                        }
-                    }
-                    // @ts-ignore
-                    swapInnerHTML(historyElement, fragment, settleInfo)
-                    settleImmediately(settleInfo.tasks);
-                    currentPathForHistory = path;
-                    triggerEvent(getDocument().body, "htmx:historyRestore", {path: path, cacheMiss:true, serverResponse:this.response});
-                } else {
-                    triggerErrorEvent(getDocument().body, "htmx:historyCacheMissLoadError", details);
-                }
-            };
-            request.send();
-        }
-
-        function restoreHistory(path) {
-            saveCurrentPageToHistory();
-            path = path || location.pathname+location.search;
-            var cached = getCachedHistory(path);
-            if (cached) {
-                var fragment = makeFragment(cached.content);
-                var historyElement = getHistoryElement();
-                var settleInfo = makeSettleInfo(historyElement);
-                swapInnerHTML(historyElement, fragment, settleInfo)
-                settleImmediately(settleInfo.tasks);
-                document.title = cached.title;
-                window.scrollTo(0, cached.scroll);
-                currentPathForHistory = path;
-                triggerEvent(getDocument().body, "htmx:historyRestore", {path:path, item:cached});
-            } else {
-                if (htmx.config.refreshOnHistoryMiss) {
-
-                    // @ts-ignore: optional parameter in reload() function throws error
-                    window.location.reload(true);
-                } else {
-                    loadHistoryFromServer(path);
-                }
-            }
-        }
-
-        function addRequestIndicatorClasses(elt) {
-            var indicators = findAttributeTargets(elt, 'hx-indicator');
-            if (indicators == null) {
-                indicators = [elt];
-            }
-            forEach(indicators, function (ic) {
-                var internalData = getInternalData(ic);
-                internalData.requestCount = (internalData.requestCount || 0) + 1;
-                ic.classList["add"].call(ic.classList, htmx.config.requestClass);
-            });
-            return indicators;
-        }
-
-        function removeRequestIndicatorClasses(indicators) {
-            forEach(indicators, function (ic) {
-                var internalData = getInternalData(ic);
-                internalData.requestCount = (internalData.requestCount || 0) - 1;
-                if (internalData.requestCount === 0) {
-                    ic.classList["remove"].call(ic.classList, htmx.config.requestClass);
-                }
-            });
-        }
-
-        //====================================================================
-        // Input Value Processing
-        //====================================================================
-
-        function haveSeenNode(processed, elt) {
-            for (var i = 0; i < processed.length; i++) {
-                var node = processed[i];
-                if (node.isSameNode(elt)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        function shouldInclude(elt) {
-            if(elt.name === "" || elt.name == null || elt.disabled) {
-                return false;
-            }
-            // ignore "submitter" types (see jQuery src/serialize.js)
-            if (elt.type === "button" || elt.type === "submit" || elt.tagName === "image" || elt.tagName === "reset" || elt.tagName === "file" ) {
-                return false;
-            }
-            if (elt.type === "checkbox" || elt.type === "radio" ) {
-                return elt.checked;
-            }
-            return true;
-        }
-
-        function processInputValue(processed, values, errors, elt, validate) {
-            if (elt == null || haveSeenNode(processed, elt)) {
-                return;
-            } else {
-                processed.push(elt);
-            }
-            if (shouldInclude(elt)) {
-                var name = getRawAttribute(elt,"name");
-                var value = elt.value;
-                if (elt.multiple) {
-                    value = toArray(elt.querySelectorAll("option:checked")).map(function (e) { return e.value });
-                }
-                // include file inputs
-                if (elt.files) {
-                    value = toArray(elt.files);
-                }
-                // This is a little ugly because both the current value of the named value in the form
-                // and the new value could be arrays, so we have to handle all four cases :/
-                if (name != null && value != null) {
-                    var current = values[name];
-                    if(current) {
-                        if (Array.isArray(current)) {
-                            if (Array.isArray(value)) {
-                                values[name] = current.concat(value);
-                            } else {
-                                current.push(value);
-                            }
-                        } else {
-                            if (Array.isArray(value)) {
-                                values[name] = [current].concat(value);
-                            } else {
-                                values[name] = [current, value];
-                            }
-                        }
-                    } else {
-                        values[name] = value;
-                    }
-                }
-                if (validate) {
-                    validateElement(elt, errors);
-                }
-            }
-            if (matches(elt, 'form')) {
-                var inputs = elt.elements;
-                forEach(inputs, function(input) {
-                    processInputValue(processed, values, errors, input, validate);
-                });
-            }
-        }
-
-        function validateElement(element, errors) {
-            if (element.willValidate) {
-                triggerEvent(element, "htmx:validation:validate")
-                if (!element.checkValidity()) {
-                    errors.push({elt: element, message:element.validationMessage, validity:element.validity});
-                    triggerEvent(element, "htmx:validation:failed", {message:element.validationMessage, validity:element.validity})
-                }
-            }
-        }
-
-        /**
-         * @param {HTMLElement} elt
-         * @param {string} verb
-         */
-        function getInputValues(elt, verb) {
-            var processed = [];
-            var values = {};
-            var formValues = {};
-            var errors = [];
-            var internalData = getInternalData(elt);
-
-            // only validate when form is directly submitted and novalidate or formnovalidate are not set
-            // or if the element has an explicit hx-validate="true" on it
-            var validate = (matches(elt, 'form') && elt.noValidate !== true) || getAttributeValue(elt, "hx-validate") === "true";
-            if (internalData.lastButtonClicked) {
-                validate = validate && internalData.lastButtonClicked.formNoValidate !== true;
-            }
-
-            // for a non-GET include the closest form
-            if (verb !== 'get') {
-                processInputValue(processed, formValues, errors, closest(elt, 'form'), validate);
-            }
-
-            // include the element itself
-            processInputValue(processed, values, errors, elt, validate);
-
-            // if a button or submit was clicked last, include its value
-            if (internalData.lastButtonClicked) {
-                var name = getRawAttribute(internalData.lastButtonClicked,"name");
-                if (name) {
-                    values[name] = internalData.lastButtonClicked.value;
-                }
-            }
-
-            // include any explicit includes
-            var includes = findAttributeTargets(elt, "hx-include");
-            forEach(includes, function(node) {
-                processInputValue(processed, values, errors, node, validate);
-                // if a non-form is included, include any input values within it
-                if (!matches(node, 'form')) {
-                    forEach(node.querySelectorAll(INPUT_SELECTOR), function (descendant) {
-                        processInputValue(processed, values, errors, descendant, validate);
-                    })
-                }
-            });
-
-            // form values take precedence, overriding the regular values
-            values = mergeObjects(values, formValues);
-
-            return {errors:errors, values:values};
-        }
-
-        function appendParam(returnStr, name, realValue) {
-            if (returnStr !== "") {
-                returnStr += "&";
-            }
-            if (String(realValue) === "[object Object]") {
-                realValue = JSON.stringify(realValue);
-            }
-            var s = encodeURIComponent(realValue);
-            returnStr += encodeURIComponent(name) + "=" + s;
-            return returnStr;
-        }
-
-        function urlEncode(values) {
-            var returnStr = "";
-            for (var name in values) {
-                if (values.hasOwnProperty(name)) {
-                    var value = values[name];
-                    if (Array.isArray(value)) {
-                        forEach(value, function(v) {
-                            returnStr = appendParam(returnStr, name, v);
-                        });
-                    } else {
-                        returnStr = appendParam(returnStr, name, value);
-                    }
-                }
-            }
-            return returnStr;
-        }
-
-        function makeFormData(values) {
-            var formData = new FormData();
-            for (var name in values) {
-                if (values.hasOwnProperty(name)) {
-                    var value = values[name];
-                    if (Array.isArray(value)) {
-                        forEach(value, function(v) {
-                            formData.append(name, v);
-                        });
-                    } else {
-                        formData.append(name, value);
-                    }
-                }
-            }
-            return formData;
-        }
-
-        //====================================================================
-        // Ajax
-        //====================================================================
-
-        /**
-         * @param {HTMLElement} elt
-         * @param {HTMLElement} target
-         * @param {string} prompt
-         * @returns {Object} // TODO: Define/Improve HtmxHeaderSpecification
-         */
-        function getHeaders(elt, target, prompt) {
-            var headers = {
-                "HX-Request" : "true",
-                "HX-Trigger" : getRawAttribute(elt, "id"),
-                "HX-Trigger-Name" : getRawAttribute(elt, "name"),
-                "HX-Target" : getAttributeValue(target, "id"),
-                "HX-Current-URL" : getDocument().location.href,
-            }
-            getValuesForElement(elt, "hx-headers", false, headers)
-            if (prompt !== undefined) {
-                headers["HX-Prompt"] = prompt;
-            }
-            if (getInternalData(elt).boosted) {
-                headers["HX-Boosted"] = "true";
-            }
-            return headers;
-        }
-
-        /**
-         * filterValues takes an object containing form input values
-         * and returns a new object that only contains keys that are
-         * specified by the closest "hx-params" attribute
-         * @param {Object} inputValues
-         * @param {HTMLElement} elt
-         * @returns {Object}
-         */
-        function filterValues(inputValues, elt) {
-            var paramsValue = getClosestAttributeValue(elt, "hx-params");
-            if (paramsValue) {
-                if (paramsValue === "none") {
-                    return {};
-                } else if (paramsValue === "*") {
-                    return inputValues;
-                } else if(paramsValue.indexOf("not ") === 0) {
-                    forEach(paramsValue.substr(4).split(","), function (name) {
-                        name = name.trim();
-                        delete inputValues[name];
-                    });
-                    return inputValues;
-                } else {
-                    var newValues = {}
-                    forEach(paramsValue.split(","), function (name) {
-                        name = name.trim();
-                        newValues[name] = inputValues[name];
-                    });
-                    return newValues;
-                }
-            } else {
-                return inputValues;
-            }
-        }
-
-        function isAnchorLink(elt) {
-          return getRawAttribute(elt, 'href') && getRawAttribute(elt, 'href').indexOf("#") >=0
-        }
-
-        /**
-         *
-         * @param {HTMLElement} elt
-         * @param {string} swapInfoOverride
-         * @returns {import("./htmx").HtmxSwapSpecification}
-         */
-        function getSwapSpecification(elt, swapInfoOverride) {
-            var swapInfo = swapInfoOverride ? swapInfoOverride : getClosestAttributeValue(elt, "hx-swap");
-            var swapSpec = {
-                "swapStyle" : getInternalData(elt).boosted ? 'innerHTML' : htmx.config.defaultSwapStyle,
-                "swapDelay" : htmx.config.defaultSwapDelay,
-                "settleDelay" : htmx.config.defaultSettleDelay
-            }
-            if (getInternalData(elt).boosted && !isAnchorLink(elt)) {
-              swapSpec["show"] = "top"
-            }
-            if (swapInfo) {
-                var split = splitOnWhitespace(swapInfo);
-                if (split.length > 0) {
-                    swapSpec["swapStyle"] = split[0];
-                    for (var i = 1; i < split.length; i++) {
-                        var modifier = split[i];
-                        if (modifier.indexOf("swap:") === 0) {
-                            swapSpec["swapDelay"] = parseInterval(modifier.substr(5));
-                        }
-                        if (modifier.indexOf("settle:") === 0) {
-                            swapSpec["settleDelay"] = parseInterval(modifier.substr(7));
-                        }
-                        if (modifier.indexOf("scroll:") === 0) {
-                            var scrollSpec = modifier.substr(7);
-                            var splitSpec = scrollSpec.split(":");
-                            var scrollVal = splitSpec.pop();
-                            var selectorVal = splitSpec.length > 0 ? splitSpec.join(":") : null;
-                            swapSpec["scroll"] = scrollVal;
-                            swapSpec["scrollTarget"] = selectorVal;
-                        }
-                        if (modifier.indexOf("show:") === 0) {
-                            var showSpec = modifier.substr(5);
-                            var splitSpec = showSpec.split(":");
-                            var showVal = splitSpec.pop();
-                            var selectorVal = splitSpec.length > 0 ? splitSpec.join(":") : null;
-                            swapSpec["show"] = showVal;
-                            swapSpec["showTarget"] = selectorVal;
-                        }
-                        if (modifier.indexOf("focus-scroll:") === 0) {
-                            var focusScrollVal = modifier.substr("focus-scroll:".length);
-                            swapSpec["focusScroll"] = focusScrollVal == "true";
-                        }
-                    }
-                }
-            }
-            return swapSpec;
-        }
-
-        function usesFormData(elt) {
-            return getClosestAttributeValue(elt, "hx-encoding") === "multipart/form-data" ||
-                (matches(elt, "form") && getRawAttribute(elt, 'enctype') === "multipart/form-data");
-        }
-
-        function encodeParamsForBody(xhr, elt, filteredParameters) {
-            var encodedParameters = null;
-            withExtensions(elt, function (extension) {
-                if (encodedParameters == null) {
-                    encodedParameters = extension.encodeParameters(xhr, filteredParameters, elt);
-                }
-            });
-            if (encodedParameters != null) {
-                return encodedParameters;
-            } else {
-                if (usesFormData(elt)) {
-                    return makeFormData(filteredParameters);
-                } else {
-                    return urlEncode(filteredParameters);
-                }
-            }
-        }
-
-        /**
-         *
-         * @param {Element} target
-         * @returns {import("./htmx").HtmxSettleInfo}
-         */
-        function makeSettleInfo(target) {
-            return {tasks: [], elts: [target]};
-        }
-
-        function updateScrollState(content, swapSpec) {
-            var first = content[0];
-            var last = content[content.length - 1];
-            if (swapSpec.scroll) {
-                var target = null;
-                if (swapSpec.scrollTarget) {
-                    target = querySelectorExt(first, swapSpec.scrollTarget);
-                }
-                if (swapSpec.scroll === "top" && (first || target)) {
-                    target = target || first;
-                    target.scrollTop = 0;
-                }
-                if (swapSpec.scroll === "bottom" && (last || target)) {
-                    target = target || last;
-                    target.scrollTop = target.scrollHeight;
-                }
-            }
-            if (swapSpec.show) {
-                var target = null;
-                if (swapSpec.showTarget) {
-                    var targetStr = swapSpec.showTarget;
-                    if (swapSpec.showTarget === "window") {
-                        targetStr = "body";
-                    }
-                    target = querySelectorExt(first, targetStr);
-                }
-                if (swapSpec.show === "top" && (first || target)) {
-                    target = target || first;
-                    target.scrollIntoView({block:'start', behavior: htmx.config.scrollBehavior});
-                }
-                if (swapSpec.show === "bottom" && (last || target)) {
-                    target = target || last;
-                    target.scrollIntoView({block:'end', behavior: htmx.config.scrollBehavior});
-                }
-            }
-        }
-
-        /**
-         * @param {HTMLElement} elt
-         * @param {string} attr
-         * @param {boolean=} evalAsDefault
-         * @param {Object=} values
-         * @returns {Object}
-         */
-        function getValuesForElement(elt, attr, evalAsDefault, values) {
-            if (values == null) {
-                values = {};
-            }
-            if (elt == null) {
-                return values;
-            }
-            var attributeValue = getAttributeValue(elt, attr);
-            if (attributeValue) {
-                var str = attributeValue.trim();
-                var evaluateValue = evalAsDefault;
-                if (str === "unset") {
-                    return null;
-                }
-                if (str.indexOf("javascript:") === 0) {
-                    str = str.substr(11);
-                    evaluateValue = true;
-                } else if (str.indexOf("js:") === 0) {
-                    str = str.substr(3);
-                    evaluateValue = true;
-                }
-                if (str.indexOf('{') !== 0) {
-                    str = "{" + str + "}";
-                }
-                var varsValues;
-                if (evaluateValue) {
-                    varsValues = maybeEval(elt,function () {return Function("return (" + str + ")")();}, {});
-                } else {
-                    varsValues = parseJSON(str);
-                }
-                for (var key in varsValues) {
-                    if (varsValues.hasOwnProperty(key)) {
-                        if (values[key] == null) {
-                            values[key] = varsValues[key];
-                        }
-                    }
-                }
-            }
-            return getValuesForElement(parentElt(elt), attr, evalAsDefault, values);
-        }
-
-        function maybeEval(elt, toEval, defaultVal) {
-            if (htmx.config.allowEval) {
-                return toEval();
-            } else {
-                triggerErrorEvent(elt, 'htmx:evalDisallowedError');
-                return defaultVal;
-            }
-        }
-
-        /**
-         * @param {HTMLElement} elt
-         * @param {*} expressionVars
-         * @returns
-         */
-        function getHXVarsForElement(elt, expressionVars) {
-            return getValuesForElement(elt, "hx-vars", true, expressionVars);
-        }
-
-        /**
-         * @param {HTMLElement} elt
-         * @param {*} expressionVars
-         * @returns
-         */
-        function getHXValsForElement(elt, expressionVars) {
-            return getValuesForElement(elt, "hx-vals", false, expressionVars);
-        }
-
-        /**
-         * @param {HTMLElement} elt
-         * @returns {Object}
-         */
-        function getExpressionVars(elt) {
-            return mergeObjects(getHXVarsForElement(elt), getHXValsForElement(elt));
-        }
-
-        function safelySetHeaderValue(xhr, header, headerValue) {
-            if (headerValue !== null) {
-                try {
-                    xhr.setRequestHeader(header, headerValue);
-                } catch (e) {
-                    // On an exception, try to set the header URI encoded instead
-                    xhr.setRequestHeader(header, encodeURIComponent(headerValue));
-                    xhr.setRequestHeader(header + "-URI-AutoEncoded", "true");
-                }
-            }
-        }
-
-        function getPathFromResponse(xhr) {
-            // NB: IE11 does not support this stuff
-            if (xhr.responseURL && typeof(URL) !== "undefined") {
-                try {
-                    var url = new URL(xhr.responseURL);
-                    return url.pathname + url.search;
-                } catch (e) {
-                    triggerErrorEvent(getDocument().body, "htmx:badResponseUrl", {url: xhr.responseURL});
-                }
-            }
-        }
-
-        function hasHeader(xhr, regexp) {
-            return xhr.getAllResponseHeaders().match(regexp);
-        }
-
-        function ajaxHelper(verb, path, context) {
-            verb = verb.toLowerCase();
-            if (context) {
-                if (context instanceof Element || isType(context, 'String')) {
-                    return issueAjaxRequest(verb, path, null, null, {
-                        targetOverride: resolveTarget(context),
-                        returnPromise: true
-                    });
-                } else {
-                    return issueAjaxRequest(verb, path, resolveTarget(context.source), context.event,
-                        {
-                            handler : context.handler,
-                            headers : context.headers,
-                            values : context.values,
-                            targetOverride: resolveTarget(context.target),
-                            swapOverride: context.swap,
-                            returnPromise: true
-                        });
-                }
-            } else {
-                return issueAjaxRequest(verb, path, null, null, {
-                        returnPromise: true
-                });
-            }
-        }
-
-        function hierarchyForElt(elt) {
-            var arr = [];
-            while (elt) {
-                arr.push(elt);
-                elt = elt.parentElement;
-            }
-            return arr;
-        }
-
-        function issueAjaxRequest(verb, path, elt, event, etc, confirmed) {
-            var resolve = null;
-            var reject = null;
-            etc = etc != null ? etc : {};
-            if(etc.returnPromise && typeof Promise !== "undefined"){
-                var promise = new Promise(function (_resolve, _reject) {
-                    resolve = _resolve;
-                    reject = _reject;
-                });
-            }
-            if(elt == null) {
-                elt = getDocument().body;
-            }
-            var responseHandler = etc.handler || handleAjaxResponse;
-
-            if (!bodyContains(elt)) {
-                return; // do not issue requests for elements removed from the DOM
-            }
-            var target = etc.targetOverride || getTarget(elt);
-            if (target == null || target == DUMMY_ELT) {
-                triggerErrorEvent(elt, 'htmx:targetError', {target: getAttributeValue(elt, "hx-target")});
-                return;
-            }
-
-            // allow event-based confirmation w/ a callback
-            if (!confirmed) {
-                var issueRequest = function() {
-                    return issueAjaxRequest(verb, path, elt, event, etc, true);
-                }
-                var confirmDetails = {target: target, elt: elt, path: path, verb: verb, triggeringEvent: event, etc: etc, issueRequest: issueRequest};
-                if (triggerEvent(elt, 'htmx:confirm', confirmDetails) === false) {
-                    return;
-                }
-            }
-
-            var syncElt = elt;
-            var eltData = getInternalData(elt);
-            var syncStrategy = getClosestAttributeValue(elt, "hx-sync");
-            var queueStrategy = null;
-            var abortable = false;
-            if (syncStrategy) {
-                var syncStrings = syncStrategy.split(":");
-                var selector = syncStrings[0].trim();
-                if (selector === "this") {
-                    syncElt = findThisElement(elt, 'hx-sync');
-                } else {
-                    syncElt = querySelectorExt(elt, selector);
-                }
-                // default to the drop strategy
-                syncStrategy = (syncStrings[1] || 'drop').trim();
-                eltData = getInternalData(syncElt);
-                if (syncStrategy === "drop" && eltData.xhr && eltData.abortable !== true) {
-                    return;
-                } else if (syncStrategy === "abort") {
-                    if (eltData.xhr) {
-                        return;
-                    } else {
-                        abortable = true;
-                    }
-                } else if (syncStrategy === "replace") {
-                    triggerEvent(syncElt, 'htmx:abort'); // abort the current request and continue
-                } else if (syncStrategy.indexOf("queue") === 0) {
-                    var queueStrArray = syncStrategy.split(" ");
-                    queueStrategy = (queueStrArray[1] || "last").trim();
-                }
-            }
-
-            if (eltData.xhr) {
-                if (eltData.abortable) {
-                    triggerEvent(syncElt, 'htmx:abort'); // abort the current request and continue
-                } else {
-                    if(queueStrategy == null){
-                        if (event) {
-                            var eventData = getInternalData(event);
-                            if (eventData && eventData.triggerSpec && eventData.triggerSpec.queue) {
-                                queueStrategy = eventData.triggerSpec.queue;
-                            }
-                        }
-                        if (queueStrategy == null) {
-                            queueStrategy = "last";
-                        }
-                    }
-                    if (eltData.queuedRequests == null) {
-                        eltData.queuedRequests = [];
-                    }
-                    if (queueStrategy === "first" && eltData.queuedRequests.length === 0) {
-                        eltData.queuedRequests.push(function () {
-                            issueAjaxRequest(verb, path, elt, event, etc)
-                        });
-                    } else if (queueStrategy === "all") {
-                        eltData.queuedRequests.push(function () {
-                            issueAjaxRequest(verb, path, elt, event, etc)
-                        });
-                    } else if (queueStrategy === "last") {
-                        eltData.queuedRequests = []; // dump existing queue
-                        eltData.queuedRequests.push(function () {
-                            issueAjaxRequest(verb, path, elt, event, etc)
-                        });
-                    }
-                    return;
-                }
-            }
-
-            var xhr = new XMLHttpRequest();
-            eltData.xhr = xhr;
-            eltData.abortable = abortable;
-            var endRequestLock = function(){
-                eltData.xhr = null;
-                eltData.abortable = false;
-                if (eltData.queuedRequests != null &&
-                    eltData.queuedRequests.length > 0) {
-                    var queuedRequest = eltData.queuedRequests.shift();
-                    queuedRequest();
-                }
-            }
-            var promptQuestion = getClosestAttributeValue(elt, "hx-prompt");
-            if (promptQuestion) {
-                var promptResponse = prompt(promptQuestion);
-                // prompt returns null if cancelled and empty string if accepted with no entry
-                if (promptResponse === null ||
-                    !triggerEvent(elt, 'htmx:prompt', {prompt: promptResponse, target:target})) {
-                    maybeCall(resolve);
-                    endRequestLock();
-                    return promise;
-                }
-            }
-
-            var confirmQuestion = getClosestAttributeValue(elt, "hx-confirm");
-            if (confirmQuestion) {
-                if(!confirm(confirmQuestion)) {
-                    maybeCall(resolve);
-                    endRequestLock()
-                    return promise;
-                }
-            }
-
-
-            var headers = getHeaders(elt, target, promptResponse);
-            if (etc.headers) {
-                headers = mergeObjects(headers, etc.headers);
-            }
-            var results = getInputValues(elt, verb);
-            var errors = results.errors;
-            var rawParameters = results.values;
-            if (etc.values) {
-                rawParameters = mergeObjects(rawParameters, etc.values);
-            }
-            var expressionVars = getExpressionVars(elt);
-            var allParameters = mergeObjects(rawParameters, expressionVars);
-            var filteredParameters = filterValues(allParameters, elt);
-
-            if (verb !== 'get' && !usesFormData(elt)) {
-                headers['Content-Type'] = 'application/x-www-form-urlencoded';
-            }
-
-            // behavior of anchors w/ empty href is to use the current URL
-            if (path == null || path === "") {
-                path = getDocument().location.href;
-            }
-
-
-            var requestAttrValues = getValuesForElement(elt, 'hx-request');
-
-            var eltIsBoosted = getInternalData(elt).boosted;
-            var requestConfig = {
-                boosted: eltIsBoosted,
-                parameters: filteredParameters,
-                unfilteredParameters: allParameters,
-                headers:headers,
-                target:target,
-                verb:verb,
-                errors:errors,
-                withCredentials: etc.credentials || requestAttrValues.credentials || htmx.config.withCredentials,
-                timeout:  etc.timeout || requestAttrValues.timeout || htmx.config.timeout,
-                path:path,
-                triggeringEvent:event
-            };
-
-            if(!triggerEvent(elt, 'htmx:configRequest', requestConfig)){
-                maybeCall(resolve);
-                endRequestLock();
-                return promise;
-            }
-
-            // copy out in case the object was overwritten
-            path = requestConfig.path;
-            verb = requestConfig.verb;
-            headers = requestConfig.headers;
-            filteredParameters = requestConfig.parameters;
-            errors = requestConfig.errors;
-
-            if(errors && errors.length > 0){
-                triggerEvent(elt, 'htmx:validation:halted', requestConfig)
-                maybeCall(resolve);
-                endRequestLock();
-                return promise;
-            }
-
-            var splitPath = path.split("#");
-            var pathNoAnchor = splitPath[0];
-            var anchor = splitPath[1];
-            var finalPathForGet = null;
-            if (verb === 'get') {
-                finalPathForGet = pathNoAnchor;
-                var values = Object.keys(filteredParameters).length !== 0;
-                if (values) {
-                    if (finalPathForGet.indexOf("?") < 0) {
-                        finalPathForGet += "?";
-                    } else {
-                        finalPathForGet += "&";
-                    }
-                    finalPathForGet += urlEncode(filteredParameters);
-                    if (anchor) {
-                        finalPathForGet += "#" + anchor;
-                    }
-                }
-                xhr.open('GET', finalPathForGet, true);
-            } else {
-                xhr.open(verb.toUpperCase(), path, true);
-            }
-
-            xhr.overrideMimeType("text/html");
-            xhr.withCredentials = requestConfig.withCredentials;
-            xhr.timeout = requestConfig.timeout;
-
-            // request headers
-            if (requestAttrValues.noHeaders) {
-                // ignore all headers
-            } else {
-                for (var header in headers) {
-                    if (headers.hasOwnProperty(header)) {
-                        var headerValue = headers[header];
-                        safelySetHeaderValue(xhr, header, headerValue);
-                    }
-                }
-            }
-
-            var responseInfo = {
-                xhr: xhr, target: target, requestConfig: requestConfig, etc: etc, boosted: eltIsBoosted,
-                pathInfo: {
-                    requestPath: path,
-                    finalRequestPath: finalPathForGet || path,
-                    anchor: anchor
-                }
-            };
-
-            xhr.onload = function () {
-                try {
-                    var hierarchy = hierarchyForElt(elt);
-                    responseInfo.pathInfo.responsePath = getPathFromResponse(xhr);
-                    responseHandler(elt, responseInfo);
-                    removeRequestIndicatorClasses(indicators);
-                    triggerEvent(elt, 'htmx:afterRequest', responseInfo);
-                    triggerEvent(elt, 'htmx:afterOnLoad', responseInfo);
-                    // if the body no longer contains the element, trigger the even on the closest parent
-                    // remaining in the DOM
-                    if (!bodyContains(elt)) {
-                        var secondaryTriggerElt = null;
-                        while (hierarchy.length > 0 && secondaryTriggerElt == null) {
-                            var parentEltInHierarchy = hierarchy.shift();
-                            if (bodyContains(parentEltInHierarchy)) {
-                                secondaryTriggerElt = parentEltInHierarchy;
-                            }
-                        }
-                        if (secondaryTriggerElt) {
-                            triggerEvent(secondaryTriggerElt, 'htmx:afterRequest', responseInfo);
-                            triggerEvent(secondaryTriggerElt, 'htmx:afterOnLoad', responseInfo);
-                        }
-                    }
-                    maybeCall(resolve);
-                    endRequestLock();
-                } catch (e) {
-                    triggerErrorEvent(elt, 'htmx:onLoadError', mergeObjects({error:e}, responseInfo));
-                    throw e;
-                }
-            }
-            xhr.onerror = function () {
-                removeRequestIndicatorClasses(indicators);
-                triggerErrorEvent(elt, 'htmx:afterRequest', responseInfo);
-                triggerErrorEvent(elt, 'htmx:sendError', responseInfo);
-                maybeCall(reject);
-                endRequestLock();
-            }
-            xhr.onabort = function() {
-                removeRequestIndicatorClasses(indicators);
-                triggerErrorEvent(elt, 'htmx:afterRequest', responseInfo);
-                triggerErrorEvent(elt, 'htmx:sendAbort', responseInfo);
-                maybeCall(reject);
-                endRequestLock();
-            }
-            xhr.ontimeout = function() {
-                removeRequestIndicatorClasses(indicators);
-                triggerErrorEvent(elt, 'htmx:afterRequest', responseInfo);
-                triggerErrorEvent(elt, 'htmx:timeout', responseInfo);
-                maybeCall(reject);
-                endRequestLock();
-            }
-            if(!triggerEvent(elt, 'htmx:beforeRequest', responseInfo)){
-                maybeCall(resolve);
-                endRequestLock()
-                return promise
-            }
-            var indicators = addRequestIndicatorClasses(elt);
-
-            forEach(['loadstart', 'loadend', 'progress', 'abort'], function(eventName) {
-                forEach([xhr, xhr.upload], function (target) {
-                    target.addEventListener(eventName, function(event){
-                        triggerEvent(elt, "htmx:xhr:" + eventName, {
-                            lengthComputable:event.lengthComputable,
-                            loaded:event.loaded,
-                            total:event.total
-                        });
-                    })
-                });
-            });
-            triggerEvent(elt, 'htmx:beforeSend', responseInfo);
-            xhr.send(verb === 'get' ? null : encodeParamsForBody(xhr, elt, filteredParameters));
-            return promise;
-        }
-
-        function determineHistoryUpdates(elt, responseInfo) {
-
-            var xhr = responseInfo.xhr;
-
-            //===========================================
-            // First consult response headers
-            //===========================================
-            var pathFromHeaders = null;
-            var typeFromHeaders = null;
-            if (hasHeader(xhr,/HX-Push:/i)) {
-                pathFromHeaders = xhr.getResponseHeader("HX-Push");
-                typeFromHeaders = "push";
-            } else if (hasHeader(xhr,/HX-Push-Url:/i)) {
-                pathFromHeaders = xhr.getResponseHeader("HX-Push-Url");
-                typeFromHeaders = "push";
-            } else if (hasHeader(xhr,/HX-Replace-Url:/i)) {
-                pathFromHeaders = xhr.getResponseHeader("HX-Replace-Url");
-                typeFromHeaders = "replace";
-            }
-
-            // if there was a response header, that has priority
-            if (pathFromHeaders) {
-                if (pathFromHeaders === "false") {
-                    return {}
-                } else {
-                    return {
-                        type: typeFromHeaders,
-                        path : pathFromHeaders
-                    }
-                }
-            }
-
-            //===========================================
-            // Next resolve via DOM values
-            //===========================================
-            var requestPath =  responseInfo.pathInfo.finalRequestPath;
-            var responsePath =  responseInfo.pathInfo.responsePath;
-
-            var pushUrl = getClosestAttributeValue(elt, "hx-push-url");
-            var replaceUrl = getClosestAttributeValue(elt, "hx-replace-url");
-            var elementIsBoosted = getInternalData(elt).boosted;
-
-            var saveType = null;
-            var path = null;
-
-            if (pushUrl) {
-                saveType = "push";
-                path = pushUrl;
-            } else if (replaceUrl) {
-                saveType = "replace";
-                path = replaceUrl;
-            } else if (elementIsBoosted) {
-                saveType = "push";
-                path = responsePath || requestPath; // if there is no response path, go with the original request path
-            }
-
-            if (path) {
-                // false indicates no push, return empty object
-                if (path === "false") {
-                    return {};
-                }
-
-                // true indicates we want to follow wherever the server ended up sending us
-                if (path === "true") {
-                    path = responsePath || requestPath; // if there is no response path, go with the original request path
-                }
-
-                // restore any anchor associated with the request
-                if (responseInfo.pathInfo.anchor &&
-                    path.indexOf("#") === -1) {
-                    path = path + "#" + responseInfo.pathInfo.anchor;
-                }
-
-                return {
-                    type:saveType,
-                    path: path
-                }
-            } else {
-                return {};
-            }
-        }
-
-        function handleAjaxResponse(elt, responseInfo) {
-            var xhr = responseInfo.xhr;
-            var target = responseInfo.target;
-            var etc = responseInfo.etc;
-
-            if (!triggerEvent(elt, 'htmx:beforeOnLoad', responseInfo)) return;
-
-            if (hasHeader(xhr, /HX-Trigger:/i)) {
-                handleTrigger(xhr, "HX-Trigger", elt);
-            }
-
-            if (hasHeader(xhr, /HX-Location:/i)) {
-                saveCurrentPageToHistory();
-                var redirectPath = xhr.getResponseHeader("HX-Location");
-                var swapSpec;
-                if (redirectPath.indexOf("{") === 0) {
-                    swapSpec = parseJSON(redirectPath);
-                    // what's the best way to throw an error if the user didn't include this
-                    redirectPath = swapSpec['path'];
-                    delete swapSpec['path'];
-                }
-                ajaxHelper('GET', redirectPath, swapSpec).then(function(){
-                    pushUrlIntoHistory(redirectPath);
-                });
-                return;
-            }
-
-            if (hasHeader(xhr, /HX-Redirect:/i)) {
-                location.href = xhr.getResponseHeader("HX-Redirect");
-                return;
-            }
-
-            if (hasHeader(xhr,/HX-Refresh:/i)) {
-                if ("true" === xhr.getResponseHeader("HX-Refresh")) {
-                    location.reload();
-                    return;
-                }
-            }
-
-            if (hasHeader(xhr,/HX-Retarget:/i)) {
-                responseInfo.target = getDocument().querySelector(xhr.getResponseHeader("HX-Retarget"));
-            }
-
-            var historyUpdate = determineHistoryUpdates(elt, responseInfo);
-
-            // by default htmx only swaps on 200 return codes and does not swap
-            // on 204 'No Content'
-            // this can be ovverriden by responding to the htmx:beforeSwap event and
-            // overriding the detail.shouldSwap property
-            var shouldSwap = xhr.status >= 200 && xhr.status < 400 && xhr.status !== 204;
-            var serverResponse = xhr.response;
-            var isError = xhr.status >= 400;
-            var beforeSwapDetails = mergeObjects({shouldSwap: shouldSwap, serverResponse:serverResponse, isError:isError}, responseInfo);
-            if (!triggerEvent(target, 'htmx:beforeSwap', beforeSwapDetails)) return;
-
-            target = beforeSwapDetails.target; // allow re-targeting
-            serverResponse = beforeSwapDetails.serverResponse; // allow updating content
-            isError = beforeSwapDetails.isError; // allow updating error
-
-            responseInfo.failed = isError; // Make failed property available to response events
-            responseInfo.successful = !isError; // Make successful property available to response events
-
-            if (beforeSwapDetails.shouldSwap) {
-                if (xhr.status === 286) {
-                    cancelPolling(elt);
-                }
-
-                withExtensions(elt, function (extension) {
-                    serverResponse = extension.transformResponse(serverResponse, xhr, elt);
-                });
-
-                // Save current page if there will be a history update
-                if (historyUpdate.type) {
-                    saveCurrentPageToHistory();
-                }
-
-                var swapOverride = etc.swapOverride;
-                if (hasHeader(xhr,/HX-Reswap:/i)) {
-                    swapOverride = xhr.getResponseHeader("HX-Reswap");
-                }
-                var swapSpec = getSwapSpecification(elt, swapOverride);
-
-                target.classList.add(htmx.config.swappingClass);
-                var doSwap = function () {
-                    try {
-
-                        var activeElt = document.activeElement;
-                        var selectionInfo = {};
-                        try {
-                            selectionInfo = {
-                                elt: activeElt,
-                                // @ts-ignore
-                                start: activeElt ? activeElt.selectionStart : null,
-                                // @ts-ignore
-                                end: activeElt ? activeElt.selectionEnd : null
-                            };
-                        } catch (e) {
-                            // safari issue - see https://github.com/microsoft/playwright/issues/5894
-                        }
-
-                        var settleInfo = makeSettleInfo(target);
-                        selectAndSwap(swapSpec.swapStyle, target, elt, serverResponse, settleInfo);
-
-                        if (selectionInfo.elt &&
-                            !bodyContains(selectionInfo.elt) &&
-                            selectionInfo.elt.id) {
-                            var newActiveElt = document.getElementById(selectionInfo.elt.id);
-                            var focusOptions = { preventScroll: swapSpec.focusScroll !== undefined ? !swapSpec.focusScroll : !htmx.config.defaultFocusScroll };
-                            if (newActiveElt) {
-                                // @ts-ignore
-                                if (selectionInfo.start && newActiveElt.setSelectionRange) {
-                                    // @ts-ignore
-                                    newActiveElt.setSelectionRange(selectionInfo.start, selectionInfo.end);
-                                }
-                                newActiveElt.focus(focusOptions);
-                            }
-                        }
-
-                        target.classList.remove(htmx.config.swappingClass);
-                        forEach(settleInfo.elts, function (elt) {
-                            if (elt.classList) {
-                                elt.classList.add(htmx.config.settlingClass);
-                            }
-                            triggerEvent(elt, 'htmx:afterSwap', responseInfo);
-                        });
-
-                        if (hasHeader(xhr, /HX-Trigger-After-Swap:/i)) {
-                            var finalElt = elt;
-                            if (!bodyContains(elt)) {
-                                finalElt = getDocument().body;
-                            }
-                            handleTrigger(xhr, "HX-Trigger-After-Swap", finalElt);
-                        }
-
-                        var doSettle = function () {
-                            forEach(settleInfo.tasks, function (task) {
-                                task.call();
-                            });
-                            forEach(settleInfo.elts, function (elt) {
-                                if (elt.classList) {
-                                    elt.classList.remove(htmx.config.settlingClass);
-                                }
-                                triggerEvent(elt, 'htmx:afterSettle', responseInfo);
-                            });
-
-                            // if we need to save history, do so
-                            if (historyUpdate.type) {
-                                if (historyUpdate.type === "push") {
-                                    pushUrlIntoHistory(historyUpdate.path);
-                                    triggerEvent(getDocument().body, 'htmx:pushedIntoHistory', {path: historyUpdate.path});
-                                } else {
-                                    replaceUrlInHistory(historyUpdate.path);
-                                    triggerEvent(getDocument().body, 'htmx:replacedInHistory', {path: historyUpdate.path});
-                                }
-                            }
-                            if (responseInfo.pathInfo.anchor) {
-                                var anchorTarget = find("#" + responseInfo.pathInfo.anchor);
-                                if(anchorTarget) {
-                                    anchorTarget.scrollIntoView({block:'start', behavior: "auto"});
-                                }
-                            }
-
-                            if(settleInfo.title) {
-                                var titleElt = find("title");
-                                if(titleElt) {
-                                    titleElt.innerHTML = settleInfo.title;
-                                } else {
-                                    window.document.title = settleInfo.title;
-                                }
-                            }
-
-                            updateScrollState(settleInfo.elts, swapSpec);
-
-                            if (hasHeader(xhr, /HX-Trigger-After-Settle:/i)) {
-                                var finalElt = elt;
-                                if (!bodyContains(elt)) {
-                                    finalElt = getDocument().body;
-                                }
-                                handleTrigger(xhr, "HX-Trigger-After-Settle", finalElt);
-                            }
-                        }
-
-                        if (swapSpec.settleDelay > 0) {
-                            setTimeout(doSettle, swapSpec.settleDelay)
-                        } else {
-                            doSettle();
-                        }
-                    } catch (e) {
-                        triggerErrorEvent(elt, 'htmx:swapError', responseInfo);
-                        throw e;
-                    }
-                };
-
-                if (swapSpec.swapDelay > 0) {
-                    setTimeout(doSwap, swapSpec.swapDelay)
-                } else {
-                    doSwap();
-                }
-            }
-            if (isError) {
-                triggerErrorEvent(elt, 'htmx:responseError', mergeObjects({error: "Response Status Error Code " + xhr.status + " from " + responseInfo.pathInfo.requestPath}, responseInfo));
-            }
-        }
-
-        //====================================================================
-        // Extensions API
-        //====================================================================
-
-        /** @type {Object<string, import("./htmx").HtmxExtension>} */
-        var extensions = {};
-
-        /**
-         * extensionBase defines the default functions for all extensions.
-         * @returns {import("./htmx").HtmxExtension}
-         */
-        function extensionBase() {
-            return {
-                init: function(api) {return null;},
-                onEvent : function(name, evt) {return true;},
-                transformResponse : function(text, xhr, elt) {return text;},
-                isInlineSwap : function(swapStyle) {return false;},
-                handleSwap : function(swapStyle, target, fragment, settleInfo) {return false;},
-                encodeParameters : function(xhr, parameters, elt) {return null;}
-            }
-        }
-
-        /**
-         * defineExtension initializes the extension and adds it to the htmx registry
-         *
-         * @param {string} name
-         * @param {import("./htmx").HtmxExtension} extension
-         */
-        function defineExtension(name, extension) {
-            if(extension.init) {
-                extension.init(internalAPI)
-            }
-            extensions[name] = mergeObjects(extensionBase(), extension);
-        }
-
-        /**
-         * removeExtension removes an extension from the htmx registry
-         *
-         * @param {string} name
-         */
-        function removeExtension(name) {
-            delete extensions[name];
-        }
-
-        /**
-         * getExtensions searches up the DOM tree to return all extensions that can be applied to a given element
-         *
-         * @param {HTMLElement} elt
-         * @param {import("./htmx").HtmxExtension[]=} extensionsToReturn
-         * @param {import("./htmx").HtmxExtension[]=} extensionsToIgnore
-         */
-         function getExtensions(elt, extensionsToReturn, extensionsToIgnore) {
-
-            if (elt == undefined) {
-                return extensionsToReturn;
-            }
-            if (extensionsToReturn == undefined) {
-                extensionsToReturn = [];
-            }
-            if (extensionsToIgnore == undefined) {
-                extensionsToIgnore = [];
-            }
-            var extensionsForElement = getAttributeValue(elt, "hx-ext");
-            if (extensionsForElement) {
-                forEach(extensionsForElement.split(","), function(extensionName){
-                    extensionName = extensionName.replace(/ /g, '');
-                    if (extensionName.slice(0, 7) == "ignore:") {
-                        extensionsToIgnore.push(extensionName.slice(7));
-                        return;
-                    }
-                    if (extensionsToIgnore.indexOf(extensionName) < 0) {
-                        var extension = extensions[extensionName];
-                        if (extension && extensionsToReturn.indexOf(extension) < 0) {
-                            extensionsToReturn.push(extension);
-                        }
-                    }
-                });
-            }
-            return getExtensions(parentElt(elt), extensionsToReturn, extensionsToIgnore);
-        }
-
-        //====================================================================
-        // Initialization
-        //====================================================================
-
-        function ready(fn) {
-            if (getDocument().readyState !== 'loading') {
-                fn();
-            } else {
-                getDocument().addEventListener('DOMContentLoaded', fn);
-            }
-        }
-
-        function insertIndicatorStyles() {
-            if (htmx.config.includeIndicatorStyles !== false) {
-                getDocument().head.insertAdjacentHTML("beforeend",
-                    "<style>\
-                      ." + htmx.config.indicatorClass + "{opacity:0;transition: opacity 200ms ease-in;}\
-                      ." + htmx.config.requestClass + " ." + htmx.config.indicatorClass + "{opacity:1}\
-                      ." + htmx.config.requestClass + "." + htmx.config.indicatorClass + "{opacity:1}\
-                    </style>");
-            }
-        }
-
-        function getMetaConfig() {
-            var element = getDocument().querySelector('meta[name="htmx-config"]');
-            if (element) {
-                // @ts-ignore
-                return parseJSON(element.content);
-            } else {
-                return null;
-            }
-        }
-
-        function mergeMetaConfig() {
-            var metaConfig = getMetaConfig();
-            if (metaConfig) {
-                htmx.config = mergeObjects(htmx.config , metaConfig)
-            }
-        }
-
-        // initialize the document
-        ready(function () {
-            mergeMetaConfig();
-            insertIndicatorStyles();
-            var body = getDocument().body;
-            processNode(body);
-            var restoredElts = getDocument().querySelectorAll(
-                "[hx-trigger='restored'],[data-hx-trigger='restored']"
-            );
-            body.addEventListener("htmx:abort", function (evt) {
-                var target = evt.target;
-                var internalData = getInternalData(target);
-                if (internalData && internalData.xhr) {
-                    internalData.xhr.abort();
-                }
-            });
-            window.onpopstate = function (event) {
-                if (event.state && event.state.htmx) {
-                    restoreHistory();
-                    forEach(restoredElts, function(elt){
-                        triggerEvent(elt, 'htmx:restored', {
-                            'document': getDocument(),
-                            'triggerEvent': triggerEvent
-                        });
-                    });
-                }
-            };
-            setTimeout(function () {
-                triggerEvent(body, 'htmx:load', {}); // give ready handlers a chance to load up before firing this event
-            }, 0);
-        })
-
-        return htmx;
-    }
-)()
-}));
-
-/// TODO: add this in a separate file when building the wp gulpfile
-
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-/*!
- * Splide.js
- * Version  : 4.1.2
- * License  : MIT
- * Copyright: 2022 Naotoshi Fujita
- */
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() : typeof define === 'function' && define.amd ? define(factory) : (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Splide = factory());
-})(this, function () {
-  'use strict';
-
-  var MEDIA_PREFERS_REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
-  var CREATED = 1;
-  var MOUNTED = 2;
-  var IDLE = 3;
-  var MOVING = 4;
-  var SCROLLING = 5;
-  var DRAGGING = 6;
-  var DESTROYED = 7;
-  var STATES = {
-    CREATED: CREATED,
-    MOUNTED: MOUNTED,
-    IDLE: IDLE,
-    MOVING: MOVING,
-    SCROLLING: SCROLLING,
-    DRAGGING: DRAGGING,
-    DESTROYED: DESTROYED
-  };
-
-  function empty(array) {
-    array.length = 0;
-  }
-
-  function slice(arrayLike, start, end) {
-    return Array.prototype.slice.call(arrayLike, start, end);
-  }
-
-  function apply(func) {
-    return func.bind.apply(func, [null].concat(slice(arguments, 1)));
-  }
-
-  var nextTick = setTimeout;
-
-  var noop = function noop() {};
-
-  function raf(func) {
-    return requestAnimationFrame(func);
-  }
-
-  function typeOf(type, subject) {
-    return typeof subject === type;
-  }
-
-  function isObject(subject) {
-    return !isNull(subject) && typeOf("object", subject);
-  }
-
-  var isArray = Array.isArray;
-  var isFunction = apply(typeOf, "function");
-  var isString = apply(typeOf, "string");
-  var isUndefined = apply(typeOf, "undefined");
-
-  function isNull(subject) {
-    return subject === null;
-  }
-
-  function isHTMLElement(subject) {
-    try {
-      return subject instanceof (subject.ownerDocument.defaultView || window).HTMLElement;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function toArray(value) {
-    return isArray(value) ? value : [value];
-  }
-
-  function forEach(values, iteratee) {
-    toArray(values).forEach(iteratee);
-  }
-
-  function includes(array, value) {
-    return array.indexOf(value) > -1;
-  }
-
-  function push(array, items) {
-    array.push.apply(array, toArray(items));
-    return array;
-  }
-
-  function toggleClass(elm, classes, add) {
-    if (elm) {
-      forEach(classes, function (name) {
-        if (name) {
-          elm.classList[add ? "add" : "remove"](name);
-        }
-      });
-    }
-  }
-
-  function addClass(elm, classes) {
-    toggleClass(elm, isString(classes) ? classes.split(" ") : classes, true);
-  }
-
-  function append(parent, children) {
-    forEach(children, parent.appendChild.bind(parent));
-  }
-
-  function before(nodes, ref) {
-    forEach(nodes, function (node) {
-      var parent = (ref || node).parentNode;
-
-      if (parent) {
-        parent.insertBefore(node, ref);
-      }
-    });
-  }
-
-  function matches(elm, selector) {
-    return isHTMLElement(elm) && (elm["msMatchesSelector"] || elm.matches).call(elm, selector);
-  }
-
-  function children(parent, selector) {
-    var children2 = parent ? slice(parent.children) : [];
-    return selector ? children2.filter(function (child) {
-      return matches(child, selector);
-    }) : children2;
-  }
-
-  function child(parent, selector) {
-    return selector ? children(parent, selector)[0] : parent.firstElementChild;
-  }
-
-  var ownKeys = Object.keys;
-
-  function forOwn(object, iteratee, right) {
-    if (object) {
-      (right ? ownKeys(object).reverse() : ownKeys(object)).forEach(function (key) {
-        key !== "__proto__" && iteratee(object[key], key);
-      });
-    }
-
-    return object;
-  }
-
-  function assign(object) {
-    slice(arguments, 1).forEach(function (source) {
-      forOwn(source, function (value, key) {
-        object[key] = source[key];
-      });
-    });
-    return object;
-  }
-
-  function merge(object) {
-    slice(arguments, 1).forEach(function (source) {
-      forOwn(source, function (value, key) {
-        if (isArray(value)) {
-          object[key] = value.slice();
-        } else if (isObject(value)) {
-          object[key] = merge({}, isObject(object[key]) ? object[key] : {}, value);
-        } else {
-          object[key] = value;
-        }
-      });
-    });
-    return object;
-  }
-
-  function omit(object, keys) {
-    forEach(keys || ownKeys(object), function (key) {
-      delete object[key];
-    });
-  }
-
-  function removeAttribute(elms, attrs) {
-    forEach(elms, function (elm) {
-      forEach(attrs, function (attr) {
-        elm && elm.removeAttribute(attr);
-      });
-    });
-  }
-
-  function setAttribute(elms, attrs, value) {
-    if (isObject(attrs)) {
-      forOwn(attrs, function (value2, name) {
-        setAttribute(elms, name, value2);
-      });
-    } else {
-      forEach(elms, function (elm) {
-        isNull(value) || value === "" ? removeAttribute(elm, attrs) : elm.setAttribute(attrs, String(value));
-      });
-    }
-  }
-
-  function create(tag, attrs, parent) {
-    var elm = document.createElement(tag);
-
-    if (attrs) {
-      isString(attrs) ? addClass(elm, attrs) : setAttribute(elm, attrs);
-    }
-
-    parent && append(parent, elm);
-    return elm;
-  }
-
-  function style(elm, prop, value) {
-    if (isUndefined(value)) {
-      return getComputedStyle(elm)[prop];
-    }
-
-    if (!isNull(value)) {
-      elm.style[prop] = "" + value;
-    }
-  }
-
-  function display(elm, display2) {
-    style(elm, "display", display2);
-  }
-
-  function focus(elm) {
-    elm["setActive"] && elm["setActive"]() || elm.focus({
-      preventScroll: true
-    });
-  }
-
-  function getAttribute(elm, attr) {
-    return elm.getAttribute(attr);
-  }
-
-  function hasClass(elm, className) {
-    return elm && elm.classList.contains(className);
-  }
-
-  function rect(target) {
-    return target.getBoundingClientRect();
-  }
-
-  function remove(nodes) {
-    forEach(nodes, function (node) {
-      if (node && node.parentNode) {
-        node.parentNode.removeChild(node);
-      }
-    });
-  }
-
-  function parseHtml(html) {
-    return child(new DOMParser().parseFromString(html, "text/html").body);
-  }
-
-  function prevent(e, stopPropagation) {
-    e.preventDefault();
-
-    if (stopPropagation) {
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-    }
-  }
-
-  function query(parent, selector) {
-    return parent && parent.querySelector(selector);
-  }
-
-  function queryAll(parent, selector) {
-    return selector ? slice(parent.querySelectorAll(selector)) : [];
-  }
-
-  function removeClass(elm, classes) {
-    toggleClass(elm, classes, false);
-  }
-
-  function timeOf(e) {
-    return e.timeStamp;
-  }
-
-  function unit(value) {
-    return isString(value) ? value : value ? value + "px" : "";
-  }
-
-  var PROJECT_CODE = "splide";
-  var DATA_ATTRIBUTE = "data-" + PROJECT_CODE;
-
-  function assert(condition, message) {
-    if (!condition) {
-      throw new Error("[" + PROJECT_CODE + "] " + (message || ""));
-    }
-  }
-
-  var min = Math.min,
-      max = Math.max,
-      floor = Math.floor,
-      ceil = Math.ceil,
-      abs = Math.abs;
-
-  function approximatelyEqual(x, y, epsilon) {
-    return abs(x - y) < epsilon;
-  }
-
-  function between(number, x, y, exclusive) {
-    var minimum = min(x, y);
-    var maximum = max(x, y);
-    return exclusive ? minimum < number && number < maximum : minimum <= number && number <= maximum;
-  }
-
-  function clamp(number, x, y) {
-    var minimum = min(x, y);
-    var maximum = max(x, y);
-    return min(max(minimum, number), maximum);
-  }
-
-  function sign(x) {
-    return +(x > 0) - +(x < 0);
-  }
-
-  function format(string, replacements) {
-    forEach(replacements, function (replacement) {
-      string = string.replace("%s", "" + replacement);
-    });
-    return string;
-  }
-
-  function pad(number) {
-    return number < 10 ? "0" + number : "" + number;
-  }
-
-  var ids = {};
-
-  function uniqueId(prefix) {
-    return "" + prefix + pad(ids[prefix] = (ids[prefix] || 0) + 1);
-  }
-
-  function EventBinder() {
-    var listeners = [];
-
-    function bind(targets, events, callback, options) {
-      forEachEvent(targets, events, function (target, event, namespace) {
-        var isEventTarget = ("addEventListener" in target);
-        var remover = isEventTarget ? target.removeEventListener.bind(target, event, callback, options) : target["removeListener"].bind(target, callback);
-        isEventTarget ? target.addEventListener(event, callback, options) : target["addListener"](callback);
-        listeners.push([target, event, namespace, callback, remover]);
-      });
-    }
-
-    function unbind(targets, events, callback) {
-      forEachEvent(targets, events, function (target, event, namespace) {
-        listeners = listeners.filter(function (listener) {
-          if (listener[0] === target && listener[1] === event && listener[2] === namespace && (!callback || listener[3] === callback)) {
-            listener[4]();
-            return false;
-          }
-
-          return true;
-        });
-      });
-    }
-
-    function dispatch(target, type, detail) {
-      var e;
-      var bubbles = true;
-
-      if (typeof CustomEvent === "function") {
-        e = new CustomEvent(type, {
-          bubbles: bubbles,
-          detail: detail
-        });
-      } else {
-        e = document.createEvent("CustomEvent");
-        e.initCustomEvent(type, bubbles, false, detail);
-      }
-
-      target.dispatchEvent(e);
-      return e;
-    }
-
-    function forEachEvent(targets, events, iteratee) {
-      forEach(targets, function (target) {
-        target && forEach(events, function (events2) {
-          events2.split(" ").forEach(function (eventNS) {
-            var fragment = eventNS.split(".");
-            iteratee(target, fragment[0], fragment[1]);
-          });
-        });
-      });
-    }
-
-    function destroy() {
-      listeners.forEach(function (data) {
-        data[4]();
-      });
-      empty(listeners);
-    }
-
-    return {
-      bind: bind,
-      unbind: unbind,
-      dispatch: dispatch,
-      destroy: destroy
-    };
-  }
-
-  var EVENT_MOUNTED = "mounted";
-  var EVENT_READY = "ready";
-  var EVENT_MOVE = "move";
-  var EVENT_MOVED = "moved";
-  var EVENT_CLICK = "click";
-  var EVENT_ACTIVE = "active";
-  var EVENT_INACTIVE = "inactive";
-  var EVENT_VISIBLE = "visible";
-  var EVENT_HIDDEN = "hidden";
-  var EVENT_REFRESH = "refresh";
-  var EVENT_UPDATED = "updated";
-  var EVENT_RESIZE = "resize";
-  var EVENT_RESIZED = "resized";
-  var EVENT_DRAG = "drag";
-  var EVENT_DRAGGING = "dragging";
-  var EVENT_DRAGGED = "dragged";
-  var EVENT_SCROLL = "scroll";
-  var EVENT_SCROLLED = "scrolled";
-  var EVENT_OVERFLOW = "overflow";
-  var EVENT_DESTROY = "destroy";
-  var EVENT_ARROWS_MOUNTED = "arrows:mounted";
-  var EVENT_ARROWS_UPDATED = "arrows:updated";
-  var EVENT_PAGINATION_MOUNTED = "pagination:mounted";
-  var EVENT_PAGINATION_UPDATED = "pagination:updated";
-  var EVENT_NAVIGATION_MOUNTED = "navigation:mounted";
-  var EVENT_AUTOPLAY_PLAY = "autoplay:play";
-  var EVENT_AUTOPLAY_PLAYING = "autoplay:playing";
-  var EVENT_AUTOPLAY_PAUSE = "autoplay:pause";
-  var EVENT_LAZYLOAD_LOADED = "lazyload:loaded";
-  var EVENT_SLIDE_KEYDOWN = "sk";
-  var EVENT_SHIFTED = "sh";
-  var EVENT_END_INDEX_CHANGED = "ei";
-
-  function EventInterface(Splide2) {
-    var bus = Splide2 ? Splide2.event.bus : document.createDocumentFragment();
-    var binder = EventBinder();
-
-    function on(events, callback) {
-      binder.bind(bus, toArray(events).join(" "), function (e) {
-        callback.apply(callback, isArray(e.detail) ? e.detail : []);
-      });
-    }
-
-    function emit(event) {
-      binder.dispatch(bus, event, slice(arguments, 1));
-    }
-
-    if (Splide2) {
-      Splide2.event.on(EVENT_DESTROY, binder.destroy);
-    }
-
-    return assign(binder, {
-      bus: bus,
-      on: on,
-      off: apply(binder.unbind, bus),
-      emit: emit
-    });
-  }
-
-  function RequestInterval(interval, onInterval, onUpdate, limit) {
-    var now = Date.now;
-    var startTime;
-    var rate = 0;
-    var id;
-    var paused = true;
-    var count = 0;
-
-    function update() {
-      if (!paused) {
-        rate = interval ? min((now() - startTime) / interval, 1) : 1;
-        onUpdate && onUpdate(rate);
-
-        if (rate >= 1) {
-          onInterval();
-          startTime = now();
-
-          if (limit && ++count >= limit) {
-            return pause();
-          }
-        }
-
-        id = raf(update);
-      }
-    }
-
-    function start(resume) {
-      resume || cancel();
-      startTime = now() - (resume ? rate * interval : 0);
-      paused = false;
-      id = raf(update);
-    }
-
-    function pause() {
-      paused = true;
-    }
-
-    function rewind() {
-      startTime = now();
-      rate = 0;
-
-      if (onUpdate) {
-        onUpdate(rate);
-      }
-    }
-
-    function cancel() {
-      id && cancelAnimationFrame(id);
-      rate = 0;
-      id = 0;
-      paused = true;
-    }
-
-    function set(time) {
-      interval = time;
-    }
-
-    function isPaused() {
-      return paused;
-    }
-
-    return {
-      start: start,
-      rewind: rewind,
-      pause: pause,
-      cancel: cancel,
-      set: set,
-      isPaused: isPaused
-    };
-  }
-
-  function State(initialState) {
-    var state = initialState;
-
-    function set(value) {
-      state = value;
-    }
-
-    function is(states) {
-      return includes(toArray(states), state);
-    }
-
-    return {
-      set: set,
-      is: is
-    };
-  }
-
-  function Throttle(func, duration) {
-    var interval = RequestInterval(duration || 0, func, null, 1);
-    return function () {
-      interval.isPaused() && interval.start();
-    };
-  }
-
-  function Media(Splide2, Components2, options) {
-    var state = Splide2.state;
-    var breakpoints = options.breakpoints || {};
-    var reducedMotion = options.reducedMotion || {};
-    var binder = EventBinder();
-    var queries = [];
-
-    function setup() {
-      var isMin = options.mediaQuery === "min";
-      ownKeys(breakpoints).sort(function (n, m) {
-        return isMin ? +n - +m : +m - +n;
-      }).forEach(function (key) {
-        register(breakpoints[key], "(" + (isMin ? "min" : "max") + "-width:" + key + "px)");
-      });
-      register(reducedMotion, MEDIA_PREFERS_REDUCED_MOTION);
-      update();
-    }
-
-    function destroy(completely) {
-      if (completely) {
-        binder.destroy();
-      }
-    }
-
-    function register(options2, query) {
-      var queryList = matchMedia(query);
-      binder.bind(queryList, "change", update);
-      queries.push([options2, queryList]);
-    }
-
-    function update() {
-      var destroyed = state.is(DESTROYED);
-      var direction = options.direction;
-      var merged = queries.reduce(function (merged2, entry) {
-        return merge(merged2, entry[1].matches ? entry[0] : {});
-      }, {});
-      omit(options);
-      set(merged);
-
-      if (options.destroy) {
-        Splide2.destroy(options.destroy === "completely");
-      } else if (destroyed) {
-        destroy(true);
-        Splide2.mount();
-      } else {
-        direction !== options.direction && Splide2.refresh();
-      }
-    }
-
-    function reduce(enable) {
-      if (matchMedia(MEDIA_PREFERS_REDUCED_MOTION).matches) {
-        enable ? merge(options, reducedMotion) : omit(options, ownKeys(reducedMotion));
-      }
-    }
-
-    function set(opts, base, notify) {
-      merge(options, opts);
-      base && merge(Object.getPrototypeOf(options), opts);
-
-      if (notify || !state.is(CREATED)) {
-        Splide2.emit(EVENT_UPDATED, options);
-      }
-    }
-
-    return {
-      setup: setup,
-      destroy: destroy,
-      reduce: reduce,
-      set: set
-    };
-  }
-
-  var ARROW = "Arrow";
-  var ARROW_LEFT = ARROW + "Left";
-  var ARROW_RIGHT = ARROW + "Right";
-  var ARROW_UP = ARROW + "Up";
-  var ARROW_DOWN = ARROW + "Down";
-  var RTL = "rtl";
-  var TTB = "ttb";
-  var ORIENTATION_MAP = {
-    width: ["height"],
-    left: ["top", "right"],
-    right: ["bottom", "left"],
-    x: ["y"],
-    X: ["Y"],
-    Y: ["X"],
-    ArrowLeft: [ARROW_UP, ARROW_RIGHT],
-    ArrowRight: [ARROW_DOWN, ARROW_LEFT]
-  };
-
-  function Direction(Splide2, Components2, options) {
-    function resolve(prop, axisOnly, direction) {
-      direction = direction || options.direction;
-      var index = direction === RTL && !axisOnly ? 1 : direction === TTB ? 0 : -1;
-      return ORIENTATION_MAP[prop] && ORIENTATION_MAP[prop][index] || prop.replace(/width|left|right/i, function (match, offset) {
-        var replacement = ORIENTATION_MAP[match.toLowerCase()][index] || match;
-        return offset > 0 ? replacement.charAt(0).toUpperCase() + replacement.slice(1) : replacement;
-      });
-    }
-
-    function orient(value) {
-      return value * (options.direction === RTL ? 1 : -1);
-    }
-
-    return {
-      resolve: resolve,
-      orient: orient
-    };
-  }
-
-  var ROLE = "role";
-  var TAB_INDEX = "tabindex";
-  var DISABLED = "disabled";
-  var ARIA_PREFIX = "aria-";
-  var ARIA_CONTROLS = ARIA_PREFIX + "controls";
-  var ARIA_CURRENT = ARIA_PREFIX + "current";
-  var ARIA_SELECTED = ARIA_PREFIX + "selected";
-  var ARIA_LABEL = ARIA_PREFIX + "label";
-  var ARIA_LABELLEDBY = ARIA_PREFIX + "labelledby";
-  var ARIA_HIDDEN = ARIA_PREFIX + "hidden";
-  var ARIA_ORIENTATION = ARIA_PREFIX + "orientation";
-  var ARIA_ROLEDESCRIPTION = ARIA_PREFIX + "roledescription";
-  var ARIA_LIVE = ARIA_PREFIX + "live";
-  var ARIA_BUSY = ARIA_PREFIX + "busy";
-  var ARIA_ATOMIC = ARIA_PREFIX + "atomic";
-  var ALL_ATTRIBUTES = [ROLE, TAB_INDEX, DISABLED, ARIA_CONTROLS, ARIA_CURRENT, ARIA_LABEL, ARIA_LABELLEDBY, ARIA_HIDDEN, ARIA_ORIENTATION, ARIA_ROLEDESCRIPTION];
-  var CLASS_PREFIX = PROJECT_CODE + "__";
-  var STATUS_CLASS_PREFIX = "is-";
-  var CLASS_ROOT = PROJECT_CODE;
-  var CLASS_TRACK = CLASS_PREFIX + "track";
-  var CLASS_LIST = CLASS_PREFIX + "list";
-  var CLASS_SLIDE = CLASS_PREFIX + "slide";
-  var CLASS_CLONE = CLASS_SLIDE + "--clone";
-  var CLASS_CONTAINER = CLASS_SLIDE + "__container";
-  var CLASS_ARROWS = CLASS_PREFIX + "arrows";
-  var CLASS_ARROW = CLASS_PREFIX + "arrow";
-  var CLASS_ARROW_PREV = CLASS_ARROW + "--prev";
-  var CLASS_ARROW_NEXT = CLASS_ARROW + "--next";
-  var CLASS_PAGINATION = CLASS_PREFIX + "pagination";
-  var CLASS_PAGINATION_PAGE = CLASS_PAGINATION + "__page";
-  var CLASS_PROGRESS = CLASS_PREFIX + "progress";
-  var CLASS_PROGRESS_BAR = CLASS_PROGRESS + "__bar";
-  var CLASS_TOGGLE = CLASS_PREFIX + "toggle";
-  var CLASS_SPINNER = CLASS_PREFIX + "spinner";
-  var CLASS_SR = CLASS_PREFIX + "sr";
-  var CLASS_INITIALIZED = STATUS_CLASS_PREFIX + "initialized";
-  var CLASS_ACTIVE = STATUS_CLASS_PREFIX + "active";
-  var CLASS_PREV = STATUS_CLASS_PREFIX + "prev";
-  var CLASS_NEXT = STATUS_CLASS_PREFIX + "next";
-  var CLASS_VISIBLE = STATUS_CLASS_PREFIX + "visible";
-  var CLASS_LOADING = STATUS_CLASS_PREFIX + "loading";
-  var CLASS_FOCUS_IN = STATUS_CLASS_PREFIX + "focus-in";
-  var CLASS_OVERFLOW = STATUS_CLASS_PREFIX + "overflow";
-  var STATUS_CLASSES = [CLASS_ACTIVE, CLASS_VISIBLE, CLASS_PREV, CLASS_NEXT, CLASS_LOADING, CLASS_FOCUS_IN, CLASS_OVERFLOW];
-  var CLASSES = {
-    slide: CLASS_SLIDE,
-    clone: CLASS_CLONE,
-    arrows: CLASS_ARROWS,
-    arrow: CLASS_ARROW,
-    prev: CLASS_ARROW_PREV,
-    next: CLASS_ARROW_NEXT,
-    pagination: CLASS_PAGINATION,
-    page: CLASS_PAGINATION_PAGE,
-    spinner: CLASS_SPINNER
-  };
-
-  function closest(from, selector) {
-    if (isFunction(from.closest)) {
-      return from.closest(selector);
-    }
-
-    var elm = from;
-
-    while (elm && elm.nodeType === 1) {
-      if (matches(elm, selector)) {
-        break;
-      }
-
-      elm = elm.parentElement;
-    }
-
-    return elm;
-  }
-
-  var FRICTION = 5;
-  var LOG_INTERVAL = 200;
-  var POINTER_DOWN_EVENTS = "touchstart mousedown";
-  var POINTER_MOVE_EVENTS = "touchmove mousemove";
-  var POINTER_UP_EVENTS = "touchend touchcancel mouseup click";
-
-  function Elements(Splide2, Components2, options) {
-    var _EventInterface = EventInterface(Splide2),
-        on = _EventInterface.on,
-        bind = _EventInterface.bind;
-
-    var root = Splide2.root;
-    var i18n = options.i18n;
-    var elements = {};
-    var slides = [];
-    var rootClasses = [];
-    var trackClasses = [];
-    var track;
-    var list;
-    var isUsingKey;
-
-    function setup() {
-      collect();
-      init();
-      update();
-    }
-
-    function mount() {
-      on(EVENT_REFRESH, destroy);
-      on(EVENT_REFRESH, setup);
-      on(EVENT_UPDATED, update);
-      bind(document, POINTER_DOWN_EVENTS + " keydown", function (e) {
-        isUsingKey = e.type === "keydown";
-      }, {
-        capture: true
-      });
-      bind(root, "focusin", function () {
-        toggleClass(root, CLASS_FOCUS_IN, !!isUsingKey);
-      });
-    }
-
-    function destroy(completely) {
-      var attrs = ALL_ATTRIBUTES.concat("style");
-      empty(slides);
-      removeClass(root, rootClasses);
-      removeClass(track, trackClasses);
-      removeAttribute([track, list], attrs);
-      removeAttribute(root, completely ? attrs : ["style", ARIA_ROLEDESCRIPTION]);
-    }
-
-    function update() {
-      removeClass(root, rootClasses);
-      removeClass(track, trackClasses);
-      rootClasses = getClasses(CLASS_ROOT);
-      trackClasses = getClasses(CLASS_TRACK);
-      addClass(root, rootClasses);
-      addClass(track, trackClasses);
-      setAttribute(root, ARIA_LABEL, options.label);
-      setAttribute(root, ARIA_LABELLEDBY, options.labelledby);
-    }
-
-    function collect() {
-      track = find("." + CLASS_TRACK);
-      list = child(track, "." + CLASS_LIST);
-      assert(track && list, "A track/list element is missing.");
-      push(slides, children(list, "." + CLASS_SLIDE + ":not(." + CLASS_CLONE + ")"));
-      forOwn({
-        arrows: CLASS_ARROWS,
-        pagination: CLASS_PAGINATION,
-        prev: CLASS_ARROW_PREV,
-        next: CLASS_ARROW_NEXT,
-        bar: CLASS_PROGRESS_BAR,
-        toggle: CLASS_TOGGLE
-      }, function (className, key) {
-        elements[key] = find("." + className);
-      });
-      assign(elements, {
-        root: root,
-        track: track,
-        list: list,
-        slides: slides
-      });
-    }
-
-    function init() {
-      var id = root.id || uniqueId(PROJECT_CODE);
-      var role = options.role;
-      root.id = id;
-      track.id = track.id || id + "-track";
-      list.id = list.id || id + "-list";
-
-      if (!getAttribute(root, ROLE) && root.tagName !== "SECTION" && role) {
-        setAttribute(root, ROLE, role);
-      }
-
-      setAttribute(root, ARIA_ROLEDESCRIPTION, i18n.carousel);
-      setAttribute(list, ROLE, "presentation");
-    }
-
-    function find(selector) {
-      var elm = query(root, selector);
-      return elm && closest(elm, "." + CLASS_ROOT) === root ? elm : void 0;
-    }
-
-    function getClasses(base) {
-      return [base + "--" + options.type, base + "--" + options.direction, options.drag && base + "--draggable", options.isNavigation && base + "--nav", base === CLASS_ROOT && CLASS_ACTIVE];
-    }
-
-    return assign(elements, {
-      setup: setup,
-      mount: mount,
-      destroy: destroy
-    });
-  }
-
-  var SLIDE = "slide";
-  var LOOP = "loop";
-  var FADE = "fade";
-
-  function Slide$1(Splide2, index, slideIndex, slide) {
-    var event = EventInterface(Splide2);
-    var on = event.on,
-        emit = event.emit,
-        bind = event.bind;
-    var Components = Splide2.Components,
-        root = Splide2.root,
-        options = Splide2.options;
-    var isNavigation = options.isNavigation,
-        updateOnMove = options.updateOnMove,
-        i18n = options.i18n,
-        pagination = options.pagination,
-        slideFocus = options.slideFocus;
-    var resolve = Components.Direction.resolve;
-    var styles = getAttribute(slide, "style");
-    var label = getAttribute(slide, ARIA_LABEL);
-    var isClone = slideIndex > -1;
-    var container = child(slide, "." + CLASS_CONTAINER);
-    var destroyed;
-
-    function mount() {
-      if (!isClone) {
-        slide.id = root.id + "-slide" + pad(index + 1);
-        setAttribute(slide, ROLE, pagination ? "tabpanel" : "group");
-        setAttribute(slide, ARIA_ROLEDESCRIPTION, i18n.slide);
-        setAttribute(slide, ARIA_LABEL, label || format(i18n.slideLabel, [index + 1, Splide2.length]));
-      }
-
-      listen();
-    }
-
-    function listen() {
-      bind(slide, "click", apply(emit, EVENT_CLICK, self));
-      bind(slide, "keydown", apply(emit, EVENT_SLIDE_KEYDOWN, self));
-      on([EVENT_MOVED, EVENT_SHIFTED, EVENT_SCROLLED], update);
-      on(EVENT_NAVIGATION_MOUNTED, initNavigation);
-
-      if (updateOnMove) {
-        on(EVENT_MOVE, onMove);
-      }
-    }
-
-    function destroy() {
-      destroyed = true;
-      event.destroy();
-      removeClass(slide, STATUS_CLASSES);
-      removeAttribute(slide, ALL_ATTRIBUTES);
-      setAttribute(slide, "style", styles);
-      setAttribute(slide, ARIA_LABEL, label || "");
-    }
-
-    function initNavigation() {
-      var controls = Splide2.splides.map(function (target) {
-        var Slide2 = target.splide.Components.Slides.getAt(index);
-        return Slide2 ? Slide2.slide.id : "";
-      }).join(" ");
-      setAttribute(slide, ARIA_LABEL, format(i18n.slideX, (isClone ? slideIndex : index) + 1));
-      setAttribute(slide, ARIA_CONTROLS, controls);
-      setAttribute(slide, ROLE, slideFocus ? "button" : "");
-      slideFocus && removeAttribute(slide, ARIA_ROLEDESCRIPTION);
-    }
-
-    function onMove() {
-      if (!destroyed) {
-        update();
-      }
-    }
-
-    function update() {
-      if (!destroyed) {
-        var curr = Splide2.index;
-        updateActivity();
-        updateVisibility();
-        toggleClass(slide, CLASS_PREV, index === curr - 1);
-        toggleClass(slide, CLASS_NEXT, index === curr + 1);
-      }
-    }
-
-    function updateActivity() {
-      var active = isActive();
-
-      if (active !== hasClass(slide, CLASS_ACTIVE)) {
-        toggleClass(slide, CLASS_ACTIVE, active);
-        setAttribute(slide, ARIA_CURRENT, isNavigation && active || "");
-        emit(active ? EVENT_ACTIVE : EVENT_INACTIVE, self);
-      }
-    }
-
-    function updateVisibility() {
-      var visible = isVisible();
-      var hidden = !visible && (!isActive() || isClone);
-
-      if (!Splide2.state.is([MOVING, SCROLLING])) {
-        setAttribute(slide, ARIA_HIDDEN, hidden || "");
-      }
-
-      setAttribute(queryAll(slide, options.focusableNodes || ""), TAB_INDEX, hidden ? -1 : "");
-
-      if (slideFocus) {
-        setAttribute(slide, TAB_INDEX, hidden ? -1 : 0);
-      }
-
-      if (visible !== hasClass(slide, CLASS_VISIBLE)) {
-        toggleClass(slide, CLASS_VISIBLE, visible);
-        emit(visible ? EVENT_VISIBLE : EVENT_HIDDEN, self);
-      }
-
-      if (!visible && document.activeElement === slide) {
-        var Slide2 = Components.Slides.getAt(Splide2.index);
-        Slide2 && focus(Slide2.slide);
-      }
-    }
-
-    function style$1(prop, value, useContainer) {
-      style(useContainer && container || slide, prop, value);
-    }
-
-    function isActive() {
-      var curr = Splide2.index;
-      return curr === index || options.cloneStatus && curr === slideIndex;
-    }
-
-    function isVisible() {
-      if (Splide2.is(FADE)) {
-        return isActive();
-      }
-
-      var trackRect = rect(Components.Elements.track);
-      var slideRect = rect(slide);
-      var left = resolve("left", true);
-      var right = resolve("right", true);
-      return floor(trackRect[left]) <= ceil(slideRect[left]) && floor(slideRect[right]) <= ceil(trackRect[right]);
-    }
-
-    function isWithin(from, distance) {
-      var diff = abs(from - index);
-
-      if (!isClone && (options.rewind || Splide2.is(LOOP))) {
-        diff = min(diff, Splide2.length - diff);
-      }
-
-      return diff <= distance;
-    }
-
-    var self = {
-      index: index,
-      slideIndex: slideIndex,
-      slide: slide,
-      container: container,
-      isClone: isClone,
-      mount: mount,
-      destroy: destroy,
-      update: update,
-      style: style$1,
-      isWithin: isWithin
-    };
-    return self;
-  }
-
-  function Slides(Splide2, Components2, options) {
-    var _EventInterface2 = EventInterface(Splide2),
-        on = _EventInterface2.on,
-        emit = _EventInterface2.emit,
-        bind = _EventInterface2.bind;
-
-    var _Components2$Elements = Components2.Elements,
-        slides = _Components2$Elements.slides,
-        list = _Components2$Elements.list;
-    var Slides2 = [];
-
-    function mount() {
-      init();
-      on(EVENT_REFRESH, destroy);
-      on(EVENT_REFRESH, init);
-    }
-
-    function init() {
-      slides.forEach(function (slide, index) {
-        register(slide, index, -1);
-      });
-    }
-
-    function destroy() {
-      forEach$1(function (Slide2) {
-        Slide2.destroy();
-      });
-      empty(Slides2);
-    }
-
-    function update() {
-      forEach$1(function (Slide2) {
-        Slide2.update();
-      });
-    }
-
-    function register(slide, index, slideIndex) {
-      var object = Slide$1(Splide2, index, slideIndex, slide);
-      object.mount();
-      Slides2.push(object);
-      Slides2.sort(function (Slide1, Slide2) {
-        return Slide1.index - Slide2.index;
-      });
-    }
-
-    function get(excludeClones) {
-      return excludeClones ? filter(function (Slide2) {
-        return !Slide2.isClone;
-      }) : Slides2;
-    }
-
-    function getIn(page) {
-      var Controller = Components2.Controller;
-      var index = Controller.toIndex(page);
-      var max = Controller.hasFocus() ? 1 : options.perPage;
-      return filter(function (Slide2) {
-        return between(Slide2.index, index, index + max - 1);
-      });
-    }
-
-    function getAt(index) {
-      return filter(index)[0];
-    }
-
-    function add(items, index) {
-      forEach(items, function (slide) {
-        if (isString(slide)) {
-          slide = parseHtml(slide);
-        }
-
-        if (isHTMLElement(slide)) {
-          var ref = slides[index];
-          ref ? before(slide, ref) : append(list, slide);
-          addClass(slide, options.classes.slide);
-          observeImages(slide, apply(emit, EVENT_RESIZE));
-        }
-      });
-      emit(EVENT_REFRESH);
-    }
-
-    function remove$1(matcher) {
-      remove(filter(matcher).map(function (Slide2) {
-        return Slide2.slide;
-      }));
-      emit(EVENT_REFRESH);
-    }
-
-    function forEach$1(iteratee, excludeClones) {
-      get(excludeClones).forEach(iteratee);
-    }
-
-    function filter(matcher) {
-      return Slides2.filter(isFunction(matcher) ? matcher : function (Slide2) {
-        return isString(matcher) ? matches(Slide2.slide, matcher) : includes(toArray(matcher), Slide2.index);
-      });
-    }
-
-    function style(prop, value, useContainer) {
-      forEach$1(function (Slide2) {
-        Slide2.style(prop, value, useContainer);
-      });
-    }
-
-    function observeImages(elm, callback) {
-      var images = queryAll(elm, "img");
-      var length = images.length;
-
-      if (length) {
-        images.forEach(function (img) {
-          bind(img, "load error", function () {
-            if (! --length) {
-              callback();
-            }
-          });
-        });
-      } else {
-        callback();
-      }
-    }
-
-    function getLength(excludeClones) {
-      return excludeClones ? slides.length : Slides2.length;
-    }
-
-    function isEnough() {
-      return Slides2.length > options.perPage;
-    }
-
-    return {
-      mount: mount,
-      destroy: destroy,
-      update: update,
-      register: register,
-      get: get,
-      getIn: getIn,
-      getAt: getAt,
-      add: add,
-      remove: remove$1,
-      forEach: forEach$1,
-      filter: filter,
-      style: style,
-      getLength: getLength,
-      isEnough: isEnough
-    };
-  }
-
-  function Layout(Splide2, Components2, options) {
-    var _EventInterface3 = EventInterface(Splide2),
-        on = _EventInterface3.on,
-        bind = _EventInterface3.bind,
-        emit = _EventInterface3.emit;
-
-    var Slides = Components2.Slides;
-    var resolve = Components2.Direction.resolve;
-    var _Components2$Elements2 = Components2.Elements,
-        root = _Components2$Elements2.root,
-        track = _Components2$Elements2.track,
-        list = _Components2$Elements2.list;
-    var getAt = Slides.getAt,
-        styleSlides = Slides.style;
-    var vertical;
-    var rootRect;
-    var overflow;
-
-    function mount() {
-      init();
-      bind(window, "resize load", Throttle(apply(emit, EVENT_RESIZE)));
-      on([EVENT_UPDATED, EVENT_REFRESH], init);
-      on(EVENT_RESIZE, resize);
-    }
-
-    function init() {
-      vertical = options.direction === TTB;
-      style(root, "maxWidth", unit(options.width));
-      style(track, resolve("paddingLeft"), cssPadding(false));
-      style(track, resolve("paddingRight"), cssPadding(true));
-      resize(true);
-    }
-
-    function resize(force) {
-      var newRect = rect(root);
-
-      if (force || rootRect.width !== newRect.width || rootRect.height !== newRect.height) {
-        style(track, "height", cssTrackHeight());
-        styleSlides(resolve("marginRight"), unit(options.gap));
-        styleSlides("width", cssSlideWidth());
-        styleSlides("height", cssSlideHeight(), true);
-        rootRect = newRect;
-        emit(EVENT_RESIZED);
-
-        if (overflow !== (overflow = isOverflow())) {
-          toggleClass(root, CLASS_OVERFLOW, overflow);
-          emit(EVENT_OVERFLOW, overflow);
-        }
-      }
-    }
-
-    function cssPadding(right) {
-      var padding = options.padding;
-      var prop = resolve(right ? "right" : "left");
-      return padding && unit(padding[prop] || (isObject(padding) ? 0 : padding)) || "0px";
-    }
-
-    function cssTrackHeight() {
-      var height = "";
-
-      if (vertical) {
-        height = cssHeight();
-        assert(height, "height or heightRatio is missing.");
-        height = "calc(" + height + " - " + cssPadding(false) + " - " + cssPadding(true) + ")";
-      }
-
-      return height;
-    }
-
-    function cssHeight() {
-      return unit(options.height || rect(list).width * options.heightRatio);
-    }
-
-    function cssSlideWidth() {
-      return options.autoWidth ? null : unit(options.fixedWidth) || (vertical ? "" : cssSlideSize());
-    }
-
-    function cssSlideHeight() {
-      return unit(options.fixedHeight) || (vertical ? options.autoHeight ? null : cssSlideSize() : cssHeight());
-    }
-
-    function cssSlideSize() {
-      var gap = unit(options.gap);
-      return "calc((100%" + (gap && " + " + gap) + ")/" + (options.perPage || 1) + (gap && " - " + gap) + ")";
-    }
-
-    function listSize() {
-      return rect(list)[resolve("width")];
-    }
-
-    function slideSize(index, withoutGap) {
-      var Slide = getAt(index || 0);
-      return Slide ? rect(Slide.slide)[resolve("width")] + (withoutGap ? 0 : getGap()) : 0;
-    }
-
-    function totalSize(index, withoutGap) {
-      var Slide = getAt(index);
-
-      if (Slide) {
-        var right = rect(Slide.slide)[resolve("right")];
-        var left = rect(list)[resolve("left")];
-        return abs(right - left) + (withoutGap ? 0 : getGap());
-      }
-
-      return 0;
-    }
-
-    function sliderSize(withoutGap) {
-      return totalSize(Splide2.length - 1) - totalSize(0) + slideSize(0, withoutGap);
-    }
-
-    function getGap() {
-      var Slide = getAt(0);
-      return Slide && parseFloat(style(Slide.slide, resolve("marginRight"))) || 0;
-    }
-
-    function getPadding(right) {
-      return parseFloat(style(track, resolve("padding" + (right ? "Right" : "Left")))) || 0;
-    }
-
-    function isOverflow() {
-      return Splide2.is(FADE) || sliderSize(true) > listSize();
-    }
-
-    return {
-      mount: mount,
-      resize: resize,
-      listSize: listSize,
-      slideSize: slideSize,
-      sliderSize: sliderSize,
-      totalSize: totalSize,
-      getPadding: getPadding,
-      isOverflow: isOverflow
-    };
-  }
-
-  var MULTIPLIER = 2;
-
-  function Clones(Splide2, Components2, options) {
-    var event = EventInterface(Splide2);
-    var on = event.on;
-    var Elements = Components2.Elements,
-        Slides = Components2.Slides;
-    var resolve = Components2.Direction.resolve;
-    var clones = [];
-    var cloneCount;
-
-    function mount() {
-      on(EVENT_REFRESH, remount);
-      on([EVENT_UPDATED, EVENT_RESIZE], observe);
-
-      if (cloneCount = computeCloneCount()) {
-        generate(cloneCount);
-        Components2.Layout.resize(true);
-      }
-    }
-
-    function remount() {
-      destroy();
-      mount();
-    }
-
-    function destroy() {
-      remove(clones);
-      empty(clones);
-      event.destroy();
-    }
-
-    function observe() {
-      var count = computeCloneCount();
-
-      if (cloneCount !== count) {
-        if (cloneCount < count || !count) {
-          event.emit(EVENT_REFRESH);
-        }
-      }
-    }
-
-    function generate(count) {
-      var slides = Slides.get().slice();
-      var length = slides.length;
-
-      if (length) {
-        while (slides.length < count) {
-          push(slides, slides);
-        }
-
-        push(slides.slice(-count), slides.slice(0, count)).forEach(function (Slide, index) {
-          var isHead = index < count;
-          var clone = cloneDeep(Slide.slide, index);
-          isHead ? before(clone, slides[0].slide) : append(Elements.list, clone);
-          push(clones, clone);
-          Slides.register(clone, index - count + (isHead ? 0 : length), Slide.index);
-        });
-      }
-    }
-
-    function cloneDeep(elm, index) {
-      var clone = elm.cloneNode(true);
-      addClass(clone, options.classes.clone);
-      clone.id = Splide2.root.id + "-clone" + pad(index + 1);
-      return clone;
-    }
-
-    function computeCloneCount() {
-      var clones2 = options.clones;
-
-      if (!Splide2.is(LOOP)) {
-        clones2 = 0;
-      } else if (isUndefined(clones2)) {
-        var fixedSize = options[resolve("fixedWidth")] && Components2.Layout.slideSize(0);
-        var fixedCount = fixedSize && ceil(rect(Elements.track)[resolve("width")] / fixedSize);
-        clones2 = fixedCount || options[resolve("autoWidth")] && Splide2.length || options.perPage * MULTIPLIER;
-      }
-
-      return clones2;
-    }
-
-    return {
-      mount: mount,
-      destroy: destroy
-    };
-  }
-
-  function Move(Splide2, Components2, options) {
-    var _EventInterface4 = EventInterface(Splide2),
-        on = _EventInterface4.on,
-        emit = _EventInterface4.emit;
-
-    var set = Splide2.state.set;
-    var _Components2$Layout = Components2.Layout,
-        slideSize = _Components2$Layout.slideSize,
-        getPadding = _Components2$Layout.getPadding,
-        totalSize = _Components2$Layout.totalSize,
-        listSize = _Components2$Layout.listSize,
-        sliderSize = _Components2$Layout.sliderSize;
-    var _Components2$Directio = Components2.Direction,
-        resolve = _Components2$Directio.resolve,
-        orient = _Components2$Directio.orient;
-    var _Components2$Elements3 = Components2.Elements,
-        list = _Components2$Elements3.list,
-        track = _Components2$Elements3.track;
-    var Transition;
-
-    function mount() {
-      Transition = Components2.Transition;
-      on([EVENT_MOUNTED, EVENT_RESIZED, EVENT_UPDATED, EVENT_REFRESH], reposition);
-    }
-
-    function reposition() {
-      if (!Components2.Controller.isBusy()) {
-        Components2.Scroll.cancel();
-        jump(Splide2.index);
-        Components2.Slides.update();
-      }
-    }
-
-    function move(dest, index, prev, callback) {
-      if (dest !== index && canShift(dest > prev)) {
-        cancel();
-        translate(shift(getPosition(), dest > prev), true);
-      }
-
-      set(MOVING);
-      emit(EVENT_MOVE, index, prev, dest);
-      Transition.start(index, function () {
-        set(IDLE);
-        emit(EVENT_MOVED, index, prev, dest);
-        callback && callback();
-      });
-    }
-
-    function jump(index) {
-      translate(toPosition(index, true));
-    }
-
-    function translate(position, preventLoop) {
-      if (!Splide2.is(FADE)) {
-        var destination = preventLoop ? position : loop(position);
-        style(list, "transform", "translate" + resolve("X") + "(" + destination + "px)");
-        position !== destination && emit(EVENT_SHIFTED);
-      }
-    }
-
-    function loop(position) {
-      if (Splide2.is(LOOP)) {
-        var index = toIndex(position);
-        var exceededMax = index > Components2.Controller.getEnd();
-        var exceededMin = index < 0;
-
-        if (exceededMin || exceededMax) {
-          position = shift(position, exceededMax);
-        }
-      }
-
-      return position;
-    }
-
-    function shift(position, backwards) {
-      var excess = position - getLimit(backwards);
-      var size = sliderSize();
-      position -= orient(size * (ceil(abs(excess) / size) || 1)) * (backwards ? 1 : -1);
-      return position;
-    }
-
-    function cancel() {
-      translate(getPosition(), true);
-      Transition.cancel();
-    }
-
-    function toIndex(position) {
-      var Slides = Components2.Slides.get();
-      var index = 0;
-      var minDistance = Infinity;
-
-      for (var i = 0; i < Slides.length; i++) {
-        var slideIndex = Slides[i].index;
-        var distance = abs(toPosition(slideIndex, true) - position);
-
-        if (distance <= minDistance) {
-          minDistance = distance;
-          index = slideIndex;
-        } else {
-          break;
-        }
-      }
-
-      return index;
-    }
-
-    function toPosition(index, trimming) {
-      var position = orient(totalSize(index - 1) - offset(index));
-      return trimming ? trim(position) : position;
-    }
-
-    function getPosition() {
-      var left = resolve("left");
-      return rect(list)[left] - rect(track)[left] + orient(getPadding(false));
-    }
-
-    function trim(position) {
-      if (options.trimSpace && Splide2.is(SLIDE)) {
-        position = clamp(position, 0, orient(sliderSize(true) - listSize()));
-      }
-
-      return position;
-    }
-
-    function offset(index) {
-      var focus = options.focus;
-      return focus === "center" ? (listSize() - slideSize(index, true)) / 2 : +focus * slideSize(index) || 0;
-    }
-
-    function getLimit(max) {
-      return toPosition(max ? Components2.Controller.getEnd() : 0, !!options.trimSpace);
-    }
-
-    function canShift(backwards) {
-      var shifted = orient(shift(getPosition(), backwards));
-      return backwards ? shifted >= 0 : shifted <= list[resolve("scrollWidth")] - rect(track)[resolve("width")];
-    }
-
-    function exceededLimit(max, position) {
-      position = isUndefined(position) ? getPosition() : position;
-      var exceededMin = max !== true && orient(position) < orient(getLimit(false));
-      var exceededMax = max !== false && orient(position) > orient(getLimit(true));
-      return exceededMin || exceededMax;
-    }
-
-    return {
-      mount: mount,
-      move: move,
-      jump: jump,
-      translate: translate,
-      shift: shift,
-      cancel: cancel,
-      toIndex: toIndex,
-      toPosition: toPosition,
-      getPosition: getPosition,
-      getLimit: getLimit,
-      exceededLimit: exceededLimit,
-      reposition: reposition
-    };
-  }
-
-  function Controller(Splide2, Components2, options) {
-    var _EventInterface5 = EventInterface(Splide2),
-        on = _EventInterface5.on,
-        emit = _EventInterface5.emit;
-
-    var Move = Components2.Move;
-    var getPosition = Move.getPosition,
-        getLimit = Move.getLimit,
-        toPosition = Move.toPosition;
-    var _Components2$Slides = Components2.Slides,
-        isEnough = _Components2$Slides.isEnough,
-        getLength = _Components2$Slides.getLength;
-    var omitEnd = options.omitEnd;
-    var isLoop = Splide2.is(LOOP);
-    var isSlide = Splide2.is(SLIDE);
-    var getNext = apply(getAdjacent, false);
-    var getPrev = apply(getAdjacent, true);
-    var currIndex = options.start || 0;
-    var endIndex;
-    var prevIndex = currIndex;
-    var slideCount;
-    var perMove;
-    var perPage;
-
-    function mount() {
-      init();
-      on([EVENT_UPDATED, EVENT_REFRESH, EVENT_END_INDEX_CHANGED], init);
-      on(EVENT_RESIZED, onResized);
-    }
-
-    function init() {
-      slideCount = getLength(true);
-      perMove = options.perMove;
-      perPage = options.perPage;
-      endIndex = getEnd();
-      var index = clamp(currIndex, 0, omitEnd ? endIndex : slideCount - 1);
-
-      if (index !== currIndex) {
-        currIndex = index;
-        Move.reposition();
-      }
-    }
-
-    function onResized() {
-      if (endIndex !== getEnd()) {
-        emit(EVENT_END_INDEX_CHANGED);
-      }
-    }
-
-    function go(control, allowSameIndex, callback) {
-      if (!isBusy()) {
-        var dest = parse(control);
-        var index = loop(dest);
-
-        if (index > -1 && (allowSameIndex || index !== currIndex)) {
-          setIndex(index);
-          Move.move(dest, index, prevIndex, callback);
-        }
-      }
-    }
-
-    function scroll(destination, duration, snap, callback) {
-      Components2.Scroll.scroll(destination, duration, snap, function () {
-        var index = loop(Move.toIndex(getPosition()));
-        setIndex(omitEnd ? min(index, endIndex) : index);
-        callback && callback();
-      });
-    }
-
-    function parse(control) {
-      var index = currIndex;
-
-      if (isString(control)) {
-        var _ref = control.match(/([+\-<>])(\d+)?/) || [],
-            indicator = _ref[1],
-            number = _ref[2];
-
-        if (indicator === "+" || indicator === "-") {
-          index = computeDestIndex(currIndex + +("" + indicator + (+number || 1)), currIndex);
-        } else if (indicator === ">") {
-          index = number ? toIndex(+number) : getNext(true);
-        } else if (indicator === "<") {
-          index = getPrev(true);
-        }
-      } else {
-        index = isLoop ? control : clamp(control, 0, endIndex);
-      }
-
-      return index;
-    }
-
-    function getAdjacent(prev, destination) {
-      var number = perMove || (hasFocus() ? 1 : perPage);
-      var dest = computeDestIndex(currIndex + number * (prev ? -1 : 1), currIndex, !(perMove || hasFocus()));
-
-      if (dest === -1 && isSlide) {
-        if (!approximatelyEqual(getPosition(), getLimit(!prev), 1)) {
-          return prev ? 0 : endIndex;
-        }
-      }
-
-      return destination ? dest : loop(dest);
-    }
-
-    function computeDestIndex(dest, from, snapPage) {
-      if (isEnough() || hasFocus()) {
-        var index = computeMovableDestIndex(dest);
-
-        if (index !== dest) {
-          from = dest;
-          dest = index;
-          snapPage = false;
-        }
-
-        if (dest < 0 || dest > endIndex) {
-          if (!perMove && (between(0, dest, from, true) || between(endIndex, from, dest, true))) {
-            dest = toIndex(toPage(dest));
-          } else {
-            if (isLoop) {
-              dest = snapPage ? dest < 0 ? -(slideCount % perPage || perPage) : slideCount : dest;
-            } else if (options.rewind) {
-              dest = dest < 0 ? endIndex : 0;
-            } else {
-              dest = -1;
-            }
-          }
-        } else {
-          if (snapPage && dest !== from) {
-            dest = toIndex(toPage(from) + (dest < from ? -1 : 1));
-          }
-        }
-      } else {
-        dest = -1;
-      }
-
-      return dest;
-    }
-
-    function computeMovableDestIndex(dest) {
-      if (isSlide && options.trimSpace === "move" && dest !== currIndex) {
-        var position = getPosition();
-
-        while (position === toPosition(dest, true) && between(dest, 0, Splide2.length - 1, !options.rewind)) {
-          dest < currIndex ? --dest : ++dest;
-        }
-      }
-
-      return dest;
-    }
-
-    function loop(index) {
-      return isLoop ? (index + slideCount) % slideCount || 0 : index;
-    }
-
-    function getEnd() {
-      var end = slideCount - (hasFocus() || isLoop && perMove ? 1 : perPage);
-
-      while (omitEnd && end-- > 0) {
-        if (toPosition(slideCount - 1, true) !== toPosition(end, true)) {
-          end++;
-          break;
-        }
-      }
-
-      return clamp(end, 0, slideCount - 1);
-    }
-
-    function toIndex(page) {
-      return clamp(hasFocus() ? page : perPage * page, 0, endIndex);
-    }
-
-    function toPage(index) {
-      return hasFocus() ? min(index, endIndex) : floor((index >= endIndex ? slideCount - 1 : index) / perPage);
-    }
-
-    function toDest(destination) {
-      var closest = Move.toIndex(destination);
-      return isSlide ? clamp(closest, 0, endIndex) : closest;
-    }
-
-    function setIndex(index) {
-      if (index !== currIndex) {
-        prevIndex = currIndex;
-        currIndex = index;
-      }
-    }
-
-    function getIndex(prev) {
-      return prev ? prevIndex : currIndex;
-    }
-
-    function hasFocus() {
-      return !isUndefined(options.focus) || options.isNavigation;
-    }
-
-    function isBusy() {
-      return Splide2.state.is([MOVING, SCROLLING]) && !!options.waitForTransition;
-    }
-
-    return {
-      mount: mount,
-      go: go,
-      scroll: scroll,
-      getNext: getNext,
-      getPrev: getPrev,
-      getAdjacent: getAdjacent,
-      getEnd: getEnd,
-      setIndex: setIndex,
-      getIndex: getIndex,
-      toIndex: toIndex,
-      toPage: toPage,
-      toDest: toDest,
-      hasFocus: hasFocus,
-      isBusy: isBusy
-    };
-  }
-
-  var XML_NAME_SPACE = "http://www.w3.org/2000/svg";
-  var PATH = "m15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z";
-  var SIZE = 40;
-
-  function Arrows(Splide2, Components2, options) {
-    var event = EventInterface(Splide2);
-    var on = event.on,
-        bind = event.bind,
-        emit = event.emit;
-    var classes = options.classes,
-        i18n = options.i18n;
-    var Elements = Components2.Elements,
-        Controller = Components2.Controller;
-    var placeholder = Elements.arrows,
-        track = Elements.track;
-    var wrapper = placeholder;
-    var prev = Elements.prev;
-    var next = Elements.next;
-    var created;
-    var wrapperClasses;
-    var arrows = {};
-
-    function mount() {
-      init();
-      on(EVENT_UPDATED, remount);
-    }
-
-    function remount() {
-      destroy();
-      mount();
-    }
-
-    function init() {
-      var enabled = options.arrows;
-
-      if (enabled && !(prev && next)) {
-        createArrows();
-      }
-
-      if (prev && next) {
-        assign(arrows, {
-          prev: prev,
-          next: next
-        });
-        display(wrapper, enabled ? "" : "none");
-        addClass(wrapper, wrapperClasses = CLASS_ARROWS + "--" + options.direction);
-
-        if (enabled) {
-          listen();
-          update();
-          setAttribute([prev, next], ARIA_CONTROLS, track.id);
-          emit(EVENT_ARROWS_MOUNTED, prev, next);
-        }
-      }
-    }
-
-    function destroy() {
-      event.destroy();
-      removeClass(wrapper, wrapperClasses);
-
-      if (created) {
-        remove(placeholder ? [prev, next] : wrapper);
-        prev = next = null;
-      } else {
-        removeAttribute([prev, next], ALL_ATTRIBUTES);
-      }
-    }
-
-    function listen() {
-      on([EVENT_MOUNTED, EVENT_MOVED, EVENT_REFRESH, EVENT_SCROLLED, EVENT_END_INDEX_CHANGED], update);
-      bind(next, "click", apply(go, ">"));
-      bind(prev, "click", apply(go, "<"));
-    }
-
-    function go(control) {
-      Controller.go(control, true);
-    }
-
-    function createArrows() {
-      wrapper = placeholder || create("div", classes.arrows);
-      prev = createArrow(true);
-      next = createArrow(false);
-      created = true;
-      append(wrapper, [prev, next]);
-      !placeholder && before(wrapper, track);
-    }
-
-    function createArrow(prev2) {
-      var arrow = "<button class=\"" + classes.arrow + " " + (prev2 ? classes.prev : classes.next) + "\" type=\"button\"><svg xmlns=\"" + XML_NAME_SPACE + "\" viewBox=\"0 0 " + SIZE + " " + SIZE + "\" width=\"" + SIZE + "\" height=\"" + SIZE + "\" focusable=\"false\"><path d=\"" + (options.arrowPath || PATH) + "\" />";
-      return parseHtml(arrow);
-    }
-
-    function update() {
-      if (prev && next) {
-        var index = Splide2.index;
-        var prevIndex = Controller.getPrev();
-        var nextIndex = Controller.getNext();
-        var prevLabel = prevIndex > -1 && index < prevIndex ? i18n.last : i18n.prev;
-        var nextLabel = nextIndex > -1 && index > nextIndex ? i18n.first : i18n.next;
-        prev.disabled = prevIndex < 0;
-        next.disabled = nextIndex < 0;
-        setAttribute(prev, ARIA_LABEL, prevLabel);
-        setAttribute(next, ARIA_LABEL, nextLabel);
-        emit(EVENT_ARROWS_UPDATED, prev, next, prevIndex, nextIndex);
-      }
-    }
-
-    return {
-      arrows: arrows,
-      mount: mount,
-      destroy: destroy,
-      update: update
-    };
-  }
-
-  var INTERVAL_DATA_ATTRIBUTE = DATA_ATTRIBUTE + "-interval";
-
-  function Autoplay(Splide2, Components2, options) {
-    var _EventInterface6 = EventInterface(Splide2),
-        on = _EventInterface6.on,
-        bind = _EventInterface6.bind,
-        emit = _EventInterface6.emit;
-
-    var interval = RequestInterval(options.interval, Splide2.go.bind(Splide2, ">"), onAnimationFrame);
-    var isPaused = interval.isPaused;
-    var Elements = Components2.Elements,
-        _Components2$Elements4 = Components2.Elements,
-        root = _Components2$Elements4.root,
-        toggle = _Components2$Elements4.toggle;
-    var autoplay = options.autoplay;
-    var hovered;
-    var focused;
-    var stopped = autoplay === "pause";
-
-    function mount() {
-      if (autoplay) {
-        listen();
-        toggle && setAttribute(toggle, ARIA_CONTROLS, Elements.track.id);
-        stopped || play();
-        update();
-      }
-    }
-
-    function listen() {
-      if (options.pauseOnHover) {
-        bind(root, "mouseenter mouseleave", function (e) {
-          hovered = e.type === "mouseenter";
-          autoToggle();
-        });
-      }
-
-      if (options.pauseOnFocus) {
-        bind(root, "focusin focusout", function (e) {
-          focused = e.type === "focusin";
-          autoToggle();
-        });
-      }
-
-      if (toggle) {
-        bind(toggle, "click", function () {
-          stopped ? play() : pause(true);
-        });
-      }
-
-      on([EVENT_MOVE, EVENT_SCROLL, EVENT_REFRESH], interval.rewind);
-      on(EVENT_MOVE, onMove);
-    }
-
-    function play() {
-      if (isPaused() && Components2.Slides.isEnough()) {
-        interval.start(!options.resetProgress);
-        focused = hovered = stopped = false;
-        update();
-        emit(EVENT_AUTOPLAY_PLAY);
-      }
-    }
-
-    function pause(stop) {
-      if (stop === void 0) {
-        stop = true;
-      }
-
-      stopped = !!stop;
-      update();
-
-      if (!isPaused()) {
-        interval.pause();
-        emit(EVENT_AUTOPLAY_PAUSE);
-      }
-    }
-
-    function autoToggle() {
-      if (!stopped) {
-        hovered || focused ? pause(false) : play();
-      }
-    }
-
-    function update() {
-      if (toggle) {
-        toggleClass(toggle, CLASS_ACTIVE, !stopped);
-        setAttribute(toggle, ARIA_LABEL, options.i18n[stopped ? "play" : "pause"]);
-      }
-    }
-
-    function onAnimationFrame(rate) {
-      var bar = Elements.bar;
-      bar && style(bar, "width", rate * 100 + "%");
-      emit(EVENT_AUTOPLAY_PLAYING, rate);
-    }
-
-    function onMove(index) {
-      var Slide = Components2.Slides.getAt(index);
-      interval.set(Slide && +getAttribute(Slide.slide, INTERVAL_DATA_ATTRIBUTE) || options.interval);
-    }
-
-    return {
-      mount: mount,
-      destroy: interval.cancel,
-      play: play,
-      pause: pause,
-      isPaused: isPaused
-    };
-  }
-
-  function Cover(Splide2, Components2, options) {
-    var _EventInterface7 = EventInterface(Splide2),
-        on = _EventInterface7.on;
-
-    function mount() {
-      if (options.cover) {
-        on(EVENT_LAZYLOAD_LOADED, apply(toggle, true));
-        on([EVENT_MOUNTED, EVENT_UPDATED, EVENT_REFRESH], apply(cover, true));
-      }
-    }
-
-    function cover(cover2) {
-      Components2.Slides.forEach(function (Slide) {
-        var img = child(Slide.container || Slide.slide, "img");
-
-        if (img && img.src) {
-          toggle(cover2, img, Slide);
-        }
-      });
-    }
-
-    function toggle(cover2, img, Slide) {
-      Slide.style("background", cover2 ? "center/cover no-repeat url(\"" + img.src + "\")" : "", true);
-      display(img, cover2 ? "none" : "");
-    }
-
-    return {
-      mount: mount,
-      destroy: apply(cover, false)
-    };
-  }
-
-  var BOUNCE_DIFF_THRESHOLD = 10;
-  var BOUNCE_DURATION = 600;
-  var FRICTION_FACTOR = 0.6;
-  var BASE_VELOCITY = 1.5;
-  var MIN_DURATION = 800;
-
-  function Scroll(Splide2, Components2, options) {
-    var _EventInterface8 = EventInterface(Splide2),
-        on = _EventInterface8.on,
-        emit = _EventInterface8.emit;
-
-    var set = Splide2.state.set;
-    var Move = Components2.Move;
-    var getPosition = Move.getPosition,
-        getLimit = Move.getLimit,
-        exceededLimit = Move.exceededLimit,
-        translate = Move.translate;
-    var isSlide = Splide2.is(SLIDE);
-    var interval;
-    var callback;
-    var friction = 1;
-
-    function mount() {
-      on(EVENT_MOVE, clear);
-      on([EVENT_UPDATED, EVENT_REFRESH], cancel);
-    }
-
-    function scroll(destination, duration, snap, onScrolled, noConstrain) {
-      var from = getPosition();
-      clear();
-
-      if (snap && (!isSlide || !exceededLimit())) {
-        var size = Components2.Layout.sliderSize();
-        var offset = sign(destination) * size * floor(abs(destination) / size) || 0;
-        destination = Move.toPosition(Components2.Controller.toDest(destination % size)) + offset;
-      }
-
-      var noDistance = approximatelyEqual(from, destination, 1);
-      friction = 1;
-      duration = noDistance ? 0 : duration || max(abs(destination - from) / BASE_VELOCITY, MIN_DURATION);
-      callback = onScrolled;
-      interval = RequestInterval(duration, onEnd, apply(update, from, destination, noConstrain), 1);
-      set(SCROLLING);
-      emit(EVENT_SCROLL);
-      interval.start();
-    }
-
-    function onEnd() {
-      set(IDLE);
-      callback && callback();
-      emit(EVENT_SCROLLED);
-    }
-
-    function update(from, to, noConstrain, rate) {
-      var position = getPosition();
-      var target = from + (to - from) * easing(rate);
-      var diff = (target - position) * friction;
-      translate(position + diff);
-
-      if (isSlide && !noConstrain && exceededLimit()) {
-        friction *= FRICTION_FACTOR;
-
-        if (abs(diff) < BOUNCE_DIFF_THRESHOLD) {
-          scroll(getLimit(exceededLimit(true)), BOUNCE_DURATION, false, callback, true);
-        }
-      }
-    }
-
-    function clear() {
-      if (interval) {
-        interval.cancel();
-      }
-    }
-
-    function cancel() {
-      if (interval && !interval.isPaused()) {
-        clear();
-        onEnd();
-      }
-    }
-
-    function easing(t) {
-      var easingFunc = options.easingFunc;
-      return easingFunc ? easingFunc(t) : 1 - Math.pow(1 - t, 4);
-    }
-
-    return {
-      mount: mount,
-      destroy: clear,
-      scroll: scroll,
-      cancel: cancel
-    };
-  }
-
-  var SCROLL_LISTENER_OPTIONS = {
-    passive: false,
-    capture: true
-  };
-
-  function Drag(Splide2, Components2, options) {
-    var _EventInterface9 = EventInterface(Splide2),
-        on = _EventInterface9.on,
-        emit = _EventInterface9.emit,
-        bind = _EventInterface9.bind,
-        unbind = _EventInterface9.unbind;
-
-    var state = Splide2.state;
-    var Move = Components2.Move,
-        Scroll = Components2.Scroll,
-        Controller = Components2.Controller,
-        track = Components2.Elements.track,
-        reduce = Components2.Media.reduce;
-    var _Components2$Directio2 = Components2.Direction,
-        resolve = _Components2$Directio2.resolve,
-        orient = _Components2$Directio2.orient;
-    var getPosition = Move.getPosition,
-        exceededLimit = Move.exceededLimit;
-    var basePosition;
-    var baseEvent;
-    var prevBaseEvent;
-    var isFree;
-    var dragging;
-    var exceeded = false;
-    var clickPrevented;
-    var disabled;
-    var target;
-
-    function mount() {
-      bind(track, POINTER_MOVE_EVENTS, noop, SCROLL_LISTENER_OPTIONS);
-      bind(track, POINTER_UP_EVENTS, noop, SCROLL_LISTENER_OPTIONS);
-      bind(track, POINTER_DOWN_EVENTS, onPointerDown, SCROLL_LISTENER_OPTIONS);
-      bind(track, "click", onClick, {
-        capture: true
-      });
-      bind(track, "dragstart", prevent);
-      on([EVENT_MOUNTED, EVENT_UPDATED], init);
-    }
-
-    function init() {
-      var drag = options.drag;
-      disable(!drag);
-      isFree = drag === "free";
-    }
-
-    function onPointerDown(e) {
-      clickPrevented = false;
-
-      if (!disabled) {
-        var isTouch = isTouchEvent(e);
-
-        if (isDraggable(e.target) && (isTouch || !e.button)) {
-          if (!Controller.isBusy()) {
-            target = isTouch ? track : window;
-            dragging = state.is([MOVING, SCROLLING]);
-            prevBaseEvent = null;
-            bind(target, POINTER_MOVE_EVENTS, onPointerMove, SCROLL_LISTENER_OPTIONS);
-            bind(target, POINTER_UP_EVENTS, onPointerUp, SCROLL_LISTENER_OPTIONS);
-            Move.cancel();
-            Scroll.cancel();
-            save(e);
-          } else {
-            prevent(e, true);
-          }
-        }
-      }
-    }
-
-    function onPointerMove(e) {
-      if (!state.is(DRAGGING)) {
-        state.set(DRAGGING);
-        emit(EVENT_DRAG);
-      }
-
-      if (e.cancelable) {
-        if (dragging) {
-          Move.translate(basePosition + constrain(diffCoord(e)));
-          var expired = diffTime(e) > LOG_INTERVAL;
-          var hasExceeded = exceeded !== (exceeded = exceededLimit());
-
-          if (expired || hasExceeded) {
-            save(e);
-          }
-
-          clickPrevented = true;
-          emit(EVENT_DRAGGING);
-          prevent(e);
-        } else if (isSliderDirection(e)) {
-          dragging = shouldStart(e);
-          prevent(e);
-        }
-      }
-    }
-
-    function onPointerUp(e) {
-      if (state.is(DRAGGING)) {
-        state.set(IDLE);
-        emit(EVENT_DRAGGED);
-      }
-
-      if (dragging) {
-        move(e);
-        prevent(e);
-      }
-
-      unbind(target, POINTER_MOVE_EVENTS, onPointerMove);
-      unbind(target, POINTER_UP_EVENTS, onPointerUp);
-      dragging = false;
-    }
-
-    function onClick(e) {
-      if (!disabled && clickPrevented) {
-        prevent(e, true);
-      }
-    }
-
-    function save(e) {
-      prevBaseEvent = baseEvent;
-      baseEvent = e;
-      basePosition = getPosition();
-    }
-
-    function move(e) {
-      var velocity = computeVelocity(e);
-      var destination = computeDestination(velocity);
-      var rewind = options.rewind && options.rewindByDrag;
-      reduce(false);
-
-      if (isFree) {
-        Controller.scroll(destination, 0, options.snap);
-      } else if (Splide2.is(FADE)) {
-        Controller.go(orient(sign(velocity)) < 0 ? rewind ? "<" : "-" : rewind ? ">" : "+");
-      } else if (Splide2.is(SLIDE) && exceeded && rewind) {
-        Controller.go(exceededLimit(true) ? ">" : "<");
-      } else {
-        Controller.go(Controller.toDest(destination), true);
-      }
-
-      reduce(true);
-    }
-
-    function shouldStart(e) {
-      var thresholds = options.dragMinThreshold;
-      var isObj = isObject(thresholds);
-      var mouse = isObj && thresholds.mouse || 0;
-      var touch = (isObj ? thresholds.touch : +thresholds) || 10;
-      return abs(diffCoord(e)) > (isTouchEvent(e) ? touch : mouse);
-    }
-
-    function isSliderDirection(e) {
-      return abs(diffCoord(e)) > abs(diffCoord(e, true));
-    }
-
-    function computeVelocity(e) {
-      if (Splide2.is(LOOP) || !exceeded) {
-        var time = diffTime(e);
-
-        if (time && time < LOG_INTERVAL) {
-          return diffCoord(e) / time;
-        }
-      }
-
-      return 0;
-    }
-
-    function computeDestination(velocity) {
-      return getPosition() + sign(velocity) * min(abs(velocity) * (options.flickPower || 600), isFree ? Infinity : Components2.Layout.listSize() * (options.flickMaxPages || 1));
-    }
-
-    function diffCoord(e, orthogonal) {
-      return coordOf(e, orthogonal) - coordOf(getBaseEvent(e), orthogonal);
-    }
-
-    function diffTime(e) {
-      return timeOf(e) - timeOf(getBaseEvent(e));
-    }
-
-    function getBaseEvent(e) {
-      return baseEvent === e && prevBaseEvent || baseEvent;
-    }
-
-    function coordOf(e, orthogonal) {
-      return (isTouchEvent(e) ? e.changedTouches[0] : e)["page" + resolve(orthogonal ? "Y" : "X")];
-    }
-
-    function constrain(diff) {
-      return diff / (exceeded && Splide2.is(SLIDE) ? FRICTION : 1);
-    }
-
-    function isDraggable(target2) {
-      var noDrag = options.noDrag;
-      return !matches(target2, "." + CLASS_PAGINATION_PAGE + ", ." + CLASS_ARROW) && (!noDrag || !matches(target2, noDrag));
-    }
-
-    function isTouchEvent(e) {
-      return typeof TouchEvent !== "undefined" && e instanceof TouchEvent;
-    }
-
-    function isDragging() {
-      return dragging;
-    }
-
-    function disable(value) {
-      disabled = value;
-    }
-
-    return {
-      mount: mount,
-      disable: disable,
-      isDragging: isDragging
-    };
-  }
-
-  var NORMALIZATION_MAP = {
-    Spacebar: " ",
-    Right: ARROW_RIGHT,
-    Left: ARROW_LEFT,
-    Up: ARROW_UP,
-    Down: ARROW_DOWN
-  };
-
-  function normalizeKey(key) {
-    key = isString(key) ? key : key.key;
-    return NORMALIZATION_MAP[key] || key;
-  }
-
-  var KEYBOARD_EVENT = "keydown";
-
-  function Keyboard(Splide2, Components2, options) {
-    var _EventInterface10 = EventInterface(Splide2),
-        on = _EventInterface10.on,
-        bind = _EventInterface10.bind,
-        unbind = _EventInterface10.unbind;
-
-    var root = Splide2.root;
-    var resolve = Components2.Direction.resolve;
-    var target;
-    var disabled;
-
-    function mount() {
-      init();
-      on(EVENT_UPDATED, destroy);
-      on(EVENT_UPDATED, init);
-      on(EVENT_MOVE, onMove);
-    }
-
-    function init() {
-      var keyboard = options.keyboard;
-
-      if (keyboard) {
-        target = keyboard === "global" ? window : root;
-        bind(target, KEYBOARD_EVENT, onKeydown);
-      }
-    }
-
-    function destroy() {
-      unbind(target, KEYBOARD_EVENT);
-    }
-
-    function disable(value) {
-      disabled = value;
-    }
-
-    function onMove() {
-      var _disabled = disabled;
-      disabled = true;
-      nextTick(function () {
-        disabled = _disabled;
-      });
-    }
-
-    function onKeydown(e) {
-      if (!disabled) {
-        var key = normalizeKey(e);
-
-        if (key === resolve(ARROW_LEFT)) {
-          Splide2.go("<");
-        } else if (key === resolve(ARROW_RIGHT)) {
-          Splide2.go(">");
-        }
-      }
-    }
-
-    return {
-      mount: mount,
-      destroy: destroy,
-      disable: disable
-    };
-  }
-
-  var SRC_DATA_ATTRIBUTE = DATA_ATTRIBUTE + "-lazy";
-  var SRCSET_DATA_ATTRIBUTE = SRC_DATA_ATTRIBUTE + "-srcset";
-  var IMAGE_SELECTOR = "[" + SRC_DATA_ATTRIBUTE + "], [" + SRCSET_DATA_ATTRIBUTE + "]";
-
-  function LazyLoad(Splide2, Components2, options) {
-    var _EventInterface11 = EventInterface(Splide2),
-        on = _EventInterface11.on,
-        off = _EventInterface11.off,
-        bind = _EventInterface11.bind,
-        emit = _EventInterface11.emit;
-
-    var isSequential = options.lazyLoad === "sequential";
-    var events = [EVENT_MOVED, EVENT_SCROLLED];
-    var entries = [];
-
-    function mount() {
-      if (options.lazyLoad) {
-        init();
-        on(EVENT_REFRESH, init);
-      }
-    }
-
-    function init() {
-      empty(entries);
-      register();
-
-      if (isSequential) {
-        loadNext();
-      } else {
-        off(events);
-        on(events, check);
-        check();
-      }
-    }
-
-    function register() {
-      Components2.Slides.forEach(function (Slide) {
-        queryAll(Slide.slide, IMAGE_SELECTOR).forEach(function (img) {
-          var src = getAttribute(img, SRC_DATA_ATTRIBUTE);
-          var srcset = getAttribute(img, SRCSET_DATA_ATTRIBUTE);
-
-          if (src !== img.src || srcset !== img.srcset) {
-            var className = options.classes.spinner;
-            var parent = img.parentElement;
-            var spinner = child(parent, "." + className) || create("span", className, parent);
-            entries.push([img, Slide, spinner]);
-            img.src || display(img, "none");
-          }
-        });
-      });
-    }
-
-    function check() {
-      entries = entries.filter(function (data) {
-        var distance = options.perPage * ((options.preloadPages || 1) + 1) - 1;
-        return data[1].isWithin(Splide2.index, distance) ? load(data) : true;
-      });
-      entries.length || off(events);
-    }
-
-    function load(data) {
-      var img = data[0];
-      addClass(data[1].slide, CLASS_LOADING);
-      bind(img, "load error", apply(onLoad, data));
-      setAttribute(img, "src", getAttribute(img, SRC_DATA_ATTRIBUTE));
-      setAttribute(img, "srcset", getAttribute(img, SRCSET_DATA_ATTRIBUTE));
-      removeAttribute(img, SRC_DATA_ATTRIBUTE);
-      removeAttribute(img, SRCSET_DATA_ATTRIBUTE);
-    }
-
-    function onLoad(data, e) {
-      var img = data[0],
-          Slide = data[1];
-      removeClass(Slide.slide, CLASS_LOADING);
-
-      if (e.type !== "error") {
-        remove(data[2]);
-        display(img, "");
-        emit(EVENT_LAZYLOAD_LOADED, img, Slide);
-        emit(EVENT_RESIZE);
-      }
-
-      isSequential && loadNext();
-    }
-
-    function loadNext() {
-      entries.length && load(entries.shift());
-    }
-
-    return {
-      mount: mount,
-      destroy: apply(empty, entries),
-      check: check
-    };
-  }
-
-  function Pagination(Splide2, Components2, options) {
-    var event = EventInterface(Splide2);
-    var on = event.on,
-        emit = event.emit,
-        bind = event.bind;
-    var Slides = Components2.Slides,
-        Elements = Components2.Elements,
-        Controller = Components2.Controller;
-    var hasFocus = Controller.hasFocus,
-        getIndex = Controller.getIndex,
-        go = Controller.go;
-    var resolve = Components2.Direction.resolve;
-    var placeholder = Elements.pagination;
-    var items = [];
-    var list;
-    var paginationClasses;
-
-    function mount() {
-      destroy();
-      on([EVENT_UPDATED, EVENT_REFRESH, EVENT_END_INDEX_CHANGED], mount);
-      var enabled = options.pagination;
-      placeholder && display(placeholder, enabled ? "" : "none");
-
-      if (enabled) {
-        on([EVENT_MOVE, EVENT_SCROLL, EVENT_SCROLLED], update);
-        createPagination();
-        update();
-        emit(EVENT_PAGINATION_MOUNTED, {
-          list: list,
-          items: items
-        }, getAt(Splide2.index));
-      }
-    }
-
-    function destroy() {
-      if (list) {
-        remove(placeholder ? slice(list.children) : list);
-        removeClass(list, paginationClasses);
-        empty(items);
-        list = null;
-      }
-
-      event.destroy();
-    }
-
-    function createPagination() {
-      var length = Splide2.length;
-      var classes = options.classes,
-          i18n = options.i18n,
-          perPage = options.perPage;
-      var max = hasFocus() ? Controller.getEnd() + 1 : ceil(length / perPage);
-      list = placeholder || create("ul", classes.pagination, Elements.track.parentElement);
-      addClass(list, paginationClasses = CLASS_PAGINATION + "--" + getDirection());
-      setAttribute(list, ROLE, "tablist");
-      setAttribute(list, ARIA_LABEL, i18n.select);
-      setAttribute(list, ARIA_ORIENTATION, getDirection() === TTB ? "vertical" : "");
-
-      for (var i = 0; i < max; i++) {
-        var li = create("li", null, list);
-        var button = create("button", {
-          class: classes.page,
-          type: "button"
-        }, li);
-        var controls = Slides.getIn(i).map(function (Slide) {
-          return Slide.slide.id;
-        });
-        var text = !hasFocus() && perPage > 1 ? i18n.pageX : i18n.slideX;
-        bind(button, "click", apply(onClick, i));
-
-        if (options.paginationKeyboard) {
-          bind(button, "keydown", apply(onKeydown, i));
-        }
-
-        setAttribute(li, ROLE, "presentation");
-        setAttribute(button, ROLE, "tab");
-        setAttribute(button, ARIA_CONTROLS, controls.join(" "));
-        setAttribute(button, ARIA_LABEL, format(text, i + 1));
-        setAttribute(button, TAB_INDEX, -1);
-        items.push({
-          li: li,
-          button: button,
-          page: i
-        });
-      }
-    }
-
-    function onClick(page) {
-      go(">" + page, true);
-    }
-
-    function onKeydown(page, e) {
-      var length = items.length;
-      var key = normalizeKey(e);
-      var dir = getDirection();
-      var nextPage = -1;
-
-      if (key === resolve(ARROW_RIGHT, false, dir)) {
-        nextPage = ++page % length;
-      } else if (key === resolve(ARROW_LEFT, false, dir)) {
-        nextPage = (--page + length) % length;
-      } else if (key === "Home") {
-        nextPage = 0;
-      } else if (key === "End") {
-        nextPage = length - 1;
-      }
-
-      var item = items[nextPage];
-
-      if (item) {
-        focus(item.button);
-        go(">" + nextPage);
-        prevent(e, true);
-      }
-    }
-
-    function getDirection() {
-      return options.paginationDirection || options.direction;
-    }
-
-    function getAt(index) {
-      return items[Controller.toPage(index)];
-    }
-
-    function update() {
-      var prev = getAt(getIndex(true));
-      var curr = getAt(getIndex());
-
-      if (prev) {
-        var button = prev.button;
-        removeClass(button, CLASS_ACTIVE);
-        removeAttribute(button, ARIA_SELECTED);
-        setAttribute(button, TAB_INDEX, -1);
-      }
-
-      if (curr) {
-        var _button = curr.button;
-        addClass(_button, CLASS_ACTIVE);
-        setAttribute(_button, ARIA_SELECTED, true);
-        setAttribute(_button, TAB_INDEX, "");
-      }
-
-      emit(EVENT_PAGINATION_UPDATED, {
-        list: list,
-        items: items
-      }, prev, curr);
-    }
-
-    return {
-      items: items,
-      mount: mount,
-      destroy: destroy,
-      getAt: getAt,
-      update: update
-    };
-  }
-
-  var TRIGGER_KEYS = [" ", "Enter"];
-
-  function Sync(Splide2, Components2, options) {
-    var isNavigation = options.isNavigation,
-        slideFocus = options.slideFocus;
-    var events = [];
-
-    function mount() {
-      Splide2.splides.forEach(function (target) {
-        if (!target.isParent) {
-          sync(Splide2, target.splide);
-          sync(target.splide, Splide2);
-        }
-      });
-
-      if (isNavigation) {
-        navigate();
-      }
-    }
-
-    function destroy() {
-      events.forEach(function (event) {
-        event.destroy();
-      });
-      empty(events);
-    }
-
-    function remount() {
-      destroy();
-      mount();
-    }
-
-    function sync(splide, target) {
-      var event = EventInterface(splide);
-      event.on(EVENT_MOVE, function (index, prev, dest) {
-        target.go(target.is(LOOP) ? dest : index);
-      });
-      events.push(event);
-    }
-
-    function navigate() {
-      var event = EventInterface(Splide2);
-      var on = event.on;
-      on(EVENT_CLICK, onClick);
-      on(EVENT_SLIDE_KEYDOWN, onKeydown);
-      on([EVENT_MOUNTED, EVENT_UPDATED], update);
-      events.push(event);
-      event.emit(EVENT_NAVIGATION_MOUNTED, Splide2.splides);
-    }
-
-    function update() {
-      setAttribute(Components2.Elements.list, ARIA_ORIENTATION, options.direction === TTB ? "vertical" : "");
-    }
-
-    function onClick(Slide) {
-      Splide2.go(Slide.index);
-    }
-
-    function onKeydown(Slide, e) {
-      if (includes(TRIGGER_KEYS, normalizeKey(e))) {
-        onClick(Slide);
-        prevent(e);
-      }
-    }
-
-    return {
-      setup: apply(Components2.Media.set, {
-        slideFocus: isUndefined(slideFocus) ? isNavigation : slideFocus
-      }, true),
-      mount: mount,
-      destroy: destroy,
-      remount: remount
-    };
-  }
-
-  function Wheel(Splide2, Components2, options) {
-    var _EventInterface12 = EventInterface(Splide2),
-        bind = _EventInterface12.bind;
-
-    var lastTime = 0;
-
-    function mount() {
-      if (options.wheel) {
-        bind(Components2.Elements.track, "wheel", onWheel, SCROLL_LISTENER_OPTIONS);
-      }
-    }
-
-    function onWheel(e) {
-      if (e.cancelable) {
-        var deltaY = e.deltaY;
-        var backwards = deltaY < 0;
-        var timeStamp = timeOf(e);
-
-        var _min = options.wheelMinThreshold || 0;
-
-        var sleep = options.wheelSleep || 0;
-
-        if (abs(deltaY) > _min && timeStamp - lastTime > sleep) {
-          Splide2.go(backwards ? "<" : ">");
-          lastTime = timeStamp;
-        }
-
-        shouldPrevent(backwards) && prevent(e);
-      }
-    }
-
-    function shouldPrevent(backwards) {
-      return !options.releaseWheel || Splide2.state.is(MOVING) || Components2.Controller.getAdjacent(backwards) !== -1;
-    }
-
-    return {
-      mount: mount
-    };
-  }
-
-  var SR_REMOVAL_DELAY = 90;
-
-  function Live(Splide2, Components2, options) {
-    var _EventInterface13 = EventInterface(Splide2),
-        on = _EventInterface13.on;
-
-    var track = Components2.Elements.track;
-    var enabled = options.live && !options.isNavigation;
-    var sr = create("span", CLASS_SR);
-    var interval = RequestInterval(SR_REMOVAL_DELAY, apply(toggle, false));
-
-    function mount() {
-      if (enabled) {
-        disable(!Components2.Autoplay.isPaused());
-        setAttribute(track, ARIA_ATOMIC, true);
-        sr.textContent = "\u2026";
-        on(EVENT_AUTOPLAY_PLAY, apply(disable, true));
-        on(EVENT_AUTOPLAY_PAUSE, apply(disable, false));
-        on([EVENT_MOVED, EVENT_SCROLLED], apply(toggle, true));
-      }
-    }
-
-    function toggle(active) {
-      setAttribute(track, ARIA_BUSY, active);
-
-      if (active) {
-        append(track, sr);
-        interval.start();
-      } else {
-        remove(sr);
-        interval.cancel();
-      }
-    }
-
-    function destroy() {
-      removeAttribute(track, [ARIA_LIVE, ARIA_ATOMIC, ARIA_BUSY]);
-      remove(sr);
-    }
-
-    function disable(disabled) {
-      if (enabled) {
-        setAttribute(track, ARIA_LIVE, disabled ? "off" : "polite");
-      }
-    }
-
-    return {
-      mount: mount,
-      disable: disable,
-      destroy: destroy
-    };
-  }
-
-  var ComponentConstructors = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    Media: Media,
-    Direction: Direction,
-    Elements: Elements,
-    Slides: Slides,
-    Layout: Layout,
-    Clones: Clones,
-    Move: Move,
-    Controller: Controller,
-    Arrows: Arrows,
-    Autoplay: Autoplay,
-    Cover: Cover,
-    Scroll: Scroll,
-    Drag: Drag,
-    Keyboard: Keyboard,
-    LazyLoad: LazyLoad,
-    Pagination: Pagination,
-    Sync: Sync,
-    Wheel: Wheel,
-    Live: Live
-  });
-  var I18N = {
-    prev: "Previous slide",
-    next: "Next slide",
-    first: "Go to first slide",
-    last: "Go to last slide",
-    slideX: "Go to slide %s",
-    pageX: "Go to page %s",
-    play: "Start autoplay",
-    pause: "Pause autoplay",
-    carousel: "carousel",
-    slide: "slide",
-    select: "Select a slide to show",
-    slideLabel: "%s of %s"
-  };
-  var DEFAULTS = {
-    type: "slide",
-    role: "region",
-    speed: 400,
-    perPage: 1,
-    cloneStatus: true,
-    arrows: true,
-    pagination: true,
-    paginationKeyboard: true,
-    interval: 5e3,
-    pauseOnHover: true,
-    pauseOnFocus: true,
-    resetProgress: true,
-    easing: "cubic-bezier(0.25, 1, 0.5, 1)",
-    drag: true,
-    direction: "ltr",
-    trimSpace: true,
-    focusableNodes: "a, button, textarea, input, select, iframe",
-    live: true,
-    classes: CLASSES,
-    i18n: I18N,
-    reducedMotion: {
-      speed: 0,
-      rewindSpeed: 0,
-      autoplay: "pause"
-    }
-  };
-
-  function Fade(Splide2, Components2, options) {
-    var Slides = Components2.Slides;
-
-    function mount() {
-      EventInterface(Splide2).on([EVENT_MOUNTED, EVENT_REFRESH], init);
-    }
-
-    function init() {
-      Slides.forEach(function (Slide) {
-        Slide.style("transform", "translateX(-" + 100 * Slide.index + "%)");
-      });
-    }
-
-    function start(index, done) {
-      Slides.style("transition", "opacity " + options.speed + "ms " + options.easing);
-      nextTick(done);
-    }
-
-    return {
-      mount: mount,
-      start: start,
-      cancel: noop
-    };
-  }
-
-  function Slide(Splide2, Components2, options) {
-    var Move = Components2.Move,
-        Controller = Components2.Controller,
-        Scroll = Components2.Scroll;
-    var list = Components2.Elements.list;
-    var transition = apply(style, list, "transition");
-    var endCallback;
-
-    function mount() {
-      EventInterface(Splide2).bind(list, "transitionend", function (e) {
-        if (e.target === list && endCallback) {
-          cancel();
-          endCallback();
-        }
-      });
-    }
-
-    function start(index, done) {
-      var destination = Move.toPosition(index, true);
-      var position = Move.getPosition();
-      var speed = getSpeed(index);
-
-      if (abs(destination - position) >= 1 && speed >= 1) {
-        if (options.useScroll) {
-          Scroll.scroll(destination, speed, false, done);
-        } else {
-          transition("transform " + speed + "ms " + options.easing);
-          Move.translate(destination, true);
-          endCallback = done;
-        }
-      } else {
-        Move.jump(index);
-        done();
-      }
-    }
-
-    function cancel() {
-      transition("");
-      Scroll.cancel();
-    }
-
-    function getSpeed(index) {
-      var rewindSpeed = options.rewindSpeed;
-
-      if (Splide2.is(SLIDE) && rewindSpeed) {
-        var prev = Controller.getIndex(true);
-        var end = Controller.getEnd();
-
-        if (prev === 0 && index >= end || prev >= end && index === 0) {
-          return rewindSpeed;
-        }
-      }
-
-      return options.speed;
-    }
-
-    return {
-      mount: mount,
-      start: start,
-      cancel: cancel
-    };
-  }
-
-  var _Splide = /*#__PURE__*/function () {
-    function _Splide(target, options) {
-      this.event = EventInterface();
-      this.Components = {};
-      this.state = State(CREATED);
-      this.splides = [];
-      this._o = {};
-      this._E = {};
-      var root = isString(target) ? query(document, target) : target;
-      assert(root, root + " is invalid.");
-      this.root = root;
-      options = merge({
-        label: getAttribute(root, ARIA_LABEL) || "",
-        labelledby: getAttribute(root, ARIA_LABELLEDBY) || ""
-      }, DEFAULTS, _Splide.defaults, options || {});
-
-      try {
-        merge(options, JSON.parse(getAttribute(root, DATA_ATTRIBUTE)));
-      } catch (e) {
-        assert(false, "Invalid JSON");
-      }
-
-      this._o = Object.create(merge({}, options));
-    }
-
-    var _proto = _Splide.prototype;
-
-    _proto.mount = function mount(Extensions, Transition) {
-      var _this = this;
-
-      var state = this.state,
-          Components2 = this.Components;
-      assert(state.is([CREATED, DESTROYED]), "Already mounted!");
-      state.set(CREATED);
-      this._C = Components2;
-      this._T = Transition || this._T || (this.is(FADE) ? Fade : Slide);
-      this._E = Extensions || this._E;
-      var Constructors = assign({}, ComponentConstructors, this._E, {
-        Transition: this._T
-      });
-      forOwn(Constructors, function (Component, key) {
-        var component = Component(_this, Components2, _this._o);
-        Components2[key] = component;
-        component.setup && component.setup();
-      });
-      forOwn(Components2, function (component) {
-        component.mount && component.mount();
-      });
-      this.emit(EVENT_MOUNTED);
-      addClass(this.root, CLASS_INITIALIZED);
-      state.set(IDLE);
-      this.emit(EVENT_READY);
-      return this;
-    };
-
-    _proto.sync = function sync(splide) {
-      this.splides.push({
-        splide: splide
-      });
-      splide.splides.push({
-        splide: this,
-        isParent: true
-      });
-
-      if (this.state.is(IDLE)) {
-        this._C.Sync.remount();
-
-        splide.Components.Sync.remount();
-      }
-
-      return this;
-    };
-
-    _proto.go = function go(control) {
-      this._C.Controller.go(control);
-
-      return this;
-    };
-
-    _proto.on = function on(events, callback) {
-      this.event.on(events, callback);
-      return this;
-    };
-
-    _proto.off = function off(events) {
-      this.event.off(events);
-      return this;
-    };
-
-    _proto.emit = function emit(event) {
-      var _this$event;
-
-      (_this$event = this.event).emit.apply(_this$event, [event].concat(slice(arguments, 1)));
-
-      return this;
-    };
-
-    _proto.add = function add(slides, index) {
-      this._C.Slides.add(slides, index);
-
-      return this;
-    };
-
-    _proto.remove = function remove(matcher) {
-      this._C.Slides.remove(matcher);
-
-      return this;
-    };
-
-    _proto.is = function is(type) {
-      return this._o.type === type;
-    };
-
-    _proto.refresh = function refresh() {
-      this.emit(EVENT_REFRESH);
-      return this;
-    };
-
-    _proto.destroy = function destroy(completely) {
-      if (completely === void 0) {
-        completely = true;
-      }
-
-      var event = this.event,
-          state = this.state;
-
-      if (state.is(CREATED)) {
-        EventInterface(this).on(EVENT_READY, this.destroy.bind(this, completely));
-      } else {
-        forOwn(this._C, function (component) {
-          component.destroy && component.destroy(completely);
-        }, true);
-        event.emit(EVENT_DESTROY);
-        event.destroy();
-        completely && empty(this.splides);
-        state.set(DESTROYED);
-      }
-
-      return this;
-    };
-
-    _createClass(_Splide, [{
-      key: "options",
-      get: function get() {
-        return this._o;
-      },
-      set: function set(options) {
-        this._C.Media.set(options, true, true);
-      }
-    }, {
-      key: "length",
-      get: function get() {
-        return this._C.Slides.getLength(true);
-      }
-    }, {
-      key: "index",
-      get: function get() {
-        return this._C.Controller.getIndex();
-      }
-    }]);
-
-    return _Splide;
-  }();
-
-  var Splide = _Splide;
-  Splide.defaults = {};
-  Splide.STATES = STATES;
-  return Splide;
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-  // Slider
-
-   // get width of each bsBreakpoint by --bs-breakpoint-xx
-   var getBreakpointWidth = function (breakpoint) {
-      var value = getComputedStyle(document.body).getPropertyValue("--splide-breakpoint-" + breakpoint);
-      return parseInt(value);
-    };
-    // get classnames that begin with "col-" from first child of each slider element
-  
-    var getColClasses = function ( element ) {
-      var classes = element.firstElementChild.classList;
-      var colClasses = [];
-      for (var i = 0; i < classes.length; i++) {
-        if (classes[i].startsWith("col-")) {
-          colClasses.push(classes[i]);
-        }
-      }
-      return colClasses;
-    };
-
-   // foreach column class, get the breakpoint and the number of columns
-    var getColBreakpoints = function ( element) {
-      var colBreakpoints = [];
-      var colClasses = getColClasses( element );
-
-      for (var i = 0; i < colClasses.length; i++) {
-        var colClass = colClasses[i];
-        var colClassParts = colClass.split("-");
-        var breakpoint = colClassParts[1];
-        var col = colClassParts[2];
-        colBreakpoints.push({
-          breakpoint: breakpoint,
-          col: col,
-        });
-
-      }
- 
-      return colBreakpoints;
-    };
-    
-    // based on column classes in bootstrap create splide breakpoint options
-    var getBreakpointOptions = function ( element ) {
-      var breakpointOptions = {};
-      var colBreakpoints = getColBreakpoints(element);
-
-      for (var i = 0; i < colBreakpoints.length; i++) {
-        var colBreakpoint = colBreakpoints[i];
-        var breakpoint = colBreakpoint.breakpoint;
-        var col = colBreakpoint.col;
-        var colnr = 12 / col;
-        var breakpointWidth = getBreakpointWidth(breakpoint);
-        var breakpointOption = {
-          perPage: colnr,
-          perMove: 1,
-        };
-        breakpointOptions[breakpointWidth] = breakpointOption;
-      }
-      return breakpointOptions;
-    };
-
-
-    var elms = document.getElementsByClassName( 'splide' );
-    for ( var i = 0; i < elms.length; i++ ) {
-
-
-      var elm = elms[i];
-      var children = elm.children;
-      var sliderElGutter = getComputedStyle(elm).getPropertyValue("--bs-gutter-x");
-      // get element width
-      var sliderElWidth = elm.offsetWidth;
-      // get total children width
-      var childrenWidth = 0;
-     
-      for (var j = 0; j < children.length; j++) {
-        childrenWidth += children[j].offsetWidth + parseInt(sliderElGutter) -1;
-      }
-      console.log(sliderElWidth);
-      console.log(childrenWidth);
-      if ( (sliderElWidth + 20) < childrenWidth ) {
-    
-      var options = {
-        type: "loop",
-        perPage: 4,
-        perMove: 1,
-        gap: sliderElGutter,
-        breakpoints: getBreakpointOptions(elm),
-      };
-      console.log(options);
-      // from each direct children of splide remove class "col-xx-xx"
-
-      console.log(children);
-      var colClasses = getColClasses(elm);
-      for (var j = 0; j < children.length; j++) {
-        var child = children[j];
-        console.log(j);
-        for (var k = 0; k < colClasses.length; k++) {
-          // for each child 
-          child.classList.remove(colClasses[k]);
-          child.classList.add("splide__slide");
-          console.log(colClasses[k]);
-        }
-      }
-
-      var splideTrack = document.createElement("div");
-      splideTrack.classList.add("splide__track");
-      var splideList = document.createElement("div");
-      splideList.classList.add("splide__list");
-      splideTrack.appendChild(splideList);
-      // move all children to splideList
-      while (elm.firstChild) {
-        splideList.appendChild(elm.firstChild);
-      }
-      elm.appendChild(splideTrack); 
-    
-      new Splide(elm, options).mount();
-    } else {
-      elm.classList.remove("splide");
-    }
-  }
-});
+function initializeSplide() {
+	// Slider
+
+	// get width of each bsBreakpoint by --bs-breakpoint-xx
+	var getBreakpointWidth = function (breakpoint) {
+		var value = getComputedStyle(document.body).getPropertyValue(
+			"--splide-breakpoint-" + breakpoint
+		);
+		return parseInt(value);
+	};
+	// get classnames that begin with "col-" from first child of each slider element
+
+	var getColClasses = function (element) {
+		var classes = element.firstElementChild.classList;
+		var colClasses = [];
+		for (var i = 0; i < classes.length; i++) {
+			if (classes[i].startsWith("col-")) {
+				colClasses.push(classes[i]);
+			}
+		}
+		return colClasses;
+	};
+
+	// A default mapping from bootstrap breakpoints to columns
+	var defaultBreakpointsCols = {
+		xs: 12,
+		sm: 12,
+		md: 12,
+		lg: 12,
+		xl: 12,
+		xxl: 12,
+	};
+
+	// foreach column class, get the breakpoint and the number of columns
+	var getColBreakpoints = function (element) {
+		var colBreakpoints = [];
+		var colClasses = getColClasses(element);
+		var lastColValue = defaultBreakpointsCols["xs"]; // Start with the smallest breakpoint
+
+		// List of bootstrap breakpoints in increasing order
+		var breakpointsOrder = ["xs", "sm", "md", "lg", "xl", "xxl"];
+
+		for (var i = 0; i < breakpointsOrder.length; i++) {
+			var breakpoint = breakpointsOrder[i];
+
+			// Check if this breakpoint is explicitly defined
+			var found = colClasses.find((cc) =>
+				cc.startsWith("col-" + breakpoint + "-")
+			);
+			if (found) {
+				var parts = found.split("-");
+				lastColValue = parseInt(parts[2]);
+			}
+
+			colBreakpoints.push({
+				breakpoint: breakpoint,
+				col: lastColValue,
+			});
+		}
+		return colBreakpoints;
+	};
+
+	// based on column classes in bootstrap create splide breakpoint options
+	var getBreakpointOptions = function (element) {
+		var breakpointOptions = {};
+		var perPages = []; // Array to store perPage values
+		var colBreakpoints = getColBreakpoints(element);
+
+		for (var i = 0; i < colBreakpoints.length; i++) {
+			var colBreakpoint = colBreakpoints[i];
+			var breakpoint = colBreakpoint.breakpoint;
+			var col = colBreakpoint.col;
+			var colnr = 12 / col;
+			perPages.push(colnr); // Push the computed perPage to the array
+			var breakpointWidth = getBreakpointWidth(breakpoint);
+			var breakpointOption = {
+				perPage: colnr,
+				perMove: 1,
+			};
+			breakpointOptions[breakpointWidth] = breakpointOption;
+		}
+		return { breakpointOptions, perPages };
+	};
+
+	let elms = Array.from(document.getElementsByClassName("splide"));
+
+	for (let i = 0; i < elms.length; i++) {
+		let elm = elms[i];
+		console.log("Processing element:", i);
+		console.log("elm", elm);
+		let children = elm.children;
+		let sliderElGutter = getComputedStyle(elm).getPropertyValue("--bs-gutter-x");
+		// get element width
+		let sliderElWidth = elm.offsetWidth;
+		// get total children width
+		let childrenWidth = 0;
+
+		for (let j = 0; j < children.length; j++) {
+			childrenWidth += children[j].offsetWidth + parseInt(sliderElGutter) - 1;
+		}
+		console.log("childrenWidth", childrenWidth);
+		console.log("sliderElWidth", sliderElWidth);
+		if (sliderElWidth + 20 < childrenWidth) {
+
+			console.log("sliderElWidth", sliderElWidth);
+			// Fetch the breakpoint options and perPage values
+			let { breakpointOptions, perPages } = getBreakpointOptions(elm);
+			let maxPerPage = Math.max(...perPages); // Determine the maximum perPage value
+
+			let options = {
+				type: "loop",
+				perPage: maxPerPage, // Use the max perPage value as the default
+				perMove: 1,
+				gap: sliderElGutter,
+				breakpoints: breakpointOptions,
+			};
+
+			// Check for splide-no-pagination and adjust the options
+			if (elm.classList.contains("splide-no-pagination")) {
+				options.pagination = false;
+			}
+
+			// Check for splide-no-arrows and adjust the options
+			if (elm.classList.contains("splide-no-arrows")) {
+				options.arrows = false;
+			}
+			console.log("options", options);
+			// from each direct children of splide remove class "col-xx-xx"
+			let colClasses = getColClasses(elm);
+			for (let j = 0; j < children.length; j++) {
+				let child = children[j];
+				for (let k = 0; k < colClasses.length; k++) {
+					// for each child
+					child.classList.remove(colClasses[k]);
+					child.classList.add("splide__slide");
+				}
+			}
+
+			let splideTrack = document.createElement("div");
+			splideTrack.classList.add("splide__track");
+			let splideList = document.createElement("div");
+			splideList.classList.add("splide__list");
+			splideTrack.appendChild(splideList);
+			// move all children to splideList
+			while (elm.firstChild) {
+				splideList.appendChild(elm.firstChild);
+			}
+			elm.appendChild(splideTrack);
+
+			new Splide(elm, options).mount();
+		} else {
+			elm.classList.remove("splide");
+			console.log('remove splide', elm)
+		}
+	}
+
+};
+
+document.addEventListener("DOMContentLoaded", initializeSplide);

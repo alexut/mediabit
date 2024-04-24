@@ -215,11 +215,11 @@ main#lc-main [lc-helper]:hover { cursor: url("data:image/png;base64,iVBORw0KGgoA
 /* TEXT EDITABLE HOVER FEEDBACK */
 main#lc-main [editable]:hover { cursor: text !important;  }
 
-main#lc-main [lc-helper]:hover, [NO_editable]:hover, .NO_lc-last-clicked-editable-element   {  outline: 1px dashed #A3A1A1 !important}
+main#lc-main [lc-helper]:hover, [NO_editable]:hover, .NO_lc-content-is-being-edited   {  outline: 1px dashed #A3A1A1 !important}
 
 
 /*
- *.lc-last-clicked-editable-element {outline:#DBD41C dashed 2px !important;}
+ *.lc-content-is-being-edited {outline:#DBD41C dashed 2px !important;}
  **/
  /* HELPER LINKS: another way */
  /*
@@ -230,18 +230,7 @@ a.lc-helper-link:hover {text-decoration: none;color: yellow;background: #000;opa
 a.lc-helper-link[item-type=carousel]{margin-left: 100PX}
 */
  
- 
- 
-/*  SIDEBAR/ SHORTCODE  HELPER  */ 
-main#lc-main .live-shortcode::before { content: "Shortcode:"; opacity: 0.7;
-width:100%;text-align: center;
-display: block; font-size: 14px; font-family: Arial;
-}
-
-main#lc-main .live-shortcode  {  text-align: center; 
-display: block;padding: 20px; font-size: 16px; font-family: Arial;
-}
-
+  
 /* GMAP HELPER */
  
 main#lc-main *[lc-helper]:hover > iframe {pointer-events: none;}
@@ -254,7 +243,7 @@ main#lc-main *[lc-helper]:hover > iframe {pointer-events: none;}
 /*body #lc-interface .lc-contextual-actions ul li:hover {opacity: 0.4;background: grey}*/
 
 /*make background behind clicked element darker*/
-/*.lc-last-clicked-editable-element {box-shadow: 0px 0px 1px 5000px rgba(0,0,0,0.2);} */
+/*.lc-content-is-being-edited {box-shadow: 0px 0px 1px 5000px rgba(0,0,0,0.2);} */
  
  
 /* BLOCK PREVIEEW PIP STYLE */

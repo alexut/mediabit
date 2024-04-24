@@ -1,0 +1,49 @@
+.icon-set {
+	width: 3rem;
+	height: 3rem;
+	stroke-width: 0;
+}
+.icon-small {
+	width: 2rem;
+	height: 2rem;
+}
+.icon-medium {
+	width: 2rem;
+}
+
+.icon-large {
+	width: 5rem;
+	height: 5rem;
+}
+
+.icon-primary {
+	// animate stroke and fill transitions
+	stroke: $primary;
+	fill: $primary;
+}
+
+// color animation example
+.icon-animate {
+	transition: stroke 0.2s, fill 0.2s;
+	&:hover {
+		stroke: darken($primary, 10%);
+		fill: darken($primary, 10%);
+	}
+}
+
+.icon-secondary {
+	stroke: $secondary;
+	fill: $secondary;
+}
+.icon-info {
+	stroke: $info;
+	fill: $info;
+}
+.icon-light {
+	stroke: $light;
+	fill: $light;
+}
+.icon-warning {
+	stroke: $warning;
+	fill: $warning;
+}

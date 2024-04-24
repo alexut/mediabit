@@ -40,7 +40,7 @@ class PageSync {
             }
         }
     }
-
+ 
     private static function import_page($fileinfo) {
         $syncdir = self::get_syncdir();
         $name = str_replace('-', ' ', ucfirst(substr($fileinfo->getBasename('.' . $fileinfo->getExtension()), 0)));
@@ -123,3 +123,5 @@ if (isset($_GET['importpage']) && $_GET['importpage'] == 1) {
     echo 'imported';
     die();
 }
+
+// add_action('save_post', 'PageSync::on_page_update', 10, 3);

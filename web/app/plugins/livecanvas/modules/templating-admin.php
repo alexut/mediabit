@@ -105,6 +105,8 @@ function lc_build_meta_boxes_template_assign( $post ){
 		<?php lc_print_template_assign_checkbox('is_blog_posts_index', 'Blog Posts Index'); ?> 
 		<?php lc_print_template_assign_checkbox('is_search', 'Search Results'); ?> 
 		<?php lc_print_template_assign_checkbox('is_404', '404 Not found'); ?> 
+		<?php $additional = isset($_GET['post']) ? ' (ID: '.$_GET['post'].')' : ''; ?>  
+		<?php lc_print_template_assign_checkbox('is_post_loop', 'Custom Post Loop'. (isset($_GET['post']) ? ' (ID: <b>'.$_GET['post'].'</b>)' : '')); ?> 
 		
 		<?php if ( class_exists( 'woocommerce' ) ): ?>
 

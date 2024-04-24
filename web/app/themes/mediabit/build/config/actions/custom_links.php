@@ -11,7 +11,6 @@ add_filter( 'query_vars', function( $query_vars ) {
 } );
 
 // Add a handler to send it off to a template file: custom-handler.php
-
 add_action( 'template_include', function( $template ) {
     if ( get_query_var( 'handler' ) == false || get_query_var( 'handler' ) == '' ) {
         return $template;

@@ -156,11 +156,9 @@ function lc_get_template_id($template_name) {
 function lc_render_dynamic_template($template_post_id){
 
 	$template_content = get_post_field( 'post_content', $template_post_id, 'raw' );
-	return "\n\n\n
-			<div id='lc-dynamic-template-ID-".$template_post_id."'>"
+	return "\n\n <!-- LC DT ID: ".$template_post_id." --> \n"
 			.lct_do_shortcode( /* lc_neutralize_section_tags */ (lc_strip_lc_attributes($template_content)))
-			."</div>
-			\n\n\n";
+			." \n\n";
 }
 
 
@@ -248,7 +246,7 @@ function lc_process_dynamic_templating_shortcode_func() {
 	} 
 
 	//case archive 
-	if (substr($meta_key,0,11)=='is_archive_' or $meta_key=='is_blog_posts_index' or $meta_key=='is_search' or $meta_key=='is_shop_page') {
+	if (substr($meta_key,0,11)=='is_archive_' or $meta_key=='is_blog_posts_index' or $meta_key=='is_search' or $meta_key=='is_shop_page' or $meta_key=='is_post_loop') {
 
 		//fix for loop open / close shortcode
 		if ( strpos($input, 'loop') !== false) { if (0) echo $input; wp_die(); } //early exit
@@ -300,4 +298,27 @@ function lc_process_dynamic_templating_shortcode_func() {
 	//all other cases:leave shortcode untouched
 	echo $input;
 	wp_die();	
+}
+
+
+
+
+//TEMPLATING: CREATE DYNAMIC TEMPLATE USING DEFAULTS PROGRAMMATICALLY
+function lc_create_dynamic_template( $meta_name, $post_title) {
+		
+	global $wp_filesystem;
+	if (empty($wp_filesystem)) {
+		require_once (ABSPATH . '/wp-admin/includes/file.php');
+		WP_Filesystem();
+	}
+	
+	$file = $wp_filesystem->get_contents( plugin_dir_path( __FILE__ ).'/templates/'.str_replace('is_','',$meta_name).'.html'); 	
+
+	$post_id = wp_insert_post(array('post_title' => $post_title, 'post_status' => 'publish', 'post_type' => 'lc_dynamic_template', 'post_content' => $file));
+	update_post_meta( $post_id, $meta_name, 1);
+
+	if ($post_id) {
+		return $post_id; 
+	} else die("<div class='alert alert-danger'>Function lc_create_dynamic_template could not create the post</div>");
+
 }

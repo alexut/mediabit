@@ -7,7 +7,7 @@ function lc_main_options_page(){
 	$lc_settings = get_option('lc_settings');
 	
 	// add top level menu page
-	add_menu_page('LiveCanvas - Web Authoring Suite', 'LiveCanvas', 'manage_options', 'livecanvas', 'lc_options_page_func', plugins_url() . '/livecanvas/images/lc-micrologo.svg');
+	add_menu_page('LiveCanvas - Web Authoring Suite', (!lc_plugin_option_is_set("whitelabel")? 'LiveCanvas':'Frontend Editor'), 'manage_options', 'livecanvas', 'lc_options_page_func', plugins_url() . '/livecanvas/images/lc-micrologo.svg');
 	
 	add_submenu_page('livecanvas', // Parent slug
 		'LiveCanvas Home', // Page title
@@ -103,13 +103,25 @@ function lc_options_page_func(){
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/P-LsFfZ3o68?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 		 <p> <br></p>
 		<?php if (lc_get_apikey()): ?>	
-		<a href="#" onclick='document.querySelector("#wp-admin-bar-lc-add-new-page a").click();' class="button large">Create new LiveCanvas Page Draft</a>
+		<a href="#" onclick='LiveCanvas_AddNewPage()' class="button large">Create new LiveCanvas Page Draft</a>
 		<a style="margin-left:40px;display:inline-block;margin-top:5px;" target="_blank" href="https://docs.livecanvas.com/">Plugin Documentation</a>
 		<br><br>
 		<?php endif ?>	
 		
 	
-	 
+		<script>
+ 
+			function LiveCanvas_AddNewPage(){
+				var page_name = prompt("<?php _e('New page name', 'livecanvas') ?>", "Untitled LC Page");
+				if (page_name!=null)  window.location =  "<?php 
+					echo add_query_arg(array(
+						'lc_action_new_page' => '1'
+					), get_admin_url())
+				?>&lc_page_name="+encodeURIComponent(page_name); 
+				
+				return false;
+			}
+		</script>
 		
 		<style>
 			table#lc-settings-table {padding:10px 0 30px;}
@@ -131,8 +143,7 @@ function lc_options_page_func(){
 					<td>
 						<label>
 							<input name="header" type="checkbox" value="1" <?php if (isset($lc_settings['header'])) echo "checked"; ?> > Use LiveCanvas to design the header <a target="_blank" href="https://docs.livecanvas.com/header-builder/">Learn more...</a> <i style="color:red">(requires picostrap)</i>
-							<?php if (isset($lc_settings['header'])): ?>		<a style="margin-left:40px;margin-top:6px" target="_blank" class="button" href="<?php  echo add_query_arg(array('lc_action_launch_editing' => '1'),
-																																		get_permalink(    lc_get_partial_postid('is_header', "1")  ));  ?>">Launch Header Editor</a>		<?php endif ?>
+							<?php if (isset($lc_settings['header'])): ?>		<a style="margin-left:40px;margin-top:6px" class="button" href="<?php  echo add_query_arg(array('lc_action_launch_editing' => '1', 'from_url' => lc_urlencode(lc_get_current_url())), get_permalink(    lc_get_partial_postid('is_header', "1")  ));  ?>">Launch Header Editor</a>		<?php endif ?>
 							
 						</label>
 					 </td>
@@ -142,8 +153,7 @@ function lc_options_page_func(){
 					<td>
 						<label>
 							<input name="footerV2" type="checkbox" value="1" <?php if (isset($lc_settings['footerV2'])) echo "checked"; ?> > Use LiveCanvas to design the footer <a target="_blank" href="https://docs.livecanvas.com/handling-the-footer/">Learn more...</a> <i style="color:red">(requires picostrap)</i>
-							<?php if (isset($lc_settings['footerV2'])): ?>		<a style="margin-left:40px;margin-top:6px" target="_blank" class="button" href="<?php  echo add_query_arg(array('lc_action_launch_editing' => '1'),
-																																		get_permalink(    lc_get_partial_postid('is_footer', "1")  ));  ?>">Launch Footer Editor</a>		<?php endif ?>
+							<?php if (isset($lc_settings['footerV2'])): ?>		<a style="margin-left:40px;margin-top:6px" class="button" href="<?php  echo add_query_arg(array('lc_action_launch_editing' => '1', 'from_url' => lc_urlencode(lc_get_current_url())), get_permalink(    lc_get_partial_postid('is_footer', "1")  ));  ?>">Launch Footer Editor</a>		<?php endif ?>
 							
 						</label>
 					 </td>

@@ -43,8 +43,7 @@ $(document).ready(function ($) {
 	//ON CHANGE SELECT FOR ICON SET, LOAD NEW ICON SET
 	$("body").on("change", "#sidepanel section[item-type=svg-icon] *[name=iconset]",function(){ 
 		$("#lc-svg-icons").load("?lc_action=load_"+$(this).val()+"_icons", function() {});
-		if ($("#sidepanel section[item-type=svg-icon] *[name=iconset]").val()=="bs" || $("#sidepanel section[item-type=svg-icon] *[name=iconset]").val()=="mdi") $("#svg-icon-search-tool").slideDown(); else $("#svg-icon-search-tool").slideUp();
-        $('section[item-type=icon] input[name="icon_search"]').val(); //reset search field
+        $('section[item-type=svg-icon] input[name="icon_search"]').val(""); //reset search field
     });
      
 	
@@ -78,11 +77,11 @@ $(document).ready(function ($) {
 		var unit=theSection.find("select[name=unit]").val();//alert(unit);
 		if(unit==="rws") {
 			//resize using rws- utility classes 
-			theSection.find(".size-feedback").text(".rws-"+$(this).val());
+            theSection.find(".size-feedback").text(".rws-" + parseInt($(this).val()));
 			doc.querySelector(selector).removeAttribute("width");
 			doc.querySelector(selector).removeAttribute("height");
 			for (i = 0; i < 50; i++) doc.querySelector(selector).classList.remove("rws-"+i);	
-			doc.querySelector(selector).classList.add("rws-"+$(this).val());
+            doc.querySelector(selector).classList.add("rws-" + parseInt($(this).val()));
 			theSection.find(".common-form-fields input[attribute-name=class]").val(doc.querySelector(selector).getAttribute("class"));
 			
 		} else {
@@ -146,7 +145,7 @@ $(document).ready(function ($) {
 		var superparent_selector = CSSelector(doc.querySelector(selector).parentNode.parentNode);
 
 		//ADD IDENTIFIER CLASS
-		var random_identifier_class_name="lc-temp-identifier-"+lc_randomString();
+		var random_identifier_class_name="lc-temp-identifier-"+generateReadableName();
 		doc.querySelector(selector).classList.add(random_identifier_class_name);
 		
 		if ($(this).val()==""){
@@ -245,7 +244,7 @@ $(document).ready(function ($) {
         myConsoleLog("init pagination");
     });
     
-    //IMAGES: UNSPLASH  Search by Keyword //////////////////////////
+    //IMAGES: UNSPLASH  Search by Keyword ////////////////////////// (used in both <IMG> and bg image cases)
 	$('#sidepanel').on('change', 'input[name="unsplash-search-by-keyword"]', function (event) {
 		event.preventDefault();
         var current_page=parseInt($(this).attr("data-page"),10);
@@ -254,12 +253,18 @@ $(document).ready(function ($) {
 		current_section.find(".lc-unsplash-search-results").html("<div class='donut'></div>"); //ADD SPINNER
         var orientation=current_section.find("[name=unsplash-search-orientation]").val();
         var jqxhr = $.getJSON("https://api.unsplash.com/search/photos/?client_id=241722b04b93fb65e1514ad48c3e916f5399e7766e5fa0dba784e008b9866216&orientation="+orientation+"&query="+$(this).val()+"&page="+current_page , function(a) {
-            //myConsoleLog(a.results);
+            //console.log(a.results);
             var headingText='<small><p>'+a.total+' results.  Page <b>'+current_page+' of '+a.total_pages+'</b></p>  </small>';
             html_li="";
-            $.each(a.results, function( index,el ) {
-                html_li+=' <li>  <img class="" src="' +el.urls.thumb+'" alt="" data-src-small="' +el.urls.small+'" data-src-regular="' +el.urls.regular+'" data-author-name="' +el.user.name+'"  >  </li>   ';
+            
+            function replaceUnSplashFormat(url) {
+                return url.replace("&fm=jpg&", "&fm=webp&");
+            }
+
+            $.each(a.results, function (index, el) {
+                html_li += '<li><img class="" src="' + replaceUnSplashFormat(el.urls.thumb) + '" alt="" data-src-small="' + replaceUnSplashFormat(el.urls.small) + '" data-src-regular="' + replaceUnSplashFormat(el.urls.regular) + '" data-author-name="' + el.user.name + '"></li>';
             });
+
             //check if we have to add pagination buttons
             if ( current_page>1 )  prevButton="<button class='lc-unsplash-pagination-button lc-pagination-button  lcb' data-page='"+(current_page-1)+"' > Previous<br>Page</button>"; else   prevButton="";    
             if (a.total_pages>current_page)  nextButton="<button class='lc-unsplash-pagination-button lc-pagination-button  lcb' data-page='"+(1+current_page)+"' >  Next <br>Page </button>"; else   nextButton="";
@@ -503,7 +508,7 @@ $(document).ready(function ($) {
     });
     
     
-    /*********** POSTLIST SHORTCODES ******************/
+    /*********** POSTS LOOP  ******************/
     
     //ONCHANGE OF INPUTS, UPDATE SHORTCODE/////////
     $("body").on("change ", "#sidepanel section[item-type=posts-loop] *[name]",function(){
@@ -517,8 +522,18 @@ $(document).ready(function ($) {
         theSection.find("*[name]").each(function(index, el) {
             var fieldValue=jQuery(el).val();
             var fieldName=jQuery(el).attr("name");
+
+            // DYNAMIC VIEWS: if post loop calls lc_get_posts_dynamic_view, dont add the output settings parameters in the shortcode
+            if ( $("#sidepanel section[item-type='posts-loop'] select[name=output_view]").val() == 'lc_get_posts_dynamic_view') {
+                if (fieldName.includes('output') && fieldName != 'output_view' && fieldName != 'output_dynamic_view_id') return; //skip fields if useless
+            }
+
+            // PHP FUNCTION VIEWS: if post loop calls lc_get_posts_mycustom_view, dont add the output settings parameters in the shortcode
+            if ($("#sidepanel section[item-type='posts-loop'] select[name=output_view]").val() == 'lc_get_posts_mycustom_view') {
+                if (fieldName.includes('output') && fieldName != 'output_view' ) return; //skip fields if useless
+            }
             
-            if (fieldValue===null) fieldValue=lc_get_parameter_value_from_shortcode(fieldName,theShortcode); //uncommented on 1.8.2
+            if (fieldValue===null) fieldValue=lc_get_parameter_value_from_shortcode(fieldName,theShortcode);
             if (fieldValue!="") shortcode_params+=jQuery(el).attr("name")+'="'+fieldValue+'" ';
         });
         //update shortcode
@@ -530,6 +545,43 @@ $(document).ready(function ($) {
         render_shortcode(selector, getPageHTML(selector)); 
     });
     
+
+    //when user changes output view select, hide or show output settings fields
+    $("body").on("change", "#sidepanel section[item-type='posts-loop'] .lc-post-output-tabcontent select[name=output_view]", function () {
+        myConsoleLog("User changed post loop output view");
+
+        const cases = ['lc_get_posts_dynamic_view', 'lc_get_posts_mycustom_view', 'lc_get_posts_theme_loop_view']; //cases where we dont need output parameters
+
+        var secondary_post_output_elements = $("#sidepanel section[item-type='posts-loop'] .lc-post-output-tabcontent div:not(:nth-child(-n+2))");
+
+        if (cases.includes($(this).val())) {
+            secondary_post_output_elements.hide();
+        } else {
+            secondary_post_output_elements.show();
+        }
+
+        if ($(this).val() == 'lc_get_posts_theme_loop_view') {
+            $('.open-dynamic-templates').hide();
+            $('#output_dynamic_view_id_wrap').hide();
+            $('#output_theme_loop_name_wrap').show();
+        } else if ($(this).val() == 'lc_get_posts_dynamic_view') {
+            $('#output_theme_loop_name_wrap').hide();
+            $('.open-dynamic-templates').show();
+            $('#output_dynamic_view_id_wrap').show();
+        } else {
+            $('#output_theme_loop_name_wrap').hide();
+            $('.open-dynamic-templates').hide();
+            $('#output_dynamic_view_id_wrap').hide();
+        }
+    });
+
+    //user clicks link to open dynamic templates screen
+    $("#sidepanel").on("click", ".open-dynamic-templates", function (event) {
+        event.preventDefault();
+        window.open(lc_editor_saving_url.replace('admin-ajax.php', 'edit.php?post_type=lc_dynamic_template'), '_blank').focus();
+
+    });
+
     //////////////////////////////////////////////////////  EMBED / VIDEO ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     $("body").on("change",'section[item-type=video-embed] form input[name=src_url]',function(){
@@ -544,14 +596,18 @@ $(document).ready(function ($) {
 				}, 
 				function(response) {
 					//myConsoleLog('The server responded: ', response);
-					if (true){
+					if (true) {
                         //success
                         //$("#previewiframe").removeClass("lc-block-pointer-events");
                         var selector=$("section[item-type=video-embed] form").closest("section").attr("selector");
-                        if (response==="") {swal("Wrong URL. Please use the straight video page URL");return;}
-                        setAttributeValue(selector+" iframe","src",response);
+                        if (response==="") {swal("Wrong URL. Please use the straight video page URL"); return;}
+                        
+                        //setAttributeValue(selector+" iframe","src",response);
+                        $('section[item-type=video-embed] form input[name=iframe_src]').val(response).change();
+
                         updatePreviewSectorial(selector);		
-						}
+					}
+                    $('section[item-type=video-embed] form input[name=src_url]').val("");
 				
 				}
 		);
@@ -662,6 +718,9 @@ $(document).ready(function ($) {
         
     }); //end on change
     */
+
+ 
+
 
 
 

@@ -1,10 +1,10 @@
 <div class="top-actions"> 
 	<!-- <a class="minimize-sidepanel"> <i class="fa fa-chevron-down"></i></a> -->
 	<!-- <a class="toggle-side-mode"> <i class="fa fa-chevron-circle-left"></i></a> -->
-	<a class="close-sidepanel">  <!-- <span>Close</span> -->   <i class="fa fa-times"></i></a>
+	<a class="close-sidepanel"> 
+		<svg width="21" height="21" fill="var(--color-grey-2)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="color: var(--color-grey-2);" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+	</a>
 </div>
-
- 
 
 <section item-type="generic">
     <h1>Item x</h1> 
@@ -13,10 +13,7 @@
     </form>
    
 </section>
- 
- 
- 
- 
+  
 <section item-type="history">
     <h1>History</h1>
 	<div class="suggestion">
@@ -28,24 +25,111 @@
    
 </section>
  
+<!-- NEW OBJECT BASED PANEL -->
+<section item-type="edit-properties">
+
+	<h1>Edit Properties</h1> 
+     
+    <form id="the-dynamic-editing-form"> 
+    </form>
+   
+</section>
  
- 
-
-
-
-
 <section item-type="sections">
-    <h1>Sections</h1> 
+    <h1>Sections</h1>
     <!-- <p class="section-suggestion">Replace the selected section with any of the following items:</p> -->
-    <div class="sidepanel-tabs">
-		<a data-show="readymade-sections" class="active"><i class="fa fa-cubes" aria-hidden="true"></i> <span>ReadyMades</span> </a>
-		<a data-show="grid-builder"><i class="fa fa-columns" aria-hidden="true"></i> <span>Grid Builder</span></a>
-		<!-- <a data-show="your-custom-sections"><i class="fa fa-star-o" aria-hidden="true"></i> <span>Custom</span> </a> -->
+    <div class="sidepanel-tabs" style="position:relative">
+        <a data-show="readymade-sections" class="active">
+            <i class="fa fa-cubes" aria-hidden="true"></i>
+            <span>ReadyMades</span>
+        </a>
+
+        <div style="position: absolute;left: 116px;top: 2px;width: fit-content; background-color: transparent;;">
+            <a style="width: 20px !important;height:14px !important; padding:2px 4px; text-decoration: none;background-color:transparent;"
+                href="#" data-copy-html from="#uikit-selection-template" to="#readymade-sections">
+                <i title="Choose UI Kit" style="font-size:13px;" class="fa fa-cog" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <a data-show="grid-builder"><i class="fa fa-columns" aria-hidden="true"></i> <span>Grid Builder</span></a>
+        <!-- <a data-show="your-custom-sections"><i class="fa fa-star-o" aria-hidden="true"></i> <span>Custom</span> </a> -->
     </div>
-	<form id="readymade-sections" class="items-browser">
-		
-		 
-	</form>
+    <form id="readymade-sections" class="items-browser">
+
+    </form>
+
+    <template id="uikit-selection-template">
+
+
+        <div id="uikit-selection" data-target-selector="#readymade-sections" style="display: block;">
+
+            <h1>Choose UI kit</h1>
+
+            <ul id="ui-kit-list">
+                <li class="ui-kit-list-item">
+                    <a href="#" action-load-html="https://cdn.livecanvas.com/remote/bs4/sections-bs4.html" >
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 48 48" fill="none">
+                            <path
+                                d="M48 24C48 37.2548 37.2548 48 24 48C10.7452 48 0 37.2548 0 24C0 10.7452 10.7452 0 24 0C37.2548 0 48 10.7452 48 24Z"
+                                fill="#1F0020" />
+                            <path
+                                d="M13.8494 35.1177C12.9711 35.1177 12.1534 34.9057 11.3962 34.4817C10.6391 34.0274 10.2605 33.2854 10.2605 32.2557C10.2605 30.8322 10.7602 29.1362 11.7596 27.1677C12.7894 25.1991 13.9554 23.1548 15.2577 21.0348C18.8011 15.2805 21.3148 12.4034 22.7988 12.4034C23.1017 12.4034 23.4045 12.5245 23.7074 12.7668C24.0405 12.9788 24.2222 13.2211 24.2525 13.4936L21.0725 17.7639C19.8308 19.4297 18.7102 20.9742 17.7108 22.3977C16.7114 23.7908 15.8482 25.0477 15.1214 26.1682C14.7579 26.7437 14.3491 27.3948 13.8948 28.1217C13.4405 28.8485 13.0317 29.6057 12.6682 30.3931C12.3351 31.1502 12.1685 31.9225 12.1685 32.71C12.1685 33.0734 12.2745 33.4065 12.4865 33.7094C12.6985 33.982 13.0771 34.1183 13.6222 34.1183C14.5914 34.1183 15.8634 33.6034 17.4382 32.5737C19.0131 31.5137 20.5728 30.06 22.1174 28.2125C22.2688 28.0308 22.4354 27.8642 22.6171 27.7128C22.7988 27.5614 22.9502 27.4857 23.0714 27.4857C23.2228 27.4857 23.2985 27.5765 23.2985 27.7582C23.2985 27.8491 23.1925 28.0308 22.9805 28.3034C22.7988 28.5457 22.6474 28.7425 22.5262 28.894L21.4359 30.1205C20.8302 30.7868 20.1034 31.5137 19.2554 32.3011C18.4377 33.0885 17.5594 33.7548 16.6205 34.3C15.7119 34.8451 14.7882 35.1177 13.8494 35.1177Z"
+                                fill="#26C6DA" />
+                            <path
+                                d="M25.7473 35.6174C24.7782 35.6174 23.8999 35.3146 23.1125 34.7089C22.3251 34.0729 21.9313 33.24 21.9313 32.2103C21.9313 30.06 23.2488 27.6069 25.8836 24.8508C28.5791 22.0646 30.9868 20.6714 33.1068 20.6714C33.8336 20.6714 34.4091 20.8683 34.8331 21.262C35.2571 21.6254 35.4691 22.0797 35.4691 22.6248C35.4691 23.382 35.2874 24.0786 34.9239 24.7146C34.4999 25.502 33.8942 25.8957 33.1068 25.8957C32.3194 25.8957 31.9256 25.6534 31.9256 25.1688C31.9256 24.8357 32.1225 24.336 32.5162 23.6697C32.9402 22.9731 33.1522 22.6097 33.1522 22.5794C33.1522 22.5188 33.1068 22.4886 33.0159 22.4886C32.1679 22.5794 30.9868 23.2003 29.4725 24.3511C28.8062 24.866 28.2156 25.3506 27.7008 25.8048C27.2162 26.2591 26.8225 26.6983 26.5196 27.1223L24.7479 29.7117C24.5662 29.9843 24.3693 30.4537 24.1573 31.12C23.9756 31.7863 23.8848 32.286 23.8848 32.6191C23.8848 33.2249 24.0816 33.7246 24.4753 34.1183C24.8993 34.512 25.4293 34.7089 26.0653 34.7089C27.5796 34.7089 29.5785 33.7246 32.0619 31.756C34.0608 30.1811 35.6659 28.5911 36.8774 26.986C37.0288 26.8043 37.2105 26.7134 37.4225 26.7134C37.6345 26.7134 37.7405 26.774 37.7405 26.8951C37.7405 26.986 37.6648 27.1374 37.5134 27.3494C35.8476 29.5603 33.8942 31.4683 31.6531 33.0734C29.2605 34.7694 27.2919 35.6174 25.7473 35.6174Z"
+                                fill="#E83E8C" />
+                        </svg>
+
+                        <div class="ui-kit-list-item-content">
+                            <h5>LC BS4 Library</h5>
+                            <p>A beautiful collection of Bootstrap 4 HTML snippets.</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="ui-kit-list-item">
+                    <a href="#" action-load-uikit="livecanvas/v1/posts-by-tax/?post_type=lc_section&tax_name=lc_section_type">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-hdd-fill" viewBox="-2 -2 20 20">
+                            <path
+                                d="M0 10a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1m2 0a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1M.91 7.204A3 3 0 0 1 2 7h12c.384 0 .752.072 1.09.204l-1.867-3.422A1.5 1.5 0 0 0 11.906 3H4.094a1.5 1.5 0 0 0-1.317.782z" />
+                        </svg>
+
+                        <div class="ui-kit-list-item-content">
+                            <h5>Your Local Readymade Sections</h5>
+                            <p>Store your custom sections here using the "Section" contextual menu and choosing "Save to Library"</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="ui-kit-list-item">
+                
+                    <!-- <a title="More Info" class="ui-more-info"
+                                        href="" target="_blank"><span class="fa fa-external-link"></span></a> -->
+                
+                    <a href="#" action-load-uikit="livecanvas/v1/html-files-from-theme/?folder=template-livecanvas-sections">
+                
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-fill"
+                            viewBox="-2 -2 20 20">
+                            <path
+                                d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z" />
+                        </svg>
+                
+                        <div class="ui-kit-list-item-content">
+                            <h5>Sections from Child Theme</h5>
+                            <p>Reads .html files from child theme folder: <span
+                                    style="font-family: monospace;">/template-livecanvas-sections/</span> </p>
+                        </div>
+                    </a>
+                </li>
+
+
+            </ul>
+
+             
+
+        </div>
+    </template>
 	
 	<form id="grid-builder" hidden>
 		<!-- <h4> Base Settings </h4> -->
@@ -76,7 +160,7 @@
 			
 			
 			<h5 class="text-left"> Equal-Width Columns  </h5>					
-			<div class="d-flex">
+			<div>
 				<button  data-rows="12"  ><span>&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span> 1  Column</button>
 				<button  data-rows="6-6" ><span>&#9608;&#9608;&#9608;&#9608;&#9608;&#9608; &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span> 2 Columns</button>
 				<button  data-rows="4-4-4" ><span>&#9608;&#9608;&#9608;&#9608; &#9608;&#9608;&#9608;&#9608; &#9608;&#9608;&#9608;&#9608;</span> 3 Columns</button>
@@ -88,7 +172,7 @@
 	
 				
 			<h5 class="text-left mt-5"> Different width : 2 Columns </h5>
-			<div class="d-flex">
+			<div>
 				<button  data-rows="2-10"><span>&#9608;&#9608; &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span> 2 - 10</button>
 				<button  data-rows="10-2"><span>&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608; &#9608;&#9608;</span> 10 - 2</button>
 				
@@ -106,7 +190,7 @@
 			<h5 class="text-left mt-5"> Different width : 3 Columns </h5>
 			
 			
-			<div class="d-flex">   
+			<div>   
 				<button  data-rows="3-3-6"><span>&#9608;&#9608;&#9608; &#9608;&#9608;&#9608; &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span> 3 - 3 - 6</button>
 				<button  data-rows="6-3-3"><span>&#9608;&#9608;&#9608;&#9608;&#9608;&#9608; &#9608;&#9608;&#9608; &#9608;&#9608;&#9608;</span> 6 - 3 - 3</button>
 				
@@ -148,16 +232,7 @@
 </section>
  
  
- 
-<section item-type="section-properties">
-    <h1>Section Properties</h1> 
-    
-	<form class="add-common-form-elements add-common-form-elements-for-properties-panels"></form>	    
-   
-</section>
- 
- 
- 
+  
 
 
 <section item-type="blocks" >
@@ -931,14 +1006,24 @@
 
 			<block>
 				<i class="fa fa-youtube-play " aria-hidden="true"></i>
-				<h5 class="block-name">YouTube</h5>
+				<h5 class="block-name">Generic Iframe</h5>
 				 <template> 
 					<div class="embed-responsive embed-responsive-16by9" lc-helper="video-embed">
-						<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"></iframe>
+						<iframe class="embed-responsive-item" src="https://getbootstrap.com/"></iframe>
 					</div>			
 				</template>
 			</block>
-			
+
+            <block>
+                <i class="fa fa-youtube-play " aria-hidden="true"></i>
+                <h5 class="block-name">YouTube</h5>
+                <template>
+                    <div class="embed-responsive embed-responsive-16by9" lc-helper="video-embed">
+                        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"></iframe>
+                    </div>
+                </template>
+            </block>
+            
 			<block>
 				<i class="fa fa-vimeo " aria-hidden="true"></i>
 				<h5 class="block-name">Vimeo</h5>
@@ -1283,265 +1368,7 @@
  
  
  
- 
-<section item-type="block-properties">
-    <h1>Block Properties</h1> 
-    
-	<form class="add-common-form-elements add-common-form-elements-for-properties-panels">
-
-
-    </form>
-    
-   
-</section>
- 
- 
-
-
-
-<section item-type="container-properties">
-    <h1>Container</h1> 
-     
-    <form class="add-common-form-elements add-common-form-elements-for-properties-panels">
- 
-		<div>
-				<label>Container Width</label>
-				<select class="form-control" name="container_classes" target="classes">
-						<option value="container">.container: Fixed Width</option>
-						<option value="container-fluid">.container-fluid: Full Width</option>
-						<option value="container-sm">.container-sm (Like .container: Full Width on XS only)</option>
-						<option value="container-md">.container-md (Full Width on XS & SM)</option>
-						<option value="container-lg">.container-lg (Full Width until MD)</option>
-						<option value="container-xl">.container-xl (Full Width until LG)</option>
-				</select>
-		</div>
-		 
-		
-    </form>
-   
-</section>
- 
-<section item-type="row-properties">
-    <h1>Row Properties</h1> 
-    
-	<form class="add-common-form-elements add-common-form-elements-for-properties-panels">
-
-
-    </form>
-    
-   
-</section>
-
-<section item-type="column-properties">
-    <h1>Column Properties</h1> 
-     
-    <form class="add-common-form-elements add-common-form-elements-for-properties-panels">
- 
-		<h2>Column Size</h2>
-		
-		<div class="widget-wrapper-flex">
-			
-			<div>
-				<label>  XS</label>
-				<select class="form-control" target="classes">
-					<option value="">--</option>
-					<option value="col-1">1</option>
-					<option value="col-2">2</option>
-					<option value="col-3">3</option>
-					<option value="col-4">4</option>
-					<option value="col-5">5</option>
-					<option value="col-6">6</option>
-					<option value="col-7">7</option>
-					<option value="col-8">8</option>
-					<option value="col-9">9</option>
-					<option value="col-10">10</option>
-					<option value="col-11">11</option>
-					<option value="col-12">12</option>
-				</select>
-			</div>
-
-			<div>
-				<label> SM</label>
-				<select class="form-control" target="classes">
-					<option value="">--</option>
-					<option value="col-sm-1">1</option>
-					<option value="col-sm-2">2</option>
-					<option value="col-sm-3">3</option>
-					<option value="col-sm-4">4</option>
-					<option value="col-sm-5">5</option>
-					<option value="col-sm-6">6</option>
-					<option value="col-sm-7">7</option>
-					<option value="col-sm-8">8</option>
-					<option value="col-sm-9">9</option>
-					<option value="col-sm-10">10</option>
-					<option value="col-sm-11">11</option>
-					<option value="col-sm-12">12</option>
-				</select>
-			</div>
-			
-			<div>
-				<label>  MD</label>
-				<select class="form-control" target="classes">
-					<option value="">--</option>
-					<option value="col-md-1">1</option>
-					<option value="col-md-2">2</option>
-					<option value="col-md-3">3</option>
-					<option value="col-md-4">4</option>
-					<option value="col-md-5">5</option>
-					<option value="col-md-6">6</option>
-					<option value="col-md-7">7</option>
-					<option value="col-md-8">8</option>
-					<option value="col-md-9">9</option>
-					<option value="col-md-10">10</option>
-					<option value="col-md-11">11</option>
-					<option value="col-md-12">12</option>
-				</select>
-			</div>
-			
-			<div>
-				<label>  LG</label>
-				<select class="form-control" target="classes">
-					<option value="">--</option>
-					<option value="col-lg-1">1</option>
-					<option value="col-lg-2">2</option>
-					<option value="col-lg-3">3</option>
-					<option value="col-lg-4">4</option>
-					<option value="col-lg-5">5</option>
-					<option value="col-lg-6">6</option>
-					<option value="col-lg-7">7</option>
-					<option value="col-lg-8">8</option>
-					<option value="col-lg-9">9</option>
-					<option value="col-lg-10">10</option>
-					<option value="col-lg-11">11</option>
-					<option value="col-lg-12">12</option>
-				</select>
-			</div>
-			
-			<div>
-				<label>  XL</label>
-				<select class="form-control" target="classes">
-					<option value="">--</option>
-					<option value="col-xl-1">1</option>
-					<option value="col-xl-2">2</option>
-					<option value="col-xl-3">3</option>
-					<option value="col-xl-4">4</option>
-					<option value="col-xl-5">5</option>
-					<option value="col-xl-6">6</option>
-					<option value="col-xl-7">7</option>
-					<option value="col-xl-8">8</option>
-					<option value="col-xl-9">9</option>
-					<option value="col-xl-10">10</option>
-					<option value="col-xl-11">11</option>
-					<option value="col-xl-12">12</option>
-				</select>
-			</div>
-			
-		</div> <!-- close flex -->
-		 
-		<h2>Offset</h2>
-		
-		<div class="widget-wrapper-flex">
-			
-			<div>
-				<label>  XS</label>
-				<select class="form-control" target="classes">
-					<option value="">--</option>
-					<option value="offset-1">1</option>
-					<option value="offset-2">2</option>
-					<option value="offset-3">3</option>
-					<option value="offset-4">4</option>
-					<option value="offset-5">5</option>
-					<option value="offset-6">6</option>
-					<option value="offset-7">7</option>
-					<option value="offset-8">8</option>
-					<option value="offset-9">9</option>
-					<option value="offset-10">10</option>
-					<option value="offset-11">11</option>
-					<option value="offset-12">12</option>
-				</select>
-			</div>
-
-			<div>
-				<label> SM</label>
-				<select class="form-control" target="classes">
-					<option value="">--</option>
-					<option value="offset-sm-1">1</option>
-					<option value="offset-sm-2">2</option>
-					<option value="offset-sm-3">3</option>
-					<option value="offset-sm-4">4</option>
-					<option value="offset-sm-5">5</option>
-					<option value="offset-sm-6">6</option>
-					<option value="offset-sm-7">7</option>
-					<option value="offset-sm-8">8</option>
-					<option value="offset-sm-9">9</option>
-					<option value="offset-sm-10">10</option>
-					<option value="offset-sm-11">11</option>
-					<option value="offset-sm-12">12</option>
-				</select>
-			</div>
-			
-			<div>
-				<label>  MD</label>
-				<select class="form-control" target="classes">
-					<option value="">--</option>
-					<option value="offset-md-1">1</option>
-					<option value="offset-md-2">2</option>
-					<option value="offset-md-3">3</option>
-					<option value="offset-md-4">4</option>
-					<option value="offset-md-5">5</option>
-					<option value="offset-md-6">6</option>
-					<option value="offset-md-7">7</option>
-					<option value="offset-md-8">8</option>
-					<option value="offset-md-9">9</option>
-					<option value="offset-md-10">10</option>
-					<option value="offset-md-11">11</option>
-					<option value="offset-md-12">12</option>
-				</select>
-			</div>
-			
-			<div>
-				<label>  LG</label>
-				<select class="form-control" target="classes">
-					<option value="">--</option>
-					<option value="offset-lg-1">1</option>
-					<option value="offset-lg-2">2</option>
-					<option value="offset-lg-3">3</option>
-					<option value="offset-lg-4">4</option>
-					<option value="offset-lg-5">5</option>
-					<option value="offset-lg-6">6</option>
-					<option value="offset-lg-7">7</option>
-					<option value="offset-lg-8">8</option>
-					<option value="offset-lg-9">9</option>
-					<option value="offset-lg-10">10</option>
-					<option value="offset-lg-11">11</option>
-					<option value="offset-lg-12">12</option>
-				</select>
-			</div>
-			
-			<div>
-				<label>  XL</label>
-				<select class="form-control" target="classes">
-					<option value="">--</option>
-					<option value="offset-xl-1">1</option>
-					<option value="offset-xl-2">2</option>
-					<option value="offset-xl-3">3</option>
-					<option value="offset-xl-4">4</option>
-					<option value="offset-xl-5">5</option>
-					<option value="offset-xl-6">6</option>
-					<option value="offset-xl-7">7</option>
-					<option value="offset-xl-8">8</option>
-					<option value="offset-xl-9">9</option>
-					<option value="offset-xl-10">10</option>
-					<option value="offset-xl-11">11</option>
-					<option value="offset-xl-12">12</option>
-				</select>
-			</div>
-			
-		</div> <!-- close flex -->
-		 
-    </form>
-   
-</section>
+  
  
  
  
@@ -1958,7 +1785,7 @@
 
 
 <section item-type="svg-icon">
-    <h1>SVG Icon <sup style="font-size: 11px" class="fa fa-question-circle" title="These icons are inline SVG code, for best performance."></sup></h1> 
+    <h1>SVG Icon</h1> 
     <form class="add-common-form-elements">
 		
 
@@ -2298,17 +2125,21 @@
 			 
 				
 				<div>
-					<label>Layout</label>
-					<div>
-						
-						<select class="form-control" name="output_view">
-								<option value="" selected="selected">Default (Plain)</option>
+					<label>Layout <a hidden style="float:right;text-decoration: underline" class="open-dynamic-templates" href="#">Dynamic Templates...</a></label>
+					 
+					<select class="form-control" name="output_view">
+							<optgroup label="Built-in">
+								<option value="" selected="selected">Plain</option>
 								<option value="lc_get_posts_listing_view">Listing (Links only)</option> 
-								<option value="lc_get_posts_card_view">Cards</option> 
-		
-						</select>
+								<option value="lc_get_posts_card_view">Cards</option>  
+							</optgroup>
+							<optgroup label="Custom">
+							<option value="lc_get_posts_dynamic_view">Dynamic Template </option>
+							<option value="lc_get_posts_mycustom_view">PHP Callback </option>
+							</optgroup>
+					</select>
 						
-					</div>
+				 
 				</div>
 
 				<!-- output_number_of_columns -->

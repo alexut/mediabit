@@ -1,0 +1,80 @@
+[
+    {
+        "post_name": "oferta-pentru-compania-nationala-a-sarii-sa",
+        "post_title": "Oferta pentru Compania Națională a Sării SA",
+        "post_date": "2023-10-03 18:00:00",
+        "post_content": "",
+        "acf_fields": {
+            "offer_description": "Avem plăcerea de a vă prezenta oferta noastră specializată pentru refacerea estetică integrală a site-ului web www.salrom.ro, împreună cu o pagină de prezentare a produselor, un magazin virtual și servicii de mentenanță și SEO.",
+            "milestones": [
+                {
+                    "milestone_title": "Refacere Estetică Integrală",
+                    "milestone_description": "Redesign complet al website-ului www.salrom.ro, pentru a îmbunătăți experiența utilizatorului și alinierea vizuală cu branding-ul companiei.",
+                    "milestone_unit": "ore",
+                    "milestone_quantity": "8",
+                    "milestone_cost": "200",
+                    "milestone_days_duration": "15"
+                },
+                {
+                    "milestone_title": "Pagină de Prezentare Produse",
+                    "milestone_description": "Crearea unei pagini dedicate pentru prezentarea gamei de produse oferite, cu descrieri detaliate și imagini de calitate.",
+                    "milestone_unit": "ore",
+                    "milestone_quantity": "5",
+                    "milestone_cost": "200",
+                    "milestone_days_duration": "10"
+                },
+                {
+                    "milestone_title": "Magazin Virtual - Administrare și Catalog Produse",
+                    "milestone_description": "Implementarea unui panou de administrare complet, statistici vânzări, gestionarea stocurilor, produse variabile și personalizabile, import de pe site-ul existent, căutare și filtrare intuitive, quick view și live chat opțional.",
+                    "milestone_unit": "ore",
+                    "milestone_quantity": "15",
+                    "milestone_cost": "200",
+                    "milestone_days_duration": "25"
+                },
+                {
+                    "milestone_title": "Magazin Virtual - Design și Conținut",
+                    "milestone_description": "Design personalizat și adaptiv, elemente animate, integrarea de conținut media, și optimizarea pentru experiență bună e-commerce.",
+                    "milestone_unit": "ore",
+                    "milestone_quantity": "10",
+                    "milestone_cost": "200",
+                    "milestone_days_duration": "20"
+                },
+                {
+                    "milestone_title": "Magazin Virtual - Marketing și SEO",
+                    "milestone_description": "Implementarea și importul setărilor SEO on-page, optimizarea vitezei, integrare instrumente de marketing, reguli și promoții, lista de favorite, newsletter, recenzii și comentarii, integrare social media.",
+                    "milestone_unit": "ore",
+                    "milestone_quantity": "12",
+                    "milestone_cost": "200",
+                    "milestone_days_duration": "22"
+                },
+                {
+                    "milestone_title": "Magazin Virtual - Clienți și Plăți",
+                    "milestone_description": "Înregistrare și autentificare utilizatori, metode de plată, export clienți, finalizare comandă pe o singură pagină, și guest checkout.",
+                    "milestone_unit": "ore",
+                    "milestone_quantity": "8",
+                    "milestone_cost": "200",
+                    "milestone_days_duration": "18"
+                },
+                {
+                    "milestone_title": "Mentenanță și Servicii SEO",
+                    "milestone_description": "Implementarea și monitorizarea strategiei de SEO, împreună cu mentenanța regulată a site-ului.",
+                    "milestone_unit": "lună",
+                    "milestone_quantity": "1",
+                    "milestone_cost": "500",
+                    "milestone_days_duration": "30"
+                }
+            ],
+            "offer_note": "Toate prețurile sunt exprimate în RON și nu includ TVA. Oferta este valabilă până la 30/11/2023.",
+            "offer_details": {
+                "offer_language": "RO",
+                "business_name": "Compania Națională a Sării SA",
+                "offer_currency": "RON",
+                "start_date": "15/10/2023"
+            },
+            "offer_title": "Ofertă Completă pentru Refacerea și Mentenanța Site-ului",
+            "offer_discount": "0"
+        },
+        "taxonomies": [],
+        "featured_image": 0
+    }
+]

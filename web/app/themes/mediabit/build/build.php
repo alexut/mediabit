@@ -11,8 +11,10 @@ class Loader {
 	public function loadParts() {
 		$folders = [
 			'config',
+			'form',
 			'handlers',
 			'templates',
+			'dashboard',
 			'shortcodes',
 			'tools',
 		];
@@ -20,7 +22,8 @@ class Loader {
 			$folder = __DIR__ . "/" . $foldername;
 			$files1 = glob($folder . '/*.php'); // return array files
 			$files2 = glob($folder . '/**/*.php'); // return array files
-			$files = array_merge($files1, $files2);
+			$files3 = glob($folder . '/**/**/*.php'); // return array files
+			$files = array_merge($files1, $files2, $files3);
 			// var_dump($files);
 			foreach ($files as $filename) {
 				if (basename($filename)[0] !== '_') {

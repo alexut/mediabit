@@ -2,7 +2,7 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 // defining variables
-$header = new \Mediabit\Templates\Sections\Header();
+
 
 ?>
 
@@ -18,6 +18,5 @@ $header = new \Mediabit\Templates\Sections\Header();
 <body <?php body_class();?>>
 <?php 
 wp_body_open();
-echo $header->render(); 
 
 ?>

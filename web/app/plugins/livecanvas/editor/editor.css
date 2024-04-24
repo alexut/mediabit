@@ -1,4 +1,6 @@
-    /* VARIABLES */
+/* ============ LIVECANVAS EDITOR CSS ============= */
+
+/* VARIABLES */
 :root {
     --maintoolbar-height: 42px;
     --sidepanel-width: 274px;
@@ -14,12 +16,22 @@
     /* --color-mediumblue: rgb(45,47,64); */
     --color-grey: rgb(102,102,102);
     --color-lightgrey: rgb(180, 183, 182);
-    
+
+    /* new colors */
+    --color-grey-2: #A9ABCB;
+    --color-interface-bg-dark: #191A29;
+    --color-prop-icons: #80829f;
+
+
     --scrollable-areas-voffset: 165px;
 }
 
-body {   margin: 0px;    overflow: hidden;font-family: Arial; /*  background: var(--color-mediumblue); */ letter-spacing: 0.5;  overscroll-behavior-x: none;}
-body,h1,h2,h3,h4,h5,h6 {font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;}
+body {   margin: 0px;    overflow: hidden; /*  background: var(--color-mediumblue); */  overscroll-behavior-x: none;}
+body,h1,h2,h3,h4,h5,h6 {font-family: "Nunito Sans",Helvetica,Arial,sans-serif;}
+
+/* GENERAL UTILITY */
+.d-flex {display: flex;}
+
 
 /* MAIN TOOLBAR */
 #maintoolbar {
@@ -394,58 +406,58 @@ section[item-type="section-properties"] .hide-in-sections {display:none}
 
 
 /* the panel heading */
-#sidepanel h1 { 
+#sidepanel h1 {
+    display: flex;
+    align-items: center;
     font-size: 16px;
-    padding: 20px 10px;
-    text-transform: uppercase;
+    padding: 16px 8px;
     margin: 0px;
-    font-weight: 200;
+    font-weight: 400;
     border-bottom: 1px solid var(--color-accents);
-    background: #1f1f32;
-}
+    background: var(--color-interface-bg);
+    color: var(--color-grey-2) !important;
+  }
+  
+  #sidepanel h1 svg {
+    vertical-align: middle;
+    margin-right: 8px;
+    opacity: 0.5;
+  }
+  
+ 
 
 #sidepanel h2 { 
     text-align: left;
     font-size: 16px;
-    font-weight: 200;
+    font-weight: 400;
     background: var(--color-interface-bg);
     border-top: 1px solid var(--color-accents);
-    padding: 20px 10px;
+    padding: 20px 10px 0 10px;
     margin: 0px;
     position: relative;
 }
-#sidepanel h3 { 
-    font-size: 12px;
-   /* padding: 20px 0px 10px; */
-    margin: 15px 0 10px 0;
-    font-weight: 200;
-    /* border-top: 1px solid #3a3f53; */
-    text-transform: uppercase;
-}
+
 #sidepanel h2:first-child { 
     border-top: none;
     margin-top: 0;
 }
-#sidepanel h2:not(.toggle-next-element) {    
-    
+#sidepanel h2:not(.property-group-title) {    
     padding: 15px 10px 5px;
 }
-#sidepanel h2.toggle-next-element:hover {cursor: pointer;}
-#sidepanel h2.toggle-next-element:after {
-    content: '\f107';
-    font-family: FontAwesome;
-    opacity: 0.4;
-    margin-right: 5px;
-    text-decoration: none;
-    display: inline-block;
-    float: right;
+
+#sidepanel h3 { 
+    font-size: 12px;
+   /* padding: 20px 0px 10px; */
+    margin: 15px 0 10px 0;
+    font-weight: 400;
+    /* border-top: 1px solid #3a3f53; */
+    text-transform: uppercase;
 }
-#sidepanel h2.toggle-next-element.opened:after { content: '\f106';}
 
 #sidepanel h4 {   
     text-align: left;
     font-size: 16px;
-    font-weight: 200;
+    font-weight: 400;
     background: var(--color-interface-bg);
     border-top: 1px solid var(--color-accents);
     padding: 20px 10px;
@@ -468,7 +480,66 @@ section[item-type="section-properties"] .hide-in-sections {display:none}
 #sidepanel .items-browser h4.opened:after { content: '\f106';}
 #sidepanel a  {    color: #fff; }
 #sidepanel a:hover {    color: var(--color1); }
-#sidepanel .top-actions {    position: absolute;    right: 11px;    top: 18px;    font-size: 18px;}
+#sidepanel .top-actions {    position: absolute;    right: 11px;    top: 16px;    font-size: 18px;}
+
+#sidepanel .top-actions a.close-sidepanel span {
+    font-size: 21px;
+    margin-top: 1px;
+    color: var(--color-grey-2);
+}
+
+#sidepanel .top-actions a.close-sidepanel span:hover {
+    color: white;
+}
+
+
+
+/* === SIDEPANEL  OPTIONS NAVI ===== */
+
+/* leg */
+.sidebar-panel-nav {
+    
+    padding: 14px 13px 0;
+    margin-bottom: 12px;
+}
+
+.sidebar-panel-nav a {
+     
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 5px;
+    margin-right: 3px;
+}
+
+.sidebar-panel-nav a.active {
+    color: var(--color1) !important; 
+}
+
+/* new sidepanel properties navigation */
+.sidebar-panel-navigation {
+    background-color: var(--color-interface-bg-dark);
+    padding: 12px 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 1px;
+    margin-bottom: 0; 
+}
+
+.sidebar-panel-navigation a {
+    color: var(--color-grey-2) !important;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    flex: 0 0 83px;
+}
+
+.sidebar-panel-navigation a:hover {
+    color: var(--color2) !important
+}
+
+.sidebar-panel-navigation a.active {
+    color: var(--color1) !important; 
+}
 
 /* === SIDEPANEL  TABS ===== */
 #sidepanel .sidepanel-tabs {  display: flex;    flex-wrap: wrap; }
@@ -532,18 +603,21 @@ section[item-type="section-properties"] .hide-in-sections {display:none}
 #sidepanel form input[type=text]:focus {/*width:100vw; */   outline: 1px solid var(--color-grey)}
 
 #sidepanel form input[attribute-name="ID"]  {color: var(--color2);}
-#sidepanel form input[attribute-name="class"]  {color: var(--color1);}
+#sidepanel form textarea[attribute-name="class"]  {color: var(--color1);}
 #sidepanel form select {width:100%;font-size: 12px}
 #sidepanel form textarea {
     width:100%;   
     font-size: 12px;
     font-family: courier;
-    min-height: 200px;
+    min-height: 65px;
+     max-height: 300px;
     color: #efefef;
     outline: none !important;
     word-break: break-all;
 }
 
+
+/* old  */
 .property-group {padding-bottom:20px !important;}
 
 /* HISTORY PANEL */
@@ -590,12 +664,99 @@ ul#history-steps li:active{
 /* END interface history*/
 
 
-/* SIDEBAR FORM COMMON FIELDS: ID CLASS STYLE */
-#sidepanel form .common-form-fields {margin-bottom: 20px;opacity: 0.9;transition: all 0.5s ease-in-out; }
-#sidepanel form .common-form-fields:hover {opacity: 1;  }
-#sidepanel form .common-form-fields  label {margin-top: 15px;    margin-bottom: 5px;}
+/* SIDEBAR FORM COMMON FIELDS: ID CLASS and  STYLE */
+
+
+a.toggle-common-form-fields {
+    float: right;
+    text-decoration: none;
+    font-size: 10px;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.html-attributes-box-title {
+
+    margin: 16px 0 14px;
+}
+
+
+#sidepanel form .common-form-fields { 
+    opacity: 0.9;
+    transition: all 0.5s ease-in-out;
+    padding: 9px;
+    /* border-top: 2px solid var(--color-accents); */
+    background: var(--color-accents);
+    margin: 20px 0 0px 0;
+}
+
+/*  for fixed  superimposed ID & class box */
+/*
+#sidepanel form .common-form-fields {
+    position: fixed;
+    bottom: 1px;
+    width: var(--sidepanel-width);
+    background: #131319;
+    padding: 9px;
+    box-sizing: border-box;
+    border-top: 2px solid var(--color-accents);
+}
+*/
+
+#sidepanel form .common-form-fields input, #sidepanel form .common-form-fields textarea {
+    background-color: hsl(236 25% 6% / 1);
+}
+
+
+#sidepanel form .common-form-fields label {  
+    font-size: 11px;
+    color: hsl(236 25% 80% / 1);
+    font-weight: 700;
+    margin-bottom: 3px;
+    margin-top: unset;
+}
+
+/* Add hashtag icon for the ID div */
+#sidepanel form .common-form-fields input.id-livedit {
+    padding-left: 22px; /* add space to the icon */
+    background-repeat: no-repeat;
+    background-position: 5px center; /* center the icon */
+    background-size: 12px; /* icon sizes */
+    background-image: url('data:image/svg+xml,<svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.40914 18L4.11914 14H0.119141L0.469141 12H4.46914L5.52914 6H1.52914L1.87914 4H5.87914L6.58914 0H8.58914L7.87914 4H13.8791L14.5891 0H16.5891L15.8791 4H19.8791L19.5291 6H15.5291L14.4691 12H18.4691L18.1191 14H14.1191L13.4091 18H11.4091L12.1191 14H6.11914L5.40914 18H3.40914ZM7.52914 6L6.46914 12H12.4691L13.5291 6H7.52914Z" fill="%233F4356"/></svg>');
+}
+
+#sidepanel form .common-form-fields input, #sidepanel form .common-form-fields textarea {
+    margin: 0 0 12px 0 
+}
+ 
+/* Add hashtag icon for the ID div */
+#sidepanel form .common-form-fields textarea[data-syntax="css"] {
+    padding-left: 22px; /* add space to the icon */
+    background-repeat: no-repeat;
+    background-position: 5px 10px; /* icon on the first line */
+    background-size: 12px; /* icon sizes */
+    background-image: url('data:image/svg+xml,<svg width="20" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 0C4.46957 0 3.96086 0.210714 3.58579 0.585786C3.21071 0.960859 3 1.46957 3 2V6C3 6.53043 2.78929 7.03914 2.41421 7.41421C2.03914 7.78929 1.53043 8 1 8H0V10H1C1.53043 10 2.03914 10.2107 2.41421 10.5858C2.78929 10.9609 3 11.4696 3 12V16C3 16.5304 3.21071 17.0391 3.58579 17.4142C3.96086 17.7893 4.46957 18 5 18H7V16H5V11C5 10.4696 4.78929 9.96086 4.41421 9.58579C4.03914 9.21071 3.53043 9 3 9C3.53043 9 4.03914 8.78929 4.41421 8.41421C4.78929 8.03914 5 7.53043 5 7V2H7V0M13 0C13.5304 0 14.0391 0.210714 14.4142 0.585786C14.7893 0.960859 15 1.46957 15 2V6C15 6.53043 15.2107 7.03914 15.5858 7.41421C15.9609 7.78929 16.4696 8 17 8H18V10H17C16.4696 10 15.9609 10.2107 15.5858 10.5858C15.2107 10.9609 15 11.4696 15 12V16C15 16.5304 14.7893 17.0391 14.4142 17.4142C14.0391 17.7893 13.5304 18 13 18H11V16H13V11C13 10.4696 13.2107 9.96086 13.5858 9.58579C13.9609 9.21071 14.4696 9 15 9C14.4696 9 13.9609 8.78929 13.5858 8.41421C13.2107 8.03914 13 7.53043 13 7V2H11V0H13Z" fill="%233F4356"/></svg>');
+}
+
+/* when textarea is empty, reduce height and padding */
+#sidepanel form .common-form-fields input.id-livedit:placeholder-shown, #sidepanel form textarea[data-syntax="css"]:placeholder-shown {
+    padding: 0 22px !important;
+    height: 2px !important;
+    min-height: 20px;
+    resize: none;
+    overflow-y: hidden;
+    background-position: 4px 5px; /* icon on the first line */
+    background-size: 10px; /* icon sizes */
+}
+
 #sidepanel form .common-form-fields h4 {color: #eee; padding-left: 10px}
-#sidepanel form .common-form-fields > h2 {border-top: 1px solid #3a3f53!important;}
+ 
+
+/*  for fixed  superimposed ID & class box */
+/*
+the-property-widgets  {margin-bottom: 300px; display: block;}
+*/
+
 #sidepanel .separator {    margin: 0px 0 10px;}
 #sidepanel .separator2 {margin: 5vh 0; border-top:2px dotted #C1C1C1}
 
@@ -628,11 +789,17 @@ ul#history-steps li:active{
 
 /* CUSTOM COLOR WIDGETS */
 
-.custom-color-widget {display: flex;padding: 10px 0 0}
-.custom-color-widget span {    flex: 1 1 0;    height: 19px;    margin-right: 5px;    border-radius: 1px;}
+.custom-color-widget {display: flex;padding: 10px 0 0;}
+.custom-color-widget span {    flex: 1 1 0;    height: 19px;    margin-right: 5px;    border-radius: 1px; border: 0.5px solid var(--color-grey);}
 .custom-color-widget span:hover{cursor: pointer}
 .custom-color-widget span:last-of-type {margin-right: 0px;}
-.custom-color-widget span.active{box-shadow:inset 0 0 0 1px #ffffff, inset 2px 2px 2px 0px #4444446e}        
+
+.custom-color-widget span.active {box-shadow:inset 0 0 0 1px #ffffff, inset 2px 2px 2px 0px #4444446e}        
+
+.custom-color-widget span[value='text-muted'] {background: gray;}
+
+.custom-color-widget span[value='text-reset'],
+.custom-color-widget span[value='bg-transparent'],
 .custom-color-widget span[value=''] {
 	background-color: #fff;
 	background-image: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc),
@@ -925,7 +1092,6 @@ form#grid-builder,.add-row-buttons-wrap {font-size: 12px}
 
 form.add-common-form-elements>div {
     padding: 0px 10px;
-    margin-bottom: 22px;
 }
 
 form.add-common-form-elements>div.common-form-fields {
@@ -1041,6 +1207,121 @@ i.block-description {
     border-top: none;
 }
  
+    
+/* UI KIT */
+
+
+#ui-kit-list {
+    padding: 2px 4px !important;
+    list-style: none !important;
+    display: block;
+}
+
+li.ui-kit-list-item {
+    position: relative;
+    border-radius: 5px;
+    margin: 5px;
+    transition: all 0.5s;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: block;
+    padding: 12px 10px;
+    border-bottom: 1px solid #0e1317;
+    background: var(--color-accents);
+
+    .ui-more-info {
+        position: absolute;
+        right: 6px;
+        top: 4px;
+        z-index: 2;
+
+        span {
+            font-size:11px !important;
+        }
+    }
+
+}
+/* UI Cloud Library icon */
+
+#cloud-library-icon {width: 24px !important;height: 24px !important;}
+#cloud-library-icon rect {
+    transition-duration: .4s;
+    &:nth-child(1) {fill: var(--color1);}
+    &:nth-child(2) {fill: var(--color-interface-bg);}
+    &:nth-child(3) {fill: var(--color1);}
+    &:nth-child(4) {fill: var(--color2);}
+    &:nth-child(5) {fill: var(--color-interface-bg);}
+    &:nth-child(6) {fill: var(--color1);}
+    &:nth-child(7) {fill: var(--color2);}
+    &:nth-child(8) {fill: var(--color1);}
+    &:nth-child(9) {fill: var(--color-interface-bg);}
+}
+
+li.ui-kit-list-item:hover {
+    background-color: var(--color-prop-icons);
+    cursor: pointer;
+    
+    /* UI Cloud Library icon hover invert */
+    #cloud-library-icon rect {
+        transition-duration: .4s;
+        &:nth-child(9) {fill: var(--color1);}
+        &:nth-child(8) {fill: var(--color-interface-bg);}
+        &:nth-child(7) {fill: var(--color1);}
+        &:nth-child(6) {fill: var(--color2);}
+        &:nth-child(5) {fill: var(--color-interface-bg);}
+        &:nth-child(4) {fill: var(--color1);}
+        &:nth-child(3) {fill: var(--color2);}
+        &:nth-child(2) {fill: var(--color1);}
+        &:nth-child(1) {fill: var(--color-interface-bg);}
+    }
+}
+
+
+li.ui-kit-list-item a {
+   display:flex;
+   align-items: center;
+   text-decoration: none;
+
+    svg {
+        width: 28px;
+        height: 28px;
+        flex: 0 0 32px;
+        padding: 4px;
+   }
+    .ui-kit-list-item-content {
+        border-left: 1px solid var(--color-grey);
+        padding-left: 6px;
+        margin-left: 2px;
+
+        h5 {
+           font-size: 13px;
+           color: #fff;
+           font-weight: 400;
+           transition: all 0.5s ease-in-out;
+           margin: unset;
+           line-height: normal;
+       }
+
+        p {
+           display:block;
+           font-size: 11px;
+           opacity: 0.75;
+           margin: 6px 0 0 0;
+       }
+   }
+}
+
+li.ui-kit-list-item a::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    content: "";
+}
+
+li.ui-kit-list-item:hover a p {color:white; opacity: 1;}
+
 
 /*
 form.add-common-form-elements {
@@ -1085,9 +1366,209 @@ form.add-common-form-elements {
     background: var(--color-accents);
 }
 
+
+/* ======== SIDEBAR EDIT PROPERTIES PANEL NEW ========= */
+
+property-group {
+    display: block;
+}
+
+property-subgroup-title {
+    font-size: 14px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 3px;
+    color: var(--color-grey-2);
+    font-weight: 400;
+    letter-spacing: 0.8px;
+}
+ 
+property-subgroup {
+    margin-bottom: 10px;
+    display: block;
+    padding: 12px 9px 2px 9px;
+    border-top: 0.5px solid var(--color-accents);
+}
+
+propertylabel {
+    font-size: 13px;
+    
+}
+
+propertylabel sup a {
+    text-decoration: none;
+    color: var(--color-grey-2) !important;
+    font-size: 10px;
+}
+
+property-subgroup > single-property:last-child {
+    border:0 !important;
+}
+
+single-property {
+    display: block; 
+    border-bottom: 0.5px solid #313454;
+    padding: 8px 0;   
+}
+
+single-property select.form-control {
+    margin-top: 5px;
+    display: block;
+}
+single-property .responsive-cases select.form-control {
+    width: 168px !important;
+    margin-left: auto;
+}
+
+single-property label {
+    margin: 5px 0 0 0 !important;
+}
+
+
+property-subgroup[name="widths"] single-property,
+property-subgroup[name="heights"] single-property  {
+    display: inline-block;
+    border-bottom: none;
+    padding: 8px 0;
+    width: 49%;
+    margin: 2px 0px;
+}
+
+
+property-subgroup[name="widths"] single-property propertylabel, 
+property-subgroup[name="heights"] single-property propertylabel {
+    font-size: 12px;
+}
+
+
+
+propertydetails {
+    display:flex;
+    margin-left:auto;
+}
+
+
+.numeric-responsive-widget label {color: var(--color-grey-2);}
+
+.responsive-properties-trigger svg {
+    width: 12px;
+    height: 12px;
+}
+.responsive-properties-trigger svg path {
+    fill: hsl(0deg 0% 50.98%);
+}
+
+.responsive-properties-trigger svg:hover path {
+    fill: var(--color2);
+}
+
+.responsive-cases > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.responsive-cases div label {
+    font-size: 10px !important;
+}
+
+propertydetails valuetags  {
+    display: flex;
+    gap: 2px;
+}
+
+propertydetails valuetag a {
+    font-size: 9px !important;
+    color: var(--color1) !important;
+    background-color: var(--color-interface-bg-dark) !important;
+    padding: 3px 6px;
+    border-radius: 18px;
+    text-decoration: none !important;
+}
+ 
+/* ======== SIDEBAR EDIT PROPERTIES PANEL NEW : ICON WIDGETS */
+
+radioicons {
+    display: flex;
+    justify-content: end;
+    gap: 0.5px;
+    margin-left: auto;
+    margin-top: 6px;
+}
+
+radioicon {
+    box-sizing: border-box;
+    position: relative;
+    width: fit-content;
+}
+
+radioicon input[type="radio"] {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    cursor: pointer;
+}
+
+single-property custom-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+single-property custom-icon span {
+    visibility: hidden;
+    font-size: 8px;
+    text-align: center;
+    position: absolute;
+    transform: translateY(-50%)!important;
+    top: 38px;
+    background-color: var(--color-interface-bg-dark);
+    color: white;
+    text-transform:uppercase;
+    font-weight: 400;
+    padding: 2px 4px;
+}
+
+
+radioicon:hover custom-icon span {
+    visibility: visible;     
+}
  
 
-/*  ========  SIDEBAR INPUT FIELDS: NUMBER  ======== */
+single-property custom-icon svg {
+   width: 20px;
+   height: 20px;
+   border: 0.5px solid var(--color-accents);
+   border-radius: 0.5px;
+   padding: 4px;
+}
+
+
+single-property radioicon input:checked + custom-icon {
+    background-color: var(--color-interface-bg-dark);
+}
+
+single-property radioicon input:checked + custom-icon:not(custom-icon[icon-for="reset-property"]) svg {
+    border: 0.5px solid var(--color1);
+    box-shadow: inset 0px 0px 0px 1px var(--color1);
+}
+
+
+
+.show-customize-palette-suggestion{
+    font-size:9px
+}
+
+
+/*  ========  SIDEBAR INPUT FIELDS: NUMBER  (general) ======== */
 #sidepanel input[type=number] {
     margin-top: 6px !important;
     color: var(--color1);
@@ -1489,4 +1970,10 @@ body.simplified_client_ui #primary-tools {display: none}
 .items-browser a.more-item-info-link span { font-size:13px !important; color:var(--color-lightgrey); }
 .items-browser a.more-item-info-link span:hover { color:var(--color1); }
 
+/* SECTIONS LIBRARY: ICON FOR CHOSEN UI KIT ON "READYMADES" TAB */
+
+.sidepanel-tabs svg {
+    width: 45px;
+    height: 45px;
+}
 

@@ -1,0 +1,47 @@
+<form method="post" id="lc-login-form">
+    <div class="input-group mb-3 align-content-center">
+        <span class="input-group-text">
+            <!-- Inline SVG for bi-person icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" fill="currentColor" class="bi bi-person"
+                viewBox="0 0 16 16" style="" lc-helper="svg-icon">
+                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path>
+            </svg>
+        </span>
+        <div class="form-floating">
+            <input type="text" class="form-control" placeholder="Username" name="log" id="user_login"
+                autocomplete="username" value="" size="20">
+            <label for="user_login">Email or Username</label>
+            <input name="mouseglue" type="text" class="form-control" placeholder="John Doe" value="" autocomplete="off" hidden="">
+        </div>
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text">
+            <!-- Inline SVG for bi-lock icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" fill="currentColor" class="bi bi-lock"
+                viewBox="0 0 16 16" style="" lc-helper="svg-icon">
+                <path
+                    d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z">
+                </path>
+            </svg>
+        </span>
+        <div class="form-floating">
+            <input type="password" name="pwd" id="user_pass" autocomplete="current-password" spellcheck="false" value=""
+                size="20" class="form-control" placeholder="Password">
+            <label for="user_pass">Password</label>
+        </div>
+    </div>
+    <!-- Remember Me Checkbox -->
+    <div class="form-check mb-4">
+        <input type="checkbox" class="form-check-input" id="remember_me" name="rememberme">
+        <label class="form-check-label" for="remember_me">Remember Me</label>
+    </div>
+    <div class="d-grid gap-3">
+        <input type="hidden" name="next_page_slug" value="/">
+        <input type="submit" name="wp-submit" id="wp-submit" class="btn btn-primary mt" value="Log In">
+    </div>
+    <div class="mt-4 mb-5">
+        Lost Password?
+    </div>
+    [lc_form action="lc_submit_user_login"]
+</form>
+<div class="lc_form_feedback"></div>

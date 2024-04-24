@@ -44,13 +44,15 @@ function register_custom_post_type($post_type, $singular_label, $plural_label, $
     );
 
     $icon_names = array(
-        'dashicons-portfolio' => array('project', 'projects', 'portfolio'),
-        'dashicons-calendar' => array('event', 'events', 'calendar'),
+        'dashicons-portfolio' => array('message', 'messages', 'portfolio'),
+        'dashicons-calendar' => array('event', 'workflow','events', 'calendar'),
         'dashicons-testimonial' => array('testimonial', 'testimonials', 'quote'),
         'dashicons-cart' => array('product', 'products', 'shopping'),
         'dashicons-hammer' => array('service', 'services', 'tool'),
         'dashicons-groups' => array('team-members','team_member', 'team_members', 'staff'),
         'dashicons-format-gallery' => array('gallery', 'galleries', 'photos'),
+        'dashicons-media-default' => array('media', 'medias', 'files'),
+        'dashicons-book' => array('book', 'books', 'library', 'ticket'),
         // Add more as needed
     );
 
@@ -67,15 +69,28 @@ function register_custom_post_type($post_type, $singular_label, $plural_label, $
 }
 
 add_action('init', function() {
-
-    $private_args = array(
-        'public' => true,
-        'has_archive' => false,
-        'publicly_queryable' => false,
-        'supports' => array( 'title', 'editor', 'thumbnail'),
-    );
-
-    register_custom_post_type('event', 'Event', 'Events');
-    register_custom_post_type('team-members', 'Member', 'Team Members', $private_args);
-    register_custom_post_type('testimonial', 'Testimonial', 'Testimonials', $private_args);
+    register_custom_post_type('mesage', 'Messages', 'Message');
 });
+
+// attach_custom_post_type('wpcf7', 'mesaj'); nu mere ca e custom page, dar nu mere nici aduagat ceea ce e ciudat. de investigat.
+// 
+function attach_custom_post_type($main, $attach) {
+    add_action('admin_menu', function() use ($main, $attach) {
+        // Remove post type from sidebar
+        remove_menu_page('edit.php?post_type=' . $attach);
+
+        // Get the post type object to access its labels
+        $post_type_object = get_post_type_object($attach);
+        $plural_label = $post_type_object->label;
+
+        // Add post type as a submenu of main post type
+        add_submenu_page(
+            'edit.php?post_type=' . $main, // parent slug
+            $plural_label, // page title
+            $plural_label, // menu title
+            'manage_options', // capability
+            'edit.php?post_type=' . $attach // menu slug
+        );
+    });
+}
+

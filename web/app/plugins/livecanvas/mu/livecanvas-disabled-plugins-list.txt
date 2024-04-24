@@ -11,3 +11,5 @@ iubenda-cookie-law-solution/iubenda_cookie_solution.php
 w3-total-cache/w3-total-cache.php
 wp-fastest-cache/wpFastestCache.php
 wp-optimize/wp-optimize.php
+wp-compress-image-optimizer/wp-compress.php
+

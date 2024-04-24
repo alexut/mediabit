@@ -14,6 +14,7 @@ require_once WPCF7_PLUGIN_DIR . '/includes/contact-form-functions.php';
 require_once WPCF7_PLUGIN_DIR . '/includes/contact-form-template.php';
 require_once WPCF7_PLUGIN_DIR . '/includes/contact-form.php';
 require_once WPCF7_PLUGIN_DIR . '/includes/mail.php';
+require_once WPCF7_PLUGIN_DIR . '/includes/mail-tag.php';
 require_once WPCF7_PLUGIN_DIR . '/includes/special-mail-tags.php';
 require_once WPCF7_PLUGIN_DIR . '/includes/file.php';
 require_once WPCF7_PLUGIN_DIR . '/includes/validation-functions.php';
@@ -21,7 +22,7 @@ require_once WPCF7_PLUGIN_DIR . '/includes/validation.php';
 require_once WPCF7_PLUGIN_DIR . '/includes/submission.php';
 require_once WPCF7_PLUGIN_DIR . '/includes/upgrade.php';
 require_once WPCF7_PLUGIN_DIR . '/includes/integration.php';
-require_once WPCF7_PLUGIN_DIR . '/includes/config-validator.php';
+require_once WPCF7_PLUGIN_DIR . '/includes/config-validator/validator.php';
 require_once WPCF7_PLUGIN_DIR . '/includes/rest-api.php';
 require_once WPCF7_PLUGIN_DIR . '/includes/block-editor/block-editor.php';
 require_once WPCF7_PLUGIN_DIR . '/includes/html-formatter.php';
@@ -110,10 +111,14 @@ class WPCF7 {
 	 * @param mixed $value Option value.
 	 */
 	public static function update_option( $name, $value ) {
-		$option = get_option( 'wpcf7' );
-		$option = ( false === $option ) ? array() : (array) $option;
-		$option = array_merge( $option, array( $name => $value ) );
-		update_option( 'wpcf7', $option );
+		$old_option = get_option( 'wpcf7' );
+		$old_option = ( false === $old_option ) ? array() : (array) $old_option;
+
+		update_option( 'wpcf7',
+			array_merge( $old_option, array( $name => $value ) )
+		);
+
+		do_action( 'wpcf7_update_option', $name, $value, $old_option );
 	}
 }
 

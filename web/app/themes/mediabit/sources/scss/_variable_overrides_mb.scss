@@ -154,7 +154,7 @@ $navbar-light-color: $secondary;
 $navbar-light-active-color: $primary;
 
 $navbar-padding-y: .25rem;
-
+$card-border-color: $gray-100;
 
 a {
   transition: color 0.1s ease-in;
@@ -162,6 +162,9 @@ a {
 
 $input-btn-focus-box-shadow: 0 0 0 0 #fff;
 $custom-range-thumb-bg: $secondary;
+
+// modal padding 
+$modal-inner-padding: 2.5rem;
 
 // splide variable overrides
 :root {

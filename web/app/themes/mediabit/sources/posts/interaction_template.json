@@ -1,0 +1,154 @@
+[
+    {
+        "post_name": "test",
+        "post_content": "",
+        "post_title": "b",
+        "post_date": "2023-08-15 07:03:48",
+        "acf_fields": {
+            "steps": {
+                "step": [
+                    {
+                        "name": "test",
+                        "tite": "test",
+                        "fields": false
+                    }
+                ]
+            },
+            "form_id": ""
+        },
+        "taxonomies": [],
+        "featured_image": 0
+    },
+    {
+        "post_name": "business-details",
+        "post_content": "",
+        "post_title": "Business Details",
+        "post_date": "2023-08-15 06:40:32",
+        "acf_fields": {
+            "steps": {
+                "step": [
+                    {
+                        "name": "step1",
+                        "tite": "Customer Details",
+                        "fields": [
+                            {
+                                "field": "\"cols\": 6,\r\n\"name\": \"client_name\",\r\n\"label\": \"Client Name\",\r\n\"required\": [\"blank\"],\r\n\"type\": \"text\""
+                            },
+                            {
+                                "field": "\"cols\": 6,\r\n\"name\": \"client_role\",\r\n\"label\": \"Client Role\",\r\n\"required\": [\"blank\"],\r\n\"type\": \"text\""
+                            },
+                            {
+                                "field": "\"cols\": 6,\r\n\"name\": \"client_business\",\r\n\"label\": \"Client Business\",\r\n\"required\": [\"blank\"],\r\n\"type\": \"text\""
+                            },
+                            {
+                                "field": "\"type\": \"next\",\r\n\"cols\": 12,\r\n\"class\": \"text-end\",\r\n\"label\": \"Next\",\r\n\"action\": \"step2\""
+                            }
+                        ]
+                    },
+                    {
+                        "name": "step2",
+                        "tite": "Customer Address",
+                        "fields": [
+                            {
+                                "field": "\"cols\": 6,\r\n\"name\": \"client_email\",\r\n\"label\": \"Client Email\",\r\n\"required\": [\"blank\"],\r\n\"type\": \"text\""
+                            },
+                            {
+                                "field": "\"cols\": 6,\r\n\"name\": \"client_address\",\r\n\"label\": \"Client Address\",\r\n\"required\": [\"blank\"],\r\n\"type\": \"text\""
+                            },
+                            {
+                                "field": "\"type\": \"prev\",\r\n\"cols\": 6,\r\n\"class\": \"text-start\",\r\n\"label\": \"Previous\",\r\n\"action\": \"step1\""
+                            },
+                            {
+                                "field": "\"type\": \"next\",\r\n\"cols\": 6,\r\n\"class\": \"text-end\",\r\n\"label\": \"Next\",\r\n\"action\": \"step3\""
+                            }
+                        ]
+                    },
+                    {
+                        "name": "step3",
+                        "tite": "Comercial Details",
+                        "fields": [
+                            {
+                                "field": "\"cols\": 6,\r\n\"name\": \"client_fiscal_identification\",\r\n\"label\": \"Client Fiscal Identification\",\r\n\"required\": [\"blank\"],\r\n\"type\": \"text\""
+                            },
+                            {
+                                "field": "\"cols\": 6,\r\n\"name\": \"client_registration\",\r\n\"label\": \"Client Registration\",\r\n\"required\": [\"blank\"],\r\n\"type\": \"text\""
+                            },
+                            {
+                                "field": "\"cols\": 6,\r\n\"name\": \"client_registration\",\r\n\"label\": \"Client Registration\",\r\n\"required\": [\"blank\"],\r\n\"type\": \"text\""
+                            },
+                            {
+                                "field": "\"cols\": 6,\r\n\"name\": \"client_iban\",\r\n\"label\": \"Client IBAN\",\r\n\"required\": [\"blank\"],\r\n\"type\": \"text\""
+                            },
+                            {
+                                "field": "\"type\": \"prev\",\r\n\"cols\": 6,\r\n\"class\": \"text-start\",\r\n\"label\": \"Previous\",\r\n\"action\": \"step2\""
+                            },
+                            {
+                                "field": "\"type\": \"next\",\r\n\"cols\": 6,\r\n\"class\": \"text-end\",\r\n\"label\": \"Finish\",\r\n\"action\": \"finish\""
+                            }
+                        ]
+                    },
+                    {
+                        "name": "finish",
+                        "tite": "Thank You",
+                        "fields": [
+                            {
+                                "field": "\"type\": \"content\",\r\n\"cols\": 12,\r\n\"class\": \"no-padding\",\r\n\"label\": \"We appreciate your cooperation!\",\r\n\"action\": \"finish\""
+                            }
+                        ]
+                    }
+                ]
+            },
+            "form_id": "",
+            "current_step": "initial"
+        },
+        "taxonomies": [],
+        "featured_image": 0
+    },
+    {
+        "post_name": "callback-details",
+        "post_content": "",
+        "post_title": "Callback Details",
+        "post_date": "2023-08-15 06:40:32",
+        "acf_fields": {
+            "steps": {
+                "step": [
+                    {
+                        "name": "step1",
+                        "tite": "Contact Details",
+                        "fields": [
+                            {
+                                "field": "\"cols\": 6,\r\n\"name\": \"contact_name\",\r\n\"label\": \"Contact Name\",\r\n\"required\": [\"blank\"],\r\n\"type\": \"text\""
+                            },
+                            {
+                                "field": "\"cols\": 6,\r\n\"name\": \"contact_email\",\r\n\"label\": \"Email\",\r\n\"required\": [\"blank\", \"email\"],\r\n\"type\": \"text\""
+                            },
+                            {
+                                "field": "\"cols\": 6,\r\n\"name\": \"contact_phone\",\r\n\"label\": \"Phone\",\r\n\"required\": [\"blank\"],\r\n\"type\": \"text\""
+                            },
+                            {
+                                "field": "\"cols\": 6,\r\n\"name\": \"callback_time\",\r\n\"label\": \"Preferred Time for Callback\",\r\n\"required\": [\"blank\"],\r\n\"type\": \"text\""
+                            },
+                            {
+                                "field": "\"type\": \"next\",\r\n\"cols\": 12,\r\n\"class\": \"text-end\",\r\n\"label\": \"Submit\",\r\n\"action\": \"finish\""
+                            }
+                        ]
+                    },
+                    {
+                        "name": "finish",
+                        "tite": "Thank You",
+                        "fields": [
+                            {
+                                "field": "\"type\": \"content\",\r\n\"cols\": 12,\r\n\"class\": \"no-padding\",\r\n\"label\": \"We will get back to you soon!\",\r\n\"action\": \"finish\""
+                            }
+                        ]
+                    }
+                ]
+            },
+            "form_id": "",
+            "current_step": "initial"
+        },
+        "taxonomies": [],
+        "featured_image": 0
+    }
+    
+]

@@ -1,3 +1,28 @@
 /*--------------------------------------------------------------
 Footer
 --------------------------------------------------------------*/
+
+footer {
+    h5 {
+        margin-top: 46px;;
+        line-height: 1.3rem;
+    }
+    .nl-subscription {
+        position: relative;
+        .btn-sm {
+            position: absolute;
+            top:9px;
+            right:9px;
+        }
+   
+    }
+    ul {
+        li {
+            margin-bottom: 0.2rem;
+        }
+        a {
+         font-size:0.9rem;
+         text-decoration: none;
+        }
+     }
+}

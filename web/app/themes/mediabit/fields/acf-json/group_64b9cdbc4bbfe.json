@@ -1,0 +1,143 @@
+{
+    "key": "group_64b9cdbc4bbfe",
+    "title": "Contract Fields",
+    "fields": [
+        {
+            "key": "field_64b9cdbc875a7",
+            "label": "Project",
+            "name": "project",
+            "type": "post_object",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_field_group_condition": 0,
+            "post_type": [
+                "project"
+            ],
+            "taxonomy": "",
+            "return_format": "id",
+            "multiple": 0,
+            "max": "",
+            "acfe_add_post": 0,
+            "acfe_edit_post": 0,
+            "save_custom": 0,
+            "save_post_status": "publish",
+            "acfe_bidirectional": {
+                "acfe_bidirectional_enabled": true,
+                "acfe_bidirectional_related": [
+                    "field_64b9d1de0d5fe"
+                ]
+            },
+            "allow_null": 0,
+            "ui": 1
+        },
+        {
+            "key": "field_64c55a7fe3898",
+            "label": "Generated Contract",
+            "name": "generated_contract",
+            "type": "file",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_field_group_condition": 0,
+            "uploader": "wp",
+            "return_format": "array",
+            "preview_style": "default",
+            "library": "uploadedTo",
+            "upload_folder": "",
+            "button_label": "Add File",
+            "file_count": 0,
+            "multiple": 0,
+            "max": "",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": ""
+        },
+        {
+            "key": "field_64c55ac902d42",
+            "label": "Signed Contract",
+            "name": "signed_contract",
+            "type": "file",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_field_group_condition": 0,
+            "uploader": "wp",
+            "return_format": "array",
+            "preview_style": "default",
+            "library": "uploadedTo",
+            "upload_folder": "",
+            "button_label": "Add File",
+            "file_count": 1,
+            "multiple": 1,
+            "min": "",
+            "max": "",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": ""
+        },
+        {
+            "key": "field_64c57703df089",
+            "label": "Actions",
+            "name": "actions",
+            "type": "acfe_button",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_field_group_condition": 0,
+            "button_value": "Submit",
+            "button_type": "button",
+            "button_class": "hidden",
+            "button_id": "",
+            "button_before": "<a href=\"\/handler\/contract-generate-pdf\" class=\"button button-secondary\">Gennerate Contract PDF<\/a>",
+            "button_after": "",
+            "button_ajax": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "contract"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "left",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "acfe_autosync": [
+        "json"
+    ],
+    "acfe_form": 0,
+    "acfe_display_title": "",
+    "acfe_meta": "",
+    "acfe_note": "",
+    "modified": 1691783953
+}

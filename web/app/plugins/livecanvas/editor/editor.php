@@ -3,11 +3,14 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 ?>
 <html data-active-plugins="<?php echo lc_get_active_plugins_list() ?>">
 	<head>
-		<title><?php bloginfo("name") ?> LiveCanvas Editor</title>
+		<title><?php bloginfo("name") ?> <?php if(!lc_plugin_option_is_set("whitelabel")) echo "LiveCanvas Editor"; ?></title>
 		<meta name="robots" content="noindex, nofollow">
 		<meta charset="UTF-8">
 		
 		<link rel="shortcut icon" type="image/x-icon" href="<?php lc_print_editor_url() ?>../images/favicon.ico">
+
+		<link rel="preconnect" href="https://cdn.livecanvas.com/" crossorigin>
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 		<script type='text/javascript' src="https://cdn.livecanvas.com/remote/lc-bundle-001-g87r37g84j2312hve6xx2.js"></script>
 		  
@@ -21,9 +24,19 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 		<script type='text/javascript' src='<?php lc_print_editor_url() ?>libs/js-beautify/beautify-html.min.js'></script>
 		<script type='text/javascript' src='<?php lc_print_editor_url() ?>libs/js-beautify/beautify-css.min.js'></script>
 
+        <?php if (!empty(locate_template('lc-editor-config.js')) ){   ?>
+                <script type='text/javascript' src='<?php echo get_stylesheet_directory_uri() ?>/lc-editor-config.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
+                <?php } else {   ?>
+                <script type='text/javascript' src='<?php lc_print_editor_url() ?>configs/bootstrap-<?php echo lc_get_bootstrap_version(); ?>.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
+		    
+        <?php } //end else ?>
 
-		<script type='text/javascript' src='<?php lc_print_editor_url() ?>functions.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
+		
+        
+        
+        <script type='text/javascript' src='<?php lc_print_editor_url() ?>functions.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
 		<script type='text/javascript' src='<?php lc_print_editor_url() ?>editor.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script> 
+		<script type='text/javascript' src='<?php lc_print_editor_url() ?>side-panel-edit-properties.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
 		<script defer type='text/javascript' src='<?php lc_print_editor_url() ?>side-panel-advanced-helpers.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script> 
 
 		<?php do_action("lc_editor_header")  ?>
@@ -31,13 +44,23 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 		<?php global $post; ?> 
 		<script id="livecanvas-environment-variables">
 			lc_editor_main_bootstrap_version=<?php echo lc_get_main_bs_version(); ?>; 
+			lc_editor_plugin_version='<?php echo LC_SCRIPTS_VERSION ?>'; 
 			lc_editor_fragment_type='<?php  if ( get_post_meta($post->ID,'is_header',TRUE)!='' ) echo "header"; 	if ( get_post_meta($post->ID,'is_footer',TRUE)!='' ) echo "footer"; ?>';
 			lc_editor_root_url='<?php lc_print_editor_url() ?>';
 			lc_editor_saving_url='<?php echo admin_url( 'admin-ajax.php' ) ?>';
 			lc_editor_media_upload_url='<?php echo admin_url( 'media.php?page=lc-media-selector' ) ?>';
 			lc_editor_current_post_id=<?php  echo esc_attr($post->ID) ?>;
 			lc_editor_current_post_page_title_tag="<?php echo esc_attr( apply_filters( 'wp_title', get_the_title($post->ID), ' | ', 'right' )); ?>";
-			lc_editor_url_before_editor="<?php echo (   (isset($_GET['from_page_edit'])) ? admin_url( 'post.php' )."?action=edit&post=" . $post->ID : get_permalink($post->ID)   ); ?>";
+			lc_editor_url_before_editor="<?php 
+                if (isset($_GET['from_url'])) echo urldecode($_GET['from_url'])
+                /*
+				if(isset($_GET['demo_id'])){
+					echo get_permalink($_GET['demo_id']);
+				} else {
+					echo (   (isset($_GET['from_page_edit'])) ? admin_url( 'post.php' )."?action=edit&post=" . $post->ID : get_permalink($post->ID)   ); 
+				}
+                */
+			?>";
 			lc_editor_url_to_load="<?php $current_url = "//$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; $current_url=remove_query_arg( array('lc_action_launch_editing'  ), $current_url );	$current_url=add_query_arg(  'lc_page_editing_mode','1', $current_url );	echo $current_url;	?>" + "&lc_random=" + Math.floor(Math.random() * 1000);
 			lc_editor_apikey="<?php echo lc_get_apikey() ?>";
 			lc_editor_simplified_client_ui=<?php if (    !current_user_can("administrator") &&    lc_plugin_option_is_set("simplified-client-ui")) echo "true"; else echo "false"; ?>;
@@ -45,12 +68,13 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 			lc_editor_hide_readymade_blocks=<?php if (   /*  !current_user_can("administrator") &&  */  lc_plugin_option_is_set("hide-readymade-blocks")) echo "true"; else echo "false"; ?>;
 			lc_editor_post_type="<?php echo  esc_attr(get_post_type($post->ID)) ?>";
 			lc_editor_experimental_mode=<?php if (function_exists('lc_enable_experimental_mode') ) echo "true"; else echo "false"; ?>;
+            lc_editor_rest_api_url='<?php echo get_rest_url() ?>';
+            lc_editor_rest_api_nonce='<?php echo wp_create_nonce('wp_rest') ?>';
 		</script>
 
 		<link rel="stylesheet" href="<?php lc_print_editor_url() ?>editor.css?v=<?php echo LC_SCRIPTS_VERSION ?>">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-		<link href="https://fonts.googleapis.com/css?family=Alex+Brush|Roboto" rel="stylesheet"> 
-
+		
 		<?php if(lc_plugin_option_is_set("whitelabel")): ?>
 			<style>
 				.product-logo {visibility:hidden}
@@ -67,7 +91,7 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 		</div>
 		 
 		<div id="sidepanel" hidden><?php include('side-panel-bs'.lc_get_main_bs_version().'.html'); ?></div>
-		<?php include('side-panel-templates-bs'.lc_get_main_bs_version().'.html'); ?> 
+		<?php include('side-panel-templates.html'); ?> 
 
 		<div id="loader">
 			<div class="product-logo">
@@ -104,25 +128,35 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 			  </div>
 			  <div class="lc-editor-menubar-draghandle"></div>
 			  <div class="lc-editor-menubar-tools">
+					<span>
+						Transparency
+						<input type="checkbox" id="lc-editor-transparency" >
+						 
+						&nbsp;&nbsp;&nbsp;
+					</span>
 					<span>Tips & How tos: 
 						
 						<select id="lc-editor-tips">
 							<option value="" selected>Browse...</option>
 							<optgroup label="Editor">
-								<option value="https://docs.livecanvas.com/keyboard-tricks/">Keyboard shortcuts</option>
-								 
+								<option value="https://docs.livecanvas.com/keyboard-tricks/">Keyboard shortcuts</option> 
 							</optgroup>
 							<optgroup label="HTML">
-							 
 								<option value="https://docs.livecanvas.com/the-livecanvas-html-structure/">The LiveCanvas HTML structure</option>
 								<option value="https://docs.livecanvas.com/creating-editable-regions/">Creating editable regions</option>
+								<option value="https://docs.livecanvas.com/shortcodes/">Built-in Shortcodes</option>
 								<option value="https://docs.livecanvas.com/dynamic-templating/">Dynamic Templating Shortcodes</option>
+								<option value="https://docs.livecanvas.com/woocommerce-shortcodes/">WooCommerce Dynamic Templating Shortcodes</option>
 							</optgroup>
 
 						</select>
-					&nbsp;&nbsp;&nbsp;</span>
-					<span>Theme: <select id="lc-editor-theme"><optgroup label="Bright"><option value="chrome">Chrome</option><option value="clouds">Clouds</option><option value="crimson_editor">Crimson Editor</option><option value="dawn">Dawn</option><option value="dreamweaver">Dreamweaver</option><option value="eclipse">Eclipse</option><option value="github">GitHub</option><option value="iplastic">IPlastic</option><option value="solarized_light">Solarized Light</option><option value="textmate">TextMate</option><option value="tomorrow">Tomorrow</option><option value="xcode">XCode</option><option value="kuroir">Kuroir</option><option value="katzenmilch">KatzenMilch</option><option value="sqlserver">SQL Server</option></optgroup><optgroup label="Dark"><option value="ambiance">Ambiance</option><option value="chaos">Chaos</option><option value="clouds_midnight">Clouds Midnight</option><option value="dracula">Dracula</option><option value="cobalt">Cobalt</option><option value="gruvbox">Gruvbox</option><option value="gob">Green on Black</option><option value="idle_fingers">idle Fingers</option><option value="kr_theme">krTheme</option><option value="merbivore">Merbivore</option><option value="merbivore_soft">Merbivore Soft</option><option value="mono_industrial">Mono Industrial</option><option value="monokai">Monokai</option><option value="pastel_on_dark">Pastel on dark</option><option value="solarized_dark">Solarized Dark</option><option value="terminal">Terminal</option><option value="tomorrow_night">Tomorrow Night</option><option value="tomorrow_night_blue">Tomorrow Night Blue</option><option value="tomorrow_night_bright">Tomorrow Night Bright</option><option value="tomorrow_night_eighties">Tomorrow Night 80s</option><option value="twilight">Twilight</option><option value="vibrant_ink">Vibrant Ink</option></optgroup></select>
-					&nbsp;&nbsp;&nbsp;</span>
+						&nbsp;&nbsp;&nbsp;
+					</span>
+					<span>
+						Theme: 
+						<select id="lc-editor-theme"><optgroup label="Bright"><option value="chrome">Chrome</option><option value="clouds">Clouds</option><option value="crimson_editor">Crimson Editor</option><option value="dawn">Dawn</option><option value="dreamweaver">Dreamweaver</option><option value="eclipse">Eclipse</option><option value="github">GitHub</option><option value="iplastic">IPlastic</option><option value="solarized_light">Solarized Light</option><option value="textmate">TextMate</option><option value="tomorrow">Tomorrow</option><option value="xcode">XCode</option><option value="kuroir">Kuroir</option><option value="katzenmilch">KatzenMilch</option><option value="sqlserver">SQL Server</option></optgroup><optgroup label="Dark"><option value="ambiance">Ambiance</option><option value="chaos">Chaos</option><option value="clouds_midnight">Clouds Midnight</option><option value="dracula">Dracula</option><option value="cobalt">Cobalt</option><option value="gruvbox">Gruvbox</option><option value="gob">Green on Black</option><option value="idle_fingers">idle Fingers</option><option value="kr_theme">krTheme</option><option value="merbivore">Merbivore</option><option value="merbivore_soft">Merbivore Soft</option><option value="mono_industrial">Mono Industrial</option><option value="monokai">Monokai</option><option value="pastel_on_dark">Pastel on dark</option><option value="solarized_dark">Solarized Dark</option><option value="terminal">Terminal</option><option value="tomorrow_night">Tomorrow Night</option><option value="tomorrow_night_blue">Tomorrow Night Blue</option><option value="tomorrow_night_bright">Tomorrow Night Bright</option><option value="tomorrow_night_eighties">Tomorrow Night 80s</option><option value="twilight">Twilight</option><option value="vibrant_ink">Vibrant Ink</option></optgroup></select>
+						&nbsp;&nbsp;&nbsp;
+					</span>
 					<span>Size: <input id="lc-editor-fontsize" type="number" value="13" min="9" max="24"> px &nbsp;&nbsp;&nbsp; </span>
 					<a href="#" class="lc-editor-side">Side <span class="fa fa-arrow-circle-left"></a>
 					<a href="#" class="lc-editor-maximize">Maximize <span class="fa fa-arrows-alt"></a>
@@ -142,9 +176,18 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 			<?php include ('modal-link.html'); ?>
 		</section>
 
+		<section>
+			<?php include ('icons/editor-icons.html'); ?>
+		</section>
+
 		<?php do_action("lc_editor_before_body_closing")  ?>
 
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@6.6.96/css/materialdesignicons.min.css">
+		<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@6.6.96/css/materialdesignicons.min.css"> -->
+
+		<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+
+		<script defer type='text/javascript' src='https://updater.livecanvas.com/lc-update-notification.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
+
 		
 	</body>
 

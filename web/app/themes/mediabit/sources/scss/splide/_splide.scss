@@ -1,0 +1,102 @@
+@keyframes splide-loading{0%{transform:rotate(0)}to{transform:rotate(1turn)}}.splide__track--draggable{-webkit-touch-callout:none;-webkit-user-select:none;-ms-user-select:none;user-select:none}.splide__track--fade>.splide__list>.splide__slide{margin:0!important;opacity:0;z-index:0}.splide__track--fade>.splide__list>.splide__slide.is-active{opacity:1;z-index:1}.splide--rtl{direction:rtl}.splide__track--ttb>.splide__list{display:block}.splide__container{box-sizing:border-box;position:relative}.splide__list{backface-visibility:hidden;display:-ms-flexbox;display:flex;height:100%;margin:0!important;padding:0!important}.splide.is-initialized:not(.is-active) .splide__list{display:block}.splide__pagination{-ms-flex-align:center;align-items:center;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;-ms-flex-pack:center;justify-content:center;margin:0;pointer-events:none}.splide__pagination li{display:inline-block;line-height:1;list-style-type:none;margin:0;pointer-events:auto}.splide:not(.is-overflow) .splide__pagination{display:none}.splide__progress__bar{width:0}.splide{position:relative;visibility:hidden}.splide.is-initialized,.splide.is-rendered{visibility:visible}.splide__slide{backface-visibility:hidden;box-sizing:border-box;-ms-flex-negative:0;flex-shrink:0;list-style-type:none!important;margin:0;position:relative}.splide__slide img{vertical-align:bottom}.splide__spinner{animation:splide-loading 1s linear infinite;border:2px solid #999;border-left-color:transparent;border-radius:50%;bottom:0;contain:strict;display:inline-block;height:20px;left:0;margin:auto;position:absolute;right:0;top:0;width:20px}.splide__sr{clip:rect(0 0 0 0);border:0;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}.splide__toggle.is-active .splide__toggle__play,.splide__toggle__pause{display:none}.splide__toggle.is-active .splide__toggle__pause{display:inline}.splide__track{overflow:hidden;position:relative;z-index:0}
+
+.splide {
+    &__arrows {
+          .splide__arrow {
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 50%;
+            transform: translate(-50%);
+            width: 2.5em;
+            z-index: 1;
+            &:focus-visible {
+                outline: 3px solid $primary;
+                outline-offset: 3px
+            }
+            svg {
+                fill: $primary;
+                height: 1.5em;
+                transition: fill .2s linear;
+                width: 1.5em;  
+            }
+                &--prev {
+                    left: 5px;
+                    right: auto;
+                    transform: none;
+                    svg {
+                        transform: scaleX(-1)
+                    }
+                }
+                &--next {
+                    right: 5px;
+                    left: auto;
+                    transform: none;
+                }
+            }
+             
+        }
+}
+
+.livecanvas-is-editing .splide {
+    visibility: visible !important;
+}
+.splide {
+    // other styles...
+    &__pagination {
+ 
+  
+      li {
+      
+      }
+  
+      &__page {
+        // background gray of $primary
+        background: $secondary;
+        border: 0;
+        border-radius: 50%;
+        display: inline-block;
+        height: 10px;
+        margin: 3px;
+        padding: 0;
+        position: relative;
+        transition: background-color .2s linear, transform .2s linear;
+        width: 10px;
+  
+        &.is-active {
+          background: $primary;
+          transform: scale(1.4);
+          z-index: 1;
+        }
+  
+        &:hover {
+          background: $primary;
+          cursor: pointer;
+          opacity: .9;
+        }
+  
+        &:focus-visible {
+          outline: 3px solid $primary;
+          outline-offset: 3px;
+        }
+      }
+    }
+    
+    &.is-focus-in {
+      .splide__pagination__page {
+        &:focus {
+          outline: 3px solid $primary;
+          outline-offset:3px;
+        }
+      }
+    }
+    
+    &:not(.is-overflow) {
+      .splide__pagination {
+        display: none;
+      }
+    }
+  }

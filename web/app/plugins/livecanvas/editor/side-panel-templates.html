@@ -1,0 +1,278 @@
+<template id="sidebar-section-form-common-elements">
+
+ 	<div class="common-form-fields"> 
+
+		<!-- <a href="#" class="toggle-common-form-fields">^ Toggle</a> -->
+		<h5 class="html-attributes-box-title">HTML Attributes</h5>
+
+
+		<div class="common-form-fields-content"> 
+
+			
+			
+			<div>
+				<label>ID</label>
+				<input type="text" spellcheck="false" attribute-name="ID" value="" placeholder="Set an ID for the element" class="id-livedit">
+			</div>
+			<div>
+				<label>CLASS[es]</label>
+				<!-- <input class="zoomable" type="text"  spellcheck="false" attribute-name="class" value="" placeholder="None assigned" class="class-livedit"> -->
+				<textarea spellcheck="false" attribute-name="class" value="" placeholder="Add classes here..." class="class-livedit"></textarea>
+
+			</div>
+			<div>
+				<label>STYLE (inline CSS)
+					<!-- <a style="float:right;text-decoration: underline" id="show-css-inspiration">Inspiration</a> --> </label>
+				<textarea data-syntax="css" data-syntax-theme="one-dark"  spellcheck="false" attribute-name="style" value="" placeholder="Add CSS rules..." class="zoomable"></textarea>
+
+			</div>
+
+			<div hidden>
+				<label>Min-Height (inline-style-readymades demo)</label>
+				<select class="form-control inline-style-readymades">
+
+					<option value="none-to-do">Set...</option>
+
+					<option value="padding: 3vh 0;">Normal</option>
+					<option value="min-height: 100vh;">Screen Height</option>
+
+				</select>
+			</div>
+
+			<div id="css-samples" hidden>
+
+				<h2>CSS best resources </h2>
+				<ul>
+					<li>
+						<a target="_blank" href="http://bennettfeely.com/gradients/">New CSS gradient possibilities with the background-blend-mode property</a>
+					</li>
+					<li>
+						Get some cool background gradients at <a target="_blank" href="https://uigradients.com/">uigradients.com</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+ 	</div>
+ </template>
+
+
+<!-- LEGACY old margins for image and svg widgets -->
+<old-spacings hidden>
+	<div class="widget-wrapper-flex" id="the-margins">
+		<div>
+			<label> Top</label>
+			<select class="form-control" target="classes">
+				<option value="">None</option>
+				<optgroup label="Positive Values">
+					<option value="mt-1">1</option>
+					<option value="mt-2">2</option>
+					<option value="mt-3">3</option>
+					<option value="mt-4">4</option>
+					<option value="mt-5">5</option>
+					<option value="mt-6">6</option>
+					<option value="mt-7">7</option>
+					<option value="mt-8">8</option>
+				</optgroup>
+				<optgroup label="Negative Values">
+					<option value="mt-n1">-1</option>
+					<option value="mt-n2">-2</option>
+					<option value="mt-n3">-3</option>
+					<option value="mt-n4">-4</option>
+					<option value="mt-n5">-5</option>
+					<option value="mt-n6">-6</option>
+					<option value="mt-n7">-7</option>
+					<option value="mt-n8">-8</option>
+				</optgroup>
+			</select>
+
+		</div>
+		<div>
+			<label> Right</label>
+			<select class="form-control" target="classes">
+				<option value="">None</option>
+				<optgroup label="Positive Values">
+					<option value="me-1">1</option>
+					<option value="me-2">2</option>
+					<option value="me-3">3</option>
+					<option value="me-4">4</option>
+					<option value="me-5">5</option>
+					<option value="me-6">6</option>
+					<option value="me-7">7</option>
+					<option value="me-8">8</option>
+				</optgroup>
+				<optgroup label="Negative Values">
+					<option value="me-n1">-1</option>
+					<option value="me-n2">-2</option>
+					<option value="me-n3">-3</option>
+					<option value="me-n4">-4</option>
+					<option value="me-n5">-5</option>
+					<option value="me-n6">-6</option>
+					<option value="me-n7">-7</option>
+					<option value="me-n8">-8</option>
+				</optgroup>
+			</select>
+
+		</div>
+
+		<div>
+			<label> Bottom</label>
+			<select class="form-control" name="margin_bottom_classes" target="classes">
+				<option value="">None</option>
+				<optgroup label="Positive Values">
+					<option value="mb-1">1</option>
+					<option value="mb-2">2</option>
+					<option value="mb-3">3</option>
+					<option value="mb-4">4</option>
+					<option value="mb-5">5</option>
+					<option value="mb-6">6</option>
+					<option value="mb-7">7</option>
+					<option value="mb-8">8</option>
+				</optgroup>
+				<optgroup label="Negative Values">
+					<option value="mb-n1">-1</option>
+					<option value="mb-n2">-2</option>
+					<option value="mb-n3">-3</option>
+					<option value="mb-n4">-4</option>
+					<option value="mb-n5">-5</option>
+					<option value="mb-n6">-6</option>
+					<option value="mb-n7">-7</option>
+					<option value="mb-n8">-8</option>
+				</optgroup>
+			</select>
+
+		</div>
+		<div>
+			<label> Left</label>
+			<select class="form-control" target="classes">
+				<option value="">None</option>
+				<optgroup label="Positive Values">
+					<option value="ms-1">1</option>
+					<option value="ms-2">2</option>
+					<option value="ms-3">3</option>
+					<option value="ms-4">4</option>
+					<option value="ms-5">5</option>
+					<option value="ms-6">6</option>
+					<option value="ms-7">7</option>
+					<option value="ms-8">8</option>
+				</optgroup>
+				<optgroup label="Negative Values">
+					<option value="ms-n1">-1</option>
+					<option value="ms-n2">-2</option>
+					<option value="ms-n3">-3</option>
+					<option value="ms-n4">-4</option>
+					<option value="ms-n5">-5</option>
+					<option value="ms-n6">-6</option>
+					<option value="ms-n7">-7</option>
+					<option value="ms-n8">-8</option>
+				</optgroup>
+			</select>
+
+		</div>
+	</div> <!-- close flex -->
+
+
+
+
+	<div class="widget-wrapper-flex" id="the-paddings">
+		<div>
+			<label> Top</label>
+			<select class="form-control" target="classes">
+				<option value="">None</option>
+				<option value="pt-1">1</option>
+				<option value="pt-2">2</option>
+				<option value="pt-3">3</option>
+				<option value="pt-4">4</option>
+				<option value="pt-5">5</option>
+				<option value="pt-6">6</option>
+				<option value="pt-7">7</option>
+				<option value="pt-8">8</option>
+			</select>
+
+		</div>
+		<div>
+			<label> Right</label>
+			<select class="form-control" target="classes">
+				<option value="">None</option>
+				<option value="pe-1">1</option>
+				<option value="pe-2">2</option>
+				<option value="pe-3">3</option>
+				<option value="pe-4">4</option>
+				<option value="pe-5">5</option>
+				<option value="pe-6">6</option>
+				<option value="pe-7">7</option>
+				<option value="pe-8">8</option>
+			</select>
+
+		</div>
+
+		<div>
+			<label> Bottom</label>
+			<select class="form-control" name="margin_bottom_classes" target="classes">
+				<option value="">None</option>
+				<option value="pb-1">1</option>
+				<option value="pb-2">2</option>
+				<option value="pb-3">3</option>
+				<option value="pb-4">4</option>
+				<option value="pb-5">5</option>
+				<option value="pb-6">6</option>
+				<option value="pb-7">7</option>
+				<option value="pb-8">8</option>
+			</select>
+
+		</div>
+		<div>
+			<label> Left</label>
+			<select class="form-control" target="classes">
+				<option value="">None</option>
+				<option value="ps-1">1</option>
+				<option value="ps-2">2</option>
+				<option value="ps-3">3</option>
+				<option value="ps-4">4</option>
+				<option value="ps-5">5</option>
+				<option value="ps-6">6</option>
+				<option value="ps-7">7</option>
+				<option value="ps-8">8</option>
+			</select>
+
+		</div>
+	</div> <!-- close flex -->
+
+ 
+</old-spacings> 
+
+<old-colors hidden>
+	<template class="custom-color-widget custom-color-widget-text-color" id="custom-color-widget-model">
+		<span value="text-primary" title="Primary"> </span>
+		<span value="text-secondary" title="Secondary"> </span>
+		<span value="text-success" title="Success"> </span>
+		<span value="text-danger" title="Danger"> </span>
+		<span value="text-warning" title="Warning"> </span>
+		<span value="text-info" title="Info"> </span>
+		<span value="text-light" title="Light"> </span>
+		<span value="text-dark" title="Dark"> </span>
+		<span value="text-body" title="Body" style="background-color: #212529;"> </span>
+		<span value="text-muted" title="Muted" style="background-color: #6c757d;"> </span>
+		<span value="text-white" title="White"> </span>
+		<span value="text-black-50" title="Black 50" style="background-color: rgba(0, 0, 0, 0.5)"> </span>
+		<span value="text-white-50" title="White 50"  style="background-color: rgba(255, 255, 255, 0.5)"> </span>
+		<span class="active" value="" title="None"> </span>
+	</template>
+
+
+	<template class="custom-color-widget custom-color-widget-bg-color"  id="custom-bg-color-widget-model">
+		<span value="bg-primary" title="Primary"> </span>
+		<span value="bg-secondary" title="Secondary"> </span>
+		<span value="bg-success" title="Success"> </span>
+		<span value="bg-danger" title="Danger"> </span>
+		<span value="bg-warning" title="Warning"> </span>
+		<span value="bg-info" title="Info"> </span>
+		<span value="bg-light" title="Light"> </span>
+		<span value="bg-dark" title="Dark"> </span>
+		<span value="bg-body" title="Body"  style="background-color: #fff;"> </span>
+			
+		<span value="bg-white" title="White"> </span> 
+		<span class="active" value="" title="None"> </span>
+	</template>
+
+</old-colors>

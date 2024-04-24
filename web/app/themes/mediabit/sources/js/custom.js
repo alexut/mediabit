@@ -88,7 +88,6 @@ function handleHamburgerIconClick() {
     })(jQuery);
 }
 
-
   // On carousel item change event
   function handleCarouselSlideChange() {
     var carousel = document.querySelector(".carousel");
@@ -101,21 +100,6 @@ function handleHamburgerIconClick() {
     }
   }
 
-  // Step click event
-  function handleGoToStepClick() {
-    const steps = document.querySelectorAll(".go-to-step");
-    if (steps) {
-      steps.forEach(step => {
-        step.addEventListener("click", function(e) {
-          e.preventDefault();
-          const targetStep = document.querySelector(this.getAttribute("href"));
-          document.querySelectorAll(".step").forEach(step => step.classList.remove("active"));
-          targetStep.classList.add("active");
-        });
-      });
-    }
-  }
-
   // Executing all the handlers once the DOM is fully loaded
   document.onreadystatechange = function() {
     if (document.readyState === 'complete') {
@@ -123,7 +107,66 @@ function handleHamburgerIconClick() {
       handleMouseEvents();
       handleHamburgerIconClick();
       handleCarouselSlideChange();
-      handleGoToStepClick();
     }
   }
 })();
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  // get URL parameter for domeniu
+  var urlParams = new URLSearchParams(window.location.search);
+  var domeniu = urlParams.get('domeniu'); // 'domeniu' is the URL parameter name
+  if (domeniu) {
+      var select = document.querySelector('select[name="domeniu-activitate"]');
+      select.value = domeniu.replace(/\+/g, ' '); // Replace + with space for URL encoded values
+  }
+
+  var rangeInput = document.getElementById('energy-bill-range');
+  var selectedAmountSpan = document.getElementById('selected-amount');
+  var selectedPackageSpan = document.getElementById('selected-package');
+
+  function updateDescription(value) {
+      selectedAmountSpan.textContent = value;
+    
+      if (value <= 500) {
+        selectedPackageSpan.textContent = 'Site cu funcționalități minime – ideal pentru prezență online rapidă.';
+    } 
+
+    else if (value > 500 && value <= 800) {
+        selectedPackageSpan.textContent = 'Site personalizat cu funcționalități de bază – potrivit pentru start-up-uri și afaceri locale.';
+    }
+
+    else if (value > 800 && value <= 1200) {
+        selectedPackageSpan.textContent = 'Site personalizat cu opțiuni medii – include blog și formular de contact.';
+    }
+
+    else if (value > 1200 && value <= 2000) {
+        selectedPackageSpan.textContent = 'Site personalizat cu funcționalități avansate – magazin online și integrare social media.';
+    }
+    else if (value > 2000 && value <= 3000) {
+        selectedPackageSpan.textContent = 'Site premium – design superior, SEO avansat, și optimizare pentru mobil.';
+    }
+    else if (value > 3000 && value <= 4500) {
+        selectedPackageSpan.textContent = 'Site premium plus – include analize detaliate ale vizitatorilor și optimizare continuă.';
+    }
+    else if (value > 4500 && value <= 6000) {
+        selectedPackageSpan.textContent = 'Platformă avansată – pentru medii și mari întreprinderi cu funcționalități complexe.';
+    }
+    else if (value > 6000 && value <= 8000) {
+        selectedPackageSpan.textContent = 'Platformă extinsă – integrări complexe cu sisteme externe și automații personalizate.';
+    }
+    else if (value > 8000) {
+        selectedPackageSpan.textContent = 'Soluție enterprise – arhitectură scalabilă, securitate avansată și suport dedicat.';
+    }
+    if (value > 20000 ) {
+       selectedAmountSpan.textContent = '+20000';
+    }
+  }
+
+  rangeInput.addEventListener('input', function() {
+      updateDescription(this.value);
+  });
+
+  // Initialize description
+  updateDescription(rangeInput.value);
+});

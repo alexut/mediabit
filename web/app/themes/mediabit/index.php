@@ -1,6 +1,9 @@
 <?php
 get_header();
-// the content loop
+
+
+$header = new \Mediabit\Templates\Sections\Header();
+echo $header->render(); 
 
 if ( have_posts() ) {
     while ( have_posts() ) {
@@ -9,6 +12,8 @@ if ( have_posts() ) {
     }
 }
 
+$footer = new \Mediabit\Templates\Sections\Footer();
+echo $footer->render();
 
 get_footer();
 ?>

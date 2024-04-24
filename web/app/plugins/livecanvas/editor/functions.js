@@ -1,5 +1,133 @@
-////////// SOME MICRO UTILITIES //////////////////////////
-var themeNoGutter = false;
+ 
+
+
+/* ******************* UTILITY FUNCTIONS ************************* */
+
+//////DEBOUNCE UTILITY  
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function () {
+		var context = this,
+			args = arguments;
+		var later = function () {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+}
+
+
+function capitalize(s){
+	if (typeof s !== 'string') return ''
+	return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+
+function generateReadableName() {
+	const vowels = ['a', 'e', 'i', 'o', 'u'];
+	const consonants = [
+		'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm',
+		'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'
+	];
+
+	function getRandomElement(arr) {
+		return arr[Math.floor(Math.random() * arr.length)];
+	}
+
+	let name = '';
+	for (let i = 0; i < 2; i++) {
+		name += getRandomElement(consonants);
+		name += getRandomElement(vowels);
+	}
+
+	return name;
+}
+
+function lc_parseParams(str) {
+
+	str = str.split('?')[1]; //eliminate part before ?
+
+	return str.split('&').reduce(function (params, param) {
+		var paramSplit = param.split('=').map(function (value) {
+			return decodeURIComponent(value.replace('+', ' '));
+		});
+		params[paramSplit[0]] = paramSplit[1];
+		return params;
+	}, {});
+}
+
+
+function lc_get_parameter_value_from_shortcode(paramName, theShortcode) {
+	theShortcode = theShortcode.replace(/ =/g, '=').replace(/= /g, '=');
+	var array1 = theShortcode.split(paramName + '="');
+	var significant_part = array1[1];
+	if (significant_part === undefined) return "";
+	var array2 = significant_part.split('"');
+	return array2[0];
+}
+
+function determineScrollBarWidth() {
+
+	var $outer = $('<div>').css({
+		visibility: 'hidden',
+		width: 100,
+		overflow: 'scroll'
+	}).appendTo('body'),
+		widthWithScroll = $('<div>').css({
+			width: '100%'
+		}).appendTo($outer).outerWidth();
+	$outer.remove();
+	theScrollBarWidth = widthWithScroll;
+}
+
+function getScrollBarWidth() {
+	//base case
+	if (previewFrameBody.height() <= $(window).height()) return 0;
+	else return 100 - theScrollBarWidth;
+}
+
+function download(filename, text) {
+	var element = document.createElement('a');
+	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+	element.setAttribute('download', filename);
+
+	element.style.display = 'none';
+	document.body.appendChild(element);
+
+	element.click();
+
+	document.body.removeChild(element);
+}
+
+function usingChromeBrowser() {
+
+	var isChromium = window.chrome;
+	var winNav = window.navigator;
+	var vendorName = winNav.vendor;
+	var isOpera = typeof window.opr !== "undefined";
+	var isIEedge = winNav.userAgent.indexOf("Edge") > -1;
+	var isIOSChrome = winNav.userAgent.match("CriOS");
+
+	if (isIOSChrome) {
+		// is Google Chrome on IOS
+		return true;
+	} else if (
+		isChromium !== null &&
+		typeof isChromium !== "undefined" &&
+		vendorName === "Google Inc." &&
+		isOpera === false &&
+		isIEedge === false
+	) {
+		return true;
+	} else {
+		return false;
+	}
+
+}
 
 function myConsoleLog(message) {
 	let baseStyles = [
@@ -11,6 +139,139 @@ function myConsoleLog(message) {
 	console.log('%c' + message, baseStyles);
 }
 
+function getCssVariablesPrefix() {
+
+	var css_variables_prefix = ""; //default for bs4
+
+	//check if bs5 vanilla: bs-primary is defined
+	if (getComputedStyle(previewiframe.contentWindow.document.documentElement).getPropertyValue('--bs-primary')) css_variables_prefix = "bs-";
+
+	//check if mdb: mdb-primary is defined
+	if (getComputedStyle(previewiframe.contentWindow.document.documentElement).getPropertyValue('--mdb-primary')) css_variables_prefix = "mdb-";
+
+	return css_variables_prefix;
+}
+
+
+///// SELECTOR GENERATOR /////////////////////////////////
+function CSSelector(el) {
+	var names = [];
+	while (el.parentNode) {
+		if (el.nodeName == "MAIN" && el.id == "lc-main") {
+			names.unshift(el.nodeName + '#' + el.id);
+			break;
+		} else {
+			if (el === el.ownerDocument.documentElement || el === el.ownerDocument.body) {
+				names.unshift(el.tagName);
+			} else {
+				for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++) { }
+				names.unshift(el.tagName + ':nth-child(' + c + ')');
+			}
+			el = el.parentNode;
+		}
+	}
+	return names.join(' > ');
+}
+
+/////////WYSIWYG HARD SANITIZER ////////////////
+function sanitize_editable_rich(input) {
+	var output = input;
+	//output = output.replace(/<\/?span[^>]*>/g, ""); //removed in aug 2020 as we now TAKE CARE OF CONTENT MERGING THAT CREATES USELESS SPANs 200 lineas below
+
+	//kill useless DIVs
+	output = output.replace(/<\/?div[^>]*>/g, "");
+	//output= output.replace(/&nbsp;/g,"");
+
+	//convert b to strong
+	output = output.replace(/<b>/g, "<strong>");
+	output = output.replace(/<b c/g, "<strong c"); // case for <b class=
+	output = output.replace(/<\/b>/g, "</strong>");
+
+	//convert i to em
+	output = output.replace(/<i>/g, "<em>");
+	output = output.replace(/<i c/g, "<em c");
+	output = output.replace(/<\/i>/g, "</em>");
+
+	//kill useless double tags
+	output = output.replace(/<\/em><em>/g, "");
+	output = output.replace(/<em> <\/em>/g, " ");
+	output = output.replace(/<\/strong><strong>/g, "");
+	output = output.replace(/<strong> <\/strong>/g, " ");
+
+	return output;
+}
+
+///FILTER HTML BLOCKS / SECTIONS BEFORE PLACING THEM INSIDE THE PAGE
+function prepareElement(html) {
+	const theRandomName = generateReadableName();
+	html = html.replaceAll('-RANDOMID', '-' + theRandomName); ///substitute random IDs for components
+	html = html.replaceAll('RANDOMID(',  capitalize(theRandomName) + '(' ); /// for function names
+	html = html.replaceAll('RANDOMID (', capitalize(theRandomName) + '(' ); /// for function names
+	//html = html.replaceAll('@zero_to_ten@', Math.floor((Math.random() * 10) + 1)); ///substitute random vars for demo images
+	html = html.replaceAll('-RANDOMNUMBER', '-' + Math.floor((Math.random() * 10000) + 1)); ///substitute with random number
+	return html;
+}
+
+///DETERMINE IF CODE  BLOCKS NEED A HARD REFRESH
+function code_needs_hard_refresh(new_html) {
+	if (new_html.includes("lc-needs-hard-refresh")) return true;
+	var bsNative = (previewiframe.srcdoc.includes('/bootstrap-native.min.js">'));
+	if (bsNative) if (
+		new_html.includes("carousel-item") ||
+		new_html.includes("data-toggle=")
+	) return true;
+	return false;
+}
+
+///////////////////////////////////////////////
+////////// UTILITIES EVENTS ///////////////////
+///////////////////////////////////////////////
+
+const lcDocAvailableEmitter = function(doc) {
+	const evt = new CustomEvent('lcDocAvailable', {
+		bubbles: true,
+		cancelable: true,
+		detail: {
+			doc: doc
+		}
+	})
+	document.dispatchEvent(evt);
+}
+
+// $(document).on('lcUpdatePreview', function(e) {})
+const lcUpdatePreviewEmitter = function(details) {
+	const evt = new CustomEvent('lcUpdatePreview', {
+			bubbles: true,
+			cancelable: true,
+			detail: details
+		})
+	document.dispatchEvent(evt);
+}
+
+
+////////////////////////////////////////////////////////////////
+////////// CREATE A STORE GLOBAL TO ATTACH TO WINDOW ///////////
+////////////////////////////////////////////////////////////////
+const lcMainStore = {
+	doc: null,
+	setDoc(newValue, creation = false) {
+		lcDocAvailableEmitter(newValue);
+		this.doc = newValue;
+	},
+	getDoc() {
+		return this.doc;
+	},
+}
+
+
+window.lcMainStore = lcMainStore;
+document.dispatchEvent(new CustomEvent('lcMainStoreReady', {
+	bubbles: true,
+	cancelable: true,
+	detail: {
+		store: lcMainStore
+	}
+}))
 
 ////////// MAIN BEHAVIORS //////////////////////////
 function loadURLintoEditor(url) {
@@ -19,6 +280,10 @@ function loadURLintoEditor(url) {
 			return response.text();
 		}).then(function(page_html) {
 			doc = new DOMParser().parseFromString(page_html, 'text/html');
+
+			// set the doc in the store
+			window.lcMainStore.setDoc(doc, true);
+
 			if (!doc.querySelector("main#lc-main")) { alert("The page loading seems to fail. This is generally due to peculiar host environments. Please reach support for advice."); }
 			
 			original_document_html = getPageHTML(); //for alert exit without saving
@@ -82,6 +347,12 @@ function tryToEnrichPreview() {
 }
 
 function updatePreview() {
+
+	lcUpdatePreviewEmitter({
+		previewHtmlUpdated: doc.querySelector("html").outerHTML,
+		selector: "html"
+	});
+
 	previewiframe.srcdoc = filterPreviewHTML(doc.querySelector("html").outerHTML);
 	previewiframe.onload = enrichPreview();
 	saveHistoryStep();
@@ -102,7 +373,8 @@ var enrichPreview = debounce(function() {
 
 	//ADD the iframe CSS stylesheet
 	previewFrame.contents().find("head").append($("<link/>", {
-		rel: "stylesheet",
+        id: "lc-preview-iframe",
+        rel: "stylesheet",
 		href: lc_editor_root_url + "preview-iframe.css",
 		type: "text/css"
 	}));
@@ -145,18 +417,10 @@ var enrichPreview = debounce(function() {
 	//GET BOOTSTRAP COLORS and paint COLOR WIDGETS
 	//check which bootstrap is in use and find out css variables prefix
 	
-	var css_variables_prefix = ""; //default for bs4
-
-	//check if bs5 vanilla: bs-primary is defined
-	if (getComputedStyle(previewiframe.contentWindow.document.documentElement).getPropertyValue('--bs-primary')) css_variables_prefix = "bs-";
-
-	//check if mdb: mdb-primary is defined
-	if (getComputedStyle(previewiframe.contentWindow.document.documentElement).getPropertyValue('--mdb-primary')) css_variables_prefix = "mdb-";
-
 	//loop color widgets and paint each element
 	$(".custom-color-widget").each(function(index, the_widget) { //foreach color widget
 		$(the_widget).find("span,a[data-class]").each(function(index, span_element) {  //foreach  color element in the widget
-			color_variable_name = css_variables_prefix + $(span_element).attr("title").trim().toLowerCase().replace(' ', '-');  //console.log(color_variable_name); 
+			color_variable_name = getCssVariablesPrefix() + $(span_element).attr("title").trim().toLowerCase().replace(' ', '-');  //console.log(color_variable_name); 
 			var color_value = getComputedStyle(previewiframe.contentWindow.document.documentElement).getPropertyValue('--' + color_variable_name); 
 			if (color_value) $(span_element).css("background",color_value);
 		}); //end each 
@@ -186,21 +450,18 @@ var enrichPreview = debounce(function() {
 	previewFrame.contents().on("click", "a", function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		console.log("You cannot navigate the site while editing.");
+		console.log("Click handled.");
 	});
 
 	//HIDE PRELOADER 
 	$("#loader").fadeOut(500);
 
-	//RENDER SHORTCODES  
-	render_shortcodes_in("main");
-	
-	//for dynamic templates,  render lc_ shortcodes
-	if (lc_editor_post_type == "lc_dynamic_template") render_dynamic_templating_shortcodes_in("main");
+	//RENDER SHORTCODES
+	render_dynamic_content("main");  
 
 	//ALL IS READY, CHECK IF USER WANTS TO START FROM A READYMADE
 	if (lc_editor_post_type != 'lc_block' && lc_editor_post_type != 'lc_section' &&	lc_editor_post_type != 'lc_partial' &&
-		lc_editor_main_bootstrap_version == 5 && doc.querySelector("main#lc-main").innerHTML == "" &&
+        lc_editor_main_bootstrap_version == 5 && doc.querySelector("main#lc-main").innerHTML.trim() == "" &&
 		(!lc_editor_simplified_client_ui)
 	) {
 		swal({
@@ -219,7 +480,15 @@ var enrichPreview = debounce(function() {
 
 }, 400);
 
+function render_dynamic_content (selector){
+	if (lc_editor_post_type == "lc_dynamic_template")
+		render_dynamic_templating_shortcodes_in(selector);
+	else
+		render_shortcodes_in(selector);
+}
+
 function updatePreviewSectorial(selector) {
+
 	myConsoleLog("updatePreviewSectorial "+selector);
 	/*
 	if (selector.trim() =='MAIN#lc-main'){
@@ -228,6 +497,11 @@ function updatePreviewSectorial(selector) {
 		return;
 	}
 	*/
+	lcUpdatePreviewEmitter({
+		selector: selector,
+		previewHtmlUpdated: filterPreviewHTML(doc.querySelector(selector).outerHTML)
+	})
+
 	previewiframe.contentWindow.document.body.querySelector(selector).outerHTML = filterPreviewHTML(doc.querySelector(selector).outerHTML);
 	enrichPreviewSectorial(selector);
 	saveHistoryStep();
@@ -238,10 +512,7 @@ var enrichPreviewSectorial = debounce(function(selector) {
 	add_helper_attributes_in_preview();
 
 	//RENDER SHORTCODES  
-	render_shortcodes_in(selector);
-
-	//for dynamic templates,  render lc_ shortcodes
-	if (lc_editor_post_type == "lc_dynamic_template") render_dynamic_templating_shortcodes_in(selector);
+	render_dynamic_content(selector); 
 	
 }, 400);
 
@@ -341,7 +612,7 @@ function handleKeyboardEvents(e){
 
 
 /* ******************* SIDE PANEL  ******************* */
-function revealSidePanel(item_type, selector) {
+function revealSidePanel(item_type, selector, layoutElementName="") {
 	
 	$(".lc-editor-close").click();//close code editor
 
@@ -353,17 +624,21 @@ function revealSidePanel(item_type, selector) {
 	previewFrame.contents().find(".lc-highlight-row").removeClass("lc-highlight-row");
 	previewFrame.contents().find(".lc-highlight-block").removeClass("lc-highlight-block");
 
+	$(".nanotoolbar").hide(); //hide text editing tools
 
-	$(".nanotoolbar").hide(); //hide other nanobars
-
-	//prepare the panel, hide all subpanels
-	$("#sidepanel > section").hide(); // hide other panels
+	//hide all "panels"
+	$("#sidepanel > section").hide(); 
 
 	//set a data attribute to identify the element we're editing
 	var sectionSelector = "#sidepanel > section[item-type=" + item_type + "]";
 	$(sectionSelector).attr("selector", selector);
 
-	initializeSidePanelSection(sectionSelector); //inits main fields
+	//show only appropriate properties relevant for the current item type. Not currently needed.
+	//$(sectionSelector).find('*[show-on]').hide();
+	//$(sectionSelector).find('*[show-on="' + item_type + '"]').show();
+	
+	//inits main field values
+	initializeSidePanelSection(sectionSelector, layoutElementName); 
 	$(sectionSelector).show(); //triggers init of other fields
 
 	//move the preview
@@ -381,20 +656,43 @@ function getDistanceFromParent(el) {
 	return rect.top - el.parentNode.getBoundingClientRect().top;
 }
 
-//sets the values of the input fields in the side panel upon opening it
-function initializeSidePanelSection(sectionSelector) {
+//sets the values of the input fields in the side panel upon opening it 
+function initializeSidePanelSection(sectionSelector, layoutElementName) {
 	
 	theSection = $(sectionSelector);
 	var selector   = theSection.attr("selector");
 	
 	myConsoleLog("Initialize panel for " + theSection.attr("item-type"));
+	
+	//INTERFACE BUILDING: build the edit properties panel
+	if (theSection.attr("item-type")=="edit-properties") {
 
+		document.querySelector('#the-dynamic-editing-form').innerHTML = buildPropertyNavigation(layoutElementName) + 
+			buildPropertyWidgets(layoutElementName) + 
+			document.querySelector('#sidebar-section-form-common-elements').innerHTML;
+		
+		// check why
+		//const iconName = 'panel-title-' + layoutElementName.toLowerCase;
+		//alert(layoutElementName);
+
+		//change window title 
+		document.querySelector("#sidepanel section[item-type='edit-properties'] h1").innerHTML = `
+			${(getCustomIcon('panel-title-' + layoutElementName))}${layoutElementName} Properties
+		`;
+
+		//initialize menu
+		$('#the-dynamic-editing-form .sidebar-panel-navigation a:first').click(); 
+	}
+	
 	//INPUTS: initialize value for text fields /////////
 	//foreach input field
 	theSection.find("*[attribute-name]").each(function(index, element) {
 		var attribute_name = $(element).attr('attribute-name');
-		if (attribute_name === 'html') $(element).val(getPageHTML(selector, attribute_name).trim());
-		else $(element).val(getAttributeValue(selector, attribute_name));
+		if (attribute_name === 'html') {
+			$(element).val(getPageHTML(selector, attribute_name).trim());
+		} else {
+			$(element).val(getAttributeValue(selector, attribute_name));
+		}
 	}); //end each
     
     //COLOR WIDGETS: initialize highlight active color
@@ -408,54 +706,16 @@ function initializeSidePanelSection(sectionSelector) {
 				//CASE AN ACTIVE COLOR WAS FOUND
 				$(span_element).addClass("active"); 
 				color_assigned=true; 
-				/*
-				//now initialize opacity widgets with the active color. CSS opacity will automatically do the shades
-				if ($(the_widget).hasClass("custom-color-widget-text-color")) {
-					var opacity_widget = $(the_widget).closest(".property-group").find(".custom-opacity-widget-text-opacity");
-					if (opacity_widget.length) opacity_widget.find("span").css("background-color", $(this).css("background-color"));
-				}
-				if ($(the_widget).hasClass("custom-color-widget-bg-color")) {
-					var opacity_widget = $(the_widget).closest(".property-group").find(".custom-opacity-widget-bg-opacity");
-					if (opacity_widget.length) opacity_widget.find("span").css("background-color", $(this).css("background-color"));
-				}
-				*/
 			}
 		}); //end each option
 		
 		if(!color_assigned) {
 			//CASE NO COLOR ASSIGNED
 			$(the_widget).find("span[value='']").addClass("active"); 
-			/*
-			//now initialize opacity widgets with the DEFAULT color. CSS opacity will automatically do the shades
-			if ($(the_widget).hasClass("custom-color-widget-text-color")) {
-				var opacity_widget = $(the_widget).closest(".property-group").find(".custom-opacity-widget-text-opacity");
-				if (opacity_widget.length) opacity_widget.find("span").css("background-color", "#fff");
-			}
-			if ($(the_widget).hasClass("custom-color-widget-bg-color")) {
-				var opacity_widget = $(the_widget).closest(".property-group").find(".custom-opacity-widget-bg-opacity");
-				if (opacity_widget.length) opacity_widget.find("span").css("background-color", "#fff");
-			}
-			*/
-		
 		}
 	}); //end each select
 
-	//OPACITY WIDGETS: highlight active 
-	theSection.find(".custom-opacity-widget").each(function (index, the_widget) { //foreach opacity widget
-		$(the_widget).find("span.active").removeClass("active");
-		//foreach  color element in the widget
-		var color_assigned = false;
-		$(the_widget).find("span").each(function (index, span_element) {
-			span_value = $(span_element).attr("value").trim(); //console.log(span_value);
-			if (span_value !== "" && doc.querySelector(selector).classList.contains(span_value)) { 
-				$(span_element).addClass("active");
-				color_assigned = true;
-			}
-		}); //end each option
-		if (!color_assigned) $(the_widget).find("span[value='']").addClass("active");
-	}); //end each select
-
-	//INPUT type NUMBER: initialize values for spacings and col widths
+	//NUMBER WIDGETS: initialize values for spacings and col widths
 	theSection.find(".activate-input-numbers input[type=number]").each(function (index, el) {
 		$(el).val(""); //init
 		var class_prefix = $(el).attr('name');
@@ -466,7 +726,7 @@ function initializeSidePanelSection(sectionSelector) {
 		}
 	});
 
-	///SELECTs: initialize value for select[target=classes]  
+	//SELECT WIDGETS: initialize value for select[target=classes]
 	theSection.find("select[target=classes]").each(function(index, select_element) { //foreach select in section
 		//apply a default starter option
 		$(select_element).find("option:first").prop('selected', true);
@@ -474,6 +734,17 @@ function initializeSidePanelSection(sectionSelector) {
 		$(select_element).find("option").each(function(index, option_element) {
 			option_value = $(option_element).val().trim(); //console.log(option_value);
 			if (option_value !== "" && doc.querySelector(selector).classList.contains(option_value)) $(option_element).prop('selected', true);
+		}); //end each option
+
+	}); //end each select
+
+	//ICON WIDGETS / RADIO: initialize values
+	theSection.find("single-property[data-widget='icons']").each(function(index, select_element) { //foreach select in section
+		 
+		//foreach option in select
+		$(select_element).find("input").each(function(index, option_element) {
+			option_value = $(option_element).val().trim(); //console.log(option_value);
+			if (option_value !== "" && doc.querySelector(selector).classList.contains(option_value)) $(option_element).prop('checked', true);
 		}); //end each option
 
 	}); //end each select
@@ -576,6 +847,10 @@ function initializeSidePanelSection(sectionSelector) {
 			//console.log("set "+fieldName+" to "+fieldValue);
 			if (fieldValue !== "") theSection.find("[name=" + fieldName + "]").val(fieldValue);
 		}); //end each    
+
+		//trigger output view change - see side-panel-advanced-helpers
+		$("#sidepanel section[item-type='posts-loop'] .lc-post-output-tabcontent select[name=output_view]").change();
+
 	}
 
 	//CUSTOM INIT FOR ANIMATIONS
@@ -592,11 +867,14 @@ function initializeSidePanelSection(sectionSelector) {
 
 /* ******************* SHORTCODES ************************* */
 function render_shortcode(selector, shortcode) {
+    
+    urlParams = new URLSearchParams(window.location.search); 
+    
 	$.post(
 		lc_editor_saving_url, {
 			'action': 'lc_process_shortcode',
 			'shortcode': shortcode,
-			'post_id': lc_editor_current_post_id,
+            'post_id': urlParams.get('demo_id') ?? lc_editor_current_post_id,
 		},
 		function(response) {
 			//console.log('The server responded: ', response);
@@ -638,194 +916,7 @@ function render_dynamic_templating_shortcodes_in(selector) {
 	});
 }
 
-/* ******************* PROCEDURES / FUNCTIONS ************************* */
-
-///// SELECTOR GENERATOR /////////////////////////////////
-function CSSelector(el) {
-	var names = [];
-	while (el.parentNode) {
-		if (el.nodeName == "MAIN" && el.id == "lc-main") {
-			names.unshift(el.nodeName + '#' + el.id);
-			break;
-		} else {
-			if (el === el.ownerDocument.documentElement || el === el.ownerDocument.body) {
-				names.unshift(el.tagName);
-			} else {
-				for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++) {}
-				names.unshift(el.tagName + ':nth-child(' + c + ')');
-			}
-			el = el.parentNode;
-		}
-	}
-	return names.join(' > ');
-}
-
-/////////WYSIWYG HARD SANITIZER ////////////////
-function sanitize_editable_rich(input) {
-	var output=input;
-	//output = output.replace(/<\/?span[^>]*>/g, ""); //removed in aug 2020 as we now TAKE CARE OF CONTENT MERGING THAT CREATES USELESS SPANs 200 lineas below
-	
-	//kill useless DIVs
-	output = output.replace(/<\/?div[^>]*>/g, "");
-	//output= output.replace(/&nbsp;/g,"");
-	
-	//convert b to strong
-	output = output.replace(/<b>/g, "<strong>");
-	output = output.replace(/<b c/g, "<strong c"); // case for <b class=
-	output = output.replace(/<\/b>/g, "</strong>");
-	
-	//convert i to em
-	output = output.replace(/<i>/g, "<em>");
-	output = output.replace(/<i c/g, "<em c");
-	output = output.replace(/<\/i>/g, "</em>");
-	
-	//kill useless double tags
-	output = output.replace(/<\/em><em>/g, "");
-	output = output.replace(/<em> <\/em>/g, " ");
-	output = output.replace(/<\/strong><strong>/g, "");
-	output = output.replace(/<strong> <\/strong>/g, " ");
-
-	return output;
-}
-
-///FILTER BLOCKS BEFORE PLACING THEM INSIDE THE PAGE
-function lc_filter_components(unfiltered_html_components) {
-	var filtered_html = unfiltered_html_components.replace(/-RANDOMID/g, '-' + lc_randomString()); ///substitute random IDs for components
-	filtered_html = filtered_html.replace(/@zero_to_ten@/g, Math.floor((Math.random() * 10) + 1)); ///substitute random vars for demo images
-	filtered_html = filtered_html.replace(/-RANDOMNUMBER/g, '-'+ Math.floor((Math.random() * 10000) + 1)); ///substitute with random number
-	return filtered_html;
-}
-
-///DETERMINE IF CODE  BLOCKS NEED A HARD REFRESH
-function code_needs_hard_refresh(new_html){
-	if ( new_html.includes("lc-needs-hard-refresh"))  return true; 
-	var bsNative=(previewiframe.srcdoc.includes('/bootstrap-native.min.js">'));
-	if (bsNative) if (
-		new_html.includes("carousel-item") || 
-		new_html.includes("data-toggle=")
-		) return true;  
-	return false;
-}
-
-/* ******************* UTILITY FUNCTIONS ************************* */
-
-//////DEBOUNCE UTILITY  
-function debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this,
-			args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
-}
-
-
-String.prototype.ucwords = function() {
-	str = this.toLowerCase();
-	return str.replace(/(^([a-zA-Z\p{M}]))|([ -][a-zA-Z\p{M}])/g,
-		function($1) {
-			return $1.toUpperCase();
-		});
-};
-
-
-function lc_randomString() {
-	length = 3;
-	chars = 'abcdefghijklmnopqrstuvwxyz'; //ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	var result = '';
-	for (var i = length; i > 0; --i)
-		result += chars[Math.round(Math.random() * (chars.length - 1))];
-	return result;
-}
-
-function lc_parseParams(str) {
-
-	str = str.split('?')[1]; //eliminate part before ?
-
-	return str.split('&').reduce(function(params, param) {
-		var paramSplit = param.split('=').map(function(value) {
-			return decodeURIComponent(value.replace('+', ' '));
-		});
-		params[paramSplit[0]] = paramSplit[1];
-		return params;
-	}, {});
-}
-
-
-function lc_get_parameter_value_from_shortcode(paramName, theShortcode) {
-	theShortcode = theShortcode.replace(/ =/g, '=').replace(/= /g, '=');
-	var array1 = theShortcode.split(paramName + '="');
-	var significant_part = array1[1];
-	if (significant_part === undefined) return "";
-	var array2 = significant_part.split('"');
-	return array2[0];
-}
-
-function determineScrollBarWidth() {
-	 
-	var $outer = $('<div>').css({
-			visibility: 'hidden',
-			width: 100,
-			overflow: 'scroll'
-		}).appendTo('body'),
-		widthWithScroll = $('<div>').css({
-			width: '100%'
-		}).appendTo($outer).outerWidth();
-	$outer.remove();
-	theScrollBarWidth=widthWithScroll;
-}
-
-function getScrollBarWidth() { 
-	//base case
-	if (previewFrameBody.height() <= $(window).height()) return 0;
-		else return 100 - theScrollBarWidth;
-}
-
-function download(filename, text) {
-	var element = document.createElement('a');
-	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-	element.setAttribute('download', filename);
-
-	element.style.display = 'none';
-	document.body.appendChild(element);
-
-	element.click();
-
-	document.body.removeChild(element);
-}
-
-function usingChromeBrowser() {
-
-	var isChromium = window.chrome;
-	var winNav = window.navigator;
-	var vendorName = winNav.vendor;
-	var isOpera = typeof window.opr !== "undefined";
-	var isIEedge = winNav.userAgent.indexOf("Edge") > -1;
-	var isIOSChrome = winNav.userAgent.match("CriOS");
-
-	if (isIOSChrome) {
-		// is Google Chrome on IOS
-		return true;
-	} else if (
-		isChromium !== null &&
-		typeof isChromium !== "undefined" &&
-		vendorName === "Google Inc." &&
-		isOpera === false &&
-		isIEedge === false
-	) {
-		return true;
-	} else {
-		return false;
-	}
-
-}
+ 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// INITIALIZE LIVE TEXT EDITING BEHAVIOURS /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -861,10 +952,10 @@ function initialize_live_editing() {
 		e.preventDefault();  
 		e.stopPropagation();
 		
-		$(this).attr("contenteditable", "true").focus().addClass("lc-last-clicked-editable-element"); //enable contenteditable and focus the area
+		$(this).attr("contenteditable", "true").focus().addClass("lc-content-is-being-edited"); //enable contenteditable and focus the area
 		
-		$(".nanotoolbar").hide();
-		$("#ww-toolbar").show();
+		$(".nanotoolbar").hide(); 
+		$("#ww-toolbar").show().attr("selector", CSSelector($(this)[0]));
 		$("#sidepanel .close-sidepanel").click(); //close side panel
 		$(".lc-editor-close").click(); //close code editor
 		
@@ -888,7 +979,7 @@ function initialize_live_editing() {
 		console.log("Handling Blur event: Reapplying content changes on code");
 		console.log("Blur event on " + $(this).attr("editable") + " element");
 		
-		$(this).removeAttr("contenteditable").removeClass("lc-last-clicked-editable-element");
+		$(this).removeAttr("contenteditable").removeClass("lc-content-is-being-edited");
 
 		$(this).find("*[style]").removeAttr("style"); //kill any inline styling
 		$(this).find("*[lc-helper]").removeAttr("lc-helper"); //kill lc-helper attributes if present
@@ -1160,11 +1251,11 @@ if (typeof initialize_contextual_menus !== "function"){
 	function initialize_contextual_menus(scope_selector) {
 
 		//FRAMEWORK SETTINGS //////////////
-		lc_main_parts_selector = "main > section";
-		lc_containers_selector = "main .container, main .container-fluid, main .container-sm,main .container-md,main .container-lg,main .container-xl";
-		lc_rows_selector = "main .row";
-		lc_columns_selector = "main *[class^='col-'], main *[class*=' col-'],main .col";
-		lc_blocks_selector = "main .lc-block";
+		lc_main_parts_selector = theFramework.layout_elements.Main.selector;
+		lc_containers_selector = theFramework.layout_elements.Container.selector;
+		lc_rows_selector = theFramework.layout_elements.Row.selector;
+		lc_columns_selector = theFramework.layout_elements.Column.selector;
+		lc_blocks_selector = theFramework.layout_elements.Block.selector;
 
 		//MICRO TESTING JS
 		/*
@@ -1417,11 +1508,67 @@ function set_html_editor(html) { //quick function to beautify and set the html e
 		"indent_size": "1",
 		"indent_char": "\t",
 	}), 1);
+	    
+    //set autocomplete
+    lc_html_editor.completers.push({
+        getCompletions: (editor, session, pos, prefix, callback) => {
+            let lineTillCursor = session.getDocument().getLine(pos.row).substring(0, pos.column);
+
+            // Check if we are editing a "class" attribute value
+            if (/class=["|'][^"']*$/i.test(lineTillCursor)) {
+                callback(null, getClassesMappedArray());
+            }
+
+			// Check if we are editing a "style" attribute value and using the var( function
+			else if (/style=["|'][^"']*var\([^\)]*$/i.test(lineTillCursor)) {
+				callback(null, getCSSVariablesMappedArray());
+			}
+
+            // Check if we are editing for "editable" attribute value
+            else if (/editable=["|'][^"']*$/i.test(lineTillCursor)) {
+                callback(null, [
+                    { value: 'inline', score: 1000, meta: 'LiveCanvas' },
+                    { value: 'rich', score: 1000, meta: 'LiveCanvas' }
+                ]);
+            }
+            // Check for adding new attribute names in general
+            else if (/\<[a-zA-Z0-9-]+[\s]+[^>]*$/i.test(lineTillCursor)) {
+                var suggestions = [
+                    { value: 'editable="rich"', score: 1000, meta: 'LiveCanvas' },
+                    { value: 'editable="inline"', score: 1000, meta: 'LiveCanvas' }
+                    // Add other attribute suggestions here if needed
+                ];
+                callback(null, suggestions.filter(item => item.value.startsWith(prefix)));
+            }
+            else {
+                callback(null, []);
+            }
+        }
+    });
+
 	$("#lc-html-editor-window").removeAttr("prevent_live_update");
 }
 
 function set_css_editor(css) { //quick function to beautify and set the css editor content
 	$("#lc-css-editor").attr("prevent_live_update", "1");
+
+    //Set CSS Completer for Variables
+    lc_css_editor.completers.push({
+        getCompletions: (editor, session, pos, prefix, callback) => {
+            // Get the current line up to the cursor position
+            const line = session.getLine(pos.row).substring(0, pos.column);
+
+            // Check if the current context is within a var() function
+            if (line.match(/var\([^\)]*$/)) {
+                // Trigger the CSS variables autocomplete
+                callback(null, getCSSVariablesMappedArray());
+            } else {
+                // If not in a var() context, do not provide any completions
+                callback(null, []);
+            }
+        }
+    }); 
+    
 	lc_css_editor.session.setValue(css_beautify(css, {
 		//unformatted: ['script', 'style'],
 		"indent_size": "1",
@@ -1430,15 +1577,23 @@ function set_css_editor(css) { //quick function to beautify and set the css edit
 	$("#lc-css-editor").removeAttr("prevent_live_update");
 }
 
-
 function initialize_contextual_menu_actions() {
+
+	//USER CLICKS ON EDIT PROPERTIES
+	previewFrame.contents().find("body").on("click", ".lc-edit-properties", function (e) {
+		e.preventDefault();
+		var selector = $(this).closest("[selector]").attr("selector");
+		var layoutElementName = $(this).closest(".lc-contextual-menu").find(".lc-contextual-title").text().trim();
+		revealSidePanel("edit-properties", selector, layoutElementName);
+	}); //end function  
+	
 	//USER DBL CLICKS CONTEXTUAL BLOCK MENU TITLE: OPEN PROPERTIES PANEL
 	previewFrame.contents().on("dblclick", ".lc-contextual-title", function(e) {
 		e.preventDefault();
 		$(this).closest(".lc-contextual-menu").find(".lc-contextual-actions ul li a[class$='properties']").click();
 		
 	}); //end function
-
+	
 	//USER RIGHT CLICKS CONTEXTUAL BLOCK MENU TITLE: OPEN CODE EDITOR
 	previewFrame.contents().on("contextmenu", ".lc-contextual-title", function(e) {
 		e.preventDefault();
@@ -1528,14 +1683,6 @@ function initialize_contextual_menu_actions() {
 
 	///////////CONTAINERS ///////////////////
 
-	//HANDLE CLICKING OF EDIT  CONTAINER PROPERTIES  
-	previewFrame.contents().on('click', " .lc-edit-container-properties", function(e) {
-		e.preventDefault();
-		var selector = $(this).closest("[selector]").attr("selector");
-		//alert(selector);
-		revealSidePanel("container-properties", selector);
-	});
-
 	//USER CLICKS ON ADD ROW&COLS TO CONTAINER from contextual menu
 	previewFrame.contents().on('click', " .lc-container-insert-rowandcols", function(e) {
 		e.preventDefault();
@@ -1578,7 +1725,7 @@ function initialize_contextual_menu_actions() {
 
 	function saveToLibrary(post_type,post_title,post_content){
 		
-		$("#previewiframe").contents().find(".lc-last-clicked-editable-element").blur(); //stop text live editing and get those edits into doc
+		$("#previewiframe").contents().find(".lc-content-is-being-edited").blur(); //stop text live editing and get those edits into doc
 		$.post(
 				lc_editor_saving_url, {
 					'action': 'lc_save_element',
@@ -1610,30 +1757,6 @@ function initialize_contextual_menu_actions() {
 		
 	}
 
-	//HANDLE CLICKING OF EDIT  SECTION PROPERTIES  
-	previewFrame.contents().on('click', " .lc-edit-section-properties", function(e) {
-		e.preventDefault();
-		var selector = $(this).closest("[selector]").attr("selector");
-		//alert(selector);
-		revealSidePanel("section-properties", selector);
-	});
-
-	//////////////ROWS ///////////////////////////////////////
-	//USER CLICKS ON ROW PROPERTIES
-	previewFrame.contents().find("body").on("click", ".lc-edit-row-properties", function(e) {
-		e.preventDefault();
-		var selector = $(this).closest("[selector]").attr("selector");
-		revealSidePanel("row-properties", selector);
-	}); //end function
-
-	//////////////COLUMNS ///////////////////////////////////////
-
-	//USER CLICKS ON COLUMN PROPERTIES
-	previewFrame.contents().find("body").on("click", ".lc-edit-column-properties", function(e) {
-		e.preventDefault();
-		var selector = $(this).closest("[selector]").attr("selector");
-		revealSidePanel("column-properties", selector);
-	}); //end function
 
 	////////////////////BLOCKS ///////////////////////////
 
@@ -1665,16 +1788,7 @@ function initialize_contextual_menu_actions() {
 		});
 	}); //end function  
 
-
-
-	//USER CLICKS ON BLOCK PROPERTIES
-	previewFrame.contents().find("body").on("click", ".lc-edit-block-properties", function(e) {
-		e.preventDefault();
-		var selector = $(this).closest("[selector]").attr("selector");
-		revealSidePanel("block-properties", selector);
-	}); //end function  
-
-	//USER CLICKS ON DUPLICATE  (GENERAL)  // patched adding  .lc-duplicate-container - and commenting above 1/2020
+	//USER CLICKS ON DUPLICATE  (GENERAL) 
 	previewFrame.contents().find("body").on("click", ".lc-duplicate-section, .lc-duplicate-container, .lc-duplicate-row, .lc-duplicate-col, .lc-duplicate-block", function(e) {
 		e.preventDefault();
 		var selector = $(this).closest("[selector]").attr("selector");
@@ -1699,16 +1813,13 @@ function initialize_contextual_menu_actions() {
 
 	}); //end function  
 
-
-
-	//USER CLICKS ON ADD   BLOCK TO COLUMN
+	//USER CLICKS ON ADD BLOCK TO COLUMN
 	previewFrame.contents().find("body").on("click", ".lc-add-block-to-column", function(e) {
 		e.preventDefault();
 		var selector = $(this).closest("[selector]").attr("selector");
 		setPageHTML(selector, getPageHTML(selector) + '<div class="lc-block"></div>');
 		updatePreviewSectorial(selector);
 	}); //end function
-
 
 	//REODER:: MOVE UP
 	previewFrame.contents().find("body").on("click", ".lc-move-up", function(e) {
@@ -1749,9 +1860,6 @@ function initialize_contextual_menu_actions() {
 
 		updatePreviewSectorial(CSSelector(doc.querySelector(selector).parentNode));
 	}); //end function
-
-
-
 
 
 } //end function
@@ -1898,4 +2006,165 @@ function initialize_readymade_templates_window (){
 		$('#readymades-modal-wrapper').css('display', 'none');
 	});
 
+}
+
+// FOR CLASSES AUTOCOMPLETE: BUILD CLASSES LIST FROM PREVIEW IFRAME's STYLESHEETS
+function getClassesMappedArray() {
+    let classes = new Set();
+
+    if (!previewiframe || !previewiframe.contentWindow || !previewiframe.contentWindow.document) {
+        console.error("Invalid or missing iframe or document object");
+        return [];
+    }
+
+    //loop all stylesheets
+    for (let sheet of previewiframe.contentWindow.document.styleSheets) {
+        
+        //skip some stylesheets
+        if (['wp-block-library-css', 'lc-preview-iframe'].includes(sheet.ownerNode.id)) {
+            continue; 
+        }
+
+        let sheetHref = sheet.href || '';
+        let sheetName = sheetHref.split('/').pop() || 'Inline Styles'; // Extract filename or label inline styles
+
+        try {
+            Array.from(sheet.cssRules).forEach(rule => {
+                // Process regular style rules
+                if (rule.type === CSSRule.STYLE_RULE) {
+                    processStyleRule(rule, classes, sheetName);
+                }
+
+                // Process rules within media queries
+                if (rule.type === CSSRule.MEDIA_RULE) {
+                    Array.from(rule.cssRules).forEach(innerRule => {
+                        if (innerRule.type === CSSRule.STYLE_RULE) {
+                            processStyleRule(innerRule, classes, sheetName);
+                        }
+                    });
+                }
+            });
+        } catch (e) {
+            console.error("Error processing stylesheet:", e);
+        }
+    }
+
+    let theClassesArray = Array.from(classes);
+
+    // Sort the classes
+    theClassesArray.sort((a, b) => a.className.localeCompare(b.className));
+
+    let mappedArray = theClassesArray.map(({ className, sheetName }) => {
+        return {
+            value: className,
+            score: sheetName.startsWith('bundle.css') ? 2 : 1,
+            meta: (sheetName.startsWith('bundle.css') || sheetName.startsWith('bundle-')) ? 'picostrap' : sheetName // Check for 'bundle.css'
+        };
+    });
+
+    return mappedArray;
+}
+
+function processStyleRule(rule, classes, sheetName) {
+    let selectorText = rule.selectorText;
+    let classNames = selectorText.match(/\.[\w-]+/g);
+    if (classNames) {
+        classNames.forEach(className => {
+            classes.add({ className: className.substring(1), sheetName });
+        });
+    }
+}
+
+function getCSSVariablesMappedArray() {
+    let variables = new Set();
+
+    if (!previewiframe || !previewiframe.contentWindow || !previewiframe.contentWindow.document) {
+        console.error("Invalid or missing iframe or document object");
+        return [];
+    }
+
+    for (let sheet of previewiframe.contentWindow.document.styleSheets) {
+        if (['wp-block-library-css', 'lc-preview-iframe'].includes(sheet.ownerNode.id)) {
+            continue; 
+        }
+
+        let sheetHref = sheet.href || '';
+        let sheetName = sheetHref.split('/').pop() || 'Inline Styles';
+
+        try {
+            Array.from(sheet.cssRules).forEach(rule => {
+                if (rule.type === CSSRule.STYLE_RULE) {
+                    processCSSVariableRule(rule, variables, sheetName);
+                }
+            });
+        } catch (e) {
+            console.error("Error processing stylesheet for variables:", e);
+        }
+    }
+
+    let variablesArray = Array.from(variables);
+    variablesArray.sort((a, b) => a.variableName.localeCompare(b.variableName));
+
+    let mappedArray = variablesArray.map(({ variableName, sheetName }) => {
+        return {
+            value: variableName,
+            score: sheetName.startsWith('bundle.css') ? 2 : 1,
+            meta: (sheetName.startsWith('bundle.css') || sheetName.startsWith('bundle-')) ? 'picostrap' : sheetName
+        };
+    });
+
+    return mappedArray;
+}
+
+function processCSSVariableRule(rule, variables, sheetName) {
+    let style = rule.style;
+    for (let i = 0; i < style.length; i++) {
+        let propName = style[i];
+        if (propName.startsWith('--')) {
+            variables.add({ variableName: propName, sheetName });
+        }
+    }
+}
+
+//FOR PREVENTING CONCURRENT EDITOR USAGE
+function pingServerWhileEditing() {
+
+    
+    $.post( //TODO: HANDLE REQUEST FAIL WITH ALERT - because saving will not be possible
+        lc_editor_saving_url, {
+        'action': 'lc_ping_server_while_editing',
+        'post_id':  lc_editor_current_post_id,
+    },
+        function (response) {
+            console.log('The server call to lc_ping_server_while_editing responded: ', response);
+            
+            if (response.includes('ERROR')) {
+                alert(response);
+                //exit the editor
+                window.location.assign(lc_editor_url_before_editor);
+                
+            }  
+        }
+    );
+
+    setTimeout(pingServerWhileEditing, 30000);
+    
+}
+
+
+
+
+/* ***************************  REMOTE UI KITS FOR READYMADES *************************** */
+
+// Function to get or prompt for the API key
+function getServiceApiKey(serviceName) {
+    const key = `${serviceName.toLowerCase()}_apikey`;
+    let apiKey = localStorage.getItem(key);
+    while (!apiKey || apiKey.length !== 64) {
+        apiKey = prompt(`Please enter your 64-character API key for ${serviceName}:`);
+        if (!apiKey) throw new Error(`No API key entered for ${serviceName}. Aborting.`);
+        if (apiKey.length === 64) localStorage.setItem(key, apiKey);
+        else alert("The API key must be exactly 64 characters. Please try again.");
+    }
+    return apiKey;
 }

@@ -12,7 +12,6 @@ html {font-feature-settings: "cv03", "cv04", "cv11";  background-color: #eee;}
     font-style: normal;
     font-weight: normal;
     text-rendering: optimizeLegibility;
-
 }
 body {
     max-width: 1740px;
@@ -47,6 +46,7 @@ body {
     display: inline-block;
     margin-bottom: 5px;
 }
+
 // *
 // * ANIMATIONS
 // *
@@ -82,6 +82,19 @@ body {
     will-change: transform;
   }
 }
+
+.form-animate .animate-event {
+  opacity: 0;
+  transform: translateY(50%);
+  animation: fadeup .7s cubic-bezier(.25,.46,.45,.94) forwards;
+  animation-delay: .3s;
+  will-change: transform;
+}
+#formModal .modal-body {
+  min-height: 340px;
+}
+
+
 
 .animate-event {
     &:first-child{
@@ -171,129 +184,6 @@ body {
   }
 }
 
-// *
-// HEADERS
-// *
-
-
-// header0
-
-.header {
-  transition: transform .3s ease-in-out;
-  width:100%;
-  left:0%;
-  z-index: 9999;
-  position: relative;
-  .container {
-    position: absolute;
-    left:50%;
-    transform: translateX(-50%);
-  }
-}
-.scroll-up .header,
-.scroll-down .header {
-  position: fixed;
-  height: 100px;
-  background-color: #fff;
-} 
-
-.scroll-down .header {
-  opacity: 0;
-  transform: translateY(-100%);
-}
-.scroll-down.at-bottom .header {
-  transform: translateY(0%);
-  opacity: 1;
- }
-.scroll-up .header {
- transform: translateY(0%);
-}
-
-.scroll-up.at-top .header {
- position: relative;
- height: 0;
-}
-
-
-.body-offcanvas {
-  // overflow: hidden;
-  > section, .navbar-brand {
-    animation: blur 1s forwards;
-  }
-  .navbar-nav  + .btn-outline-primary {
-      background-color: $primary;
-      color: #fff;
-      margin-top: 40px;
-    }
-}
-
-.hamburger-icon {
-  @include hamburger($width: 28px, $thickness: 4px, $gap: 4px, $radius:2px, $color:$secondary, $padding:12px);
-  &:hover {
-    @include hamburger_tint($primary);
-  }
-}
-
-.img-brand-logo {
-  max-width: 220px;
-  width:100%;
-  @include media-breakpoint-down(md) {
-    max-width: 200px;
-    padding-left:20px;
-  }
-}
-
-.navbar {
-  font-family: $headings-font-family;
-  text-align: center;
-  @include media-breakpoint-down(lg) {
-    .navbar-nav {
-      padding-top: 80px;
-      .nav-item a {
-        font-size: 1.6rem;
-      }
-    }
-  }
-    @include media-breakpoint-up(md) {
-        font-size:1.1rem;
-    }
-}
-
-@include media-breakpoint-down(lg) {
-  .offcanvas-collapse {
-    z-index: 999;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 100%;
-    width:50%;
-    height: 100vh;
-    min-width: 320px;
-    padding-right: 1rem;
-    padding-left: 1rem;
-    overflow-y: auto;
-    visibility: hidden;
-    background-color: #fff;
-    transition: visibility .3s ease-in-out, -webkit-transform .3s ease-in-out;
-    transition: transform .3s ease-in-out, visibility .3s ease-in-out;
-    transition: transform .3s ease-in-out, visibility .3s ease-in-out, -webkit-transform .3s ease-in-out;
-  }
-  .offcanvas-collapse.show {
-    visibility: visible;
-    -webkit-transform: translateX(-100%);
-    transform: translateX(-100%);
-    overscroll-behavior-y: contain;
-    overflow-y: auto;
-   
-  }
-}
-
-.nav-scroller {
-  position: relative;
-  z-index: 2;
-  height: 2.75rem;
-  overflow-y: hidden;
-}
 
   
 // header 1 - default
@@ -310,8 +200,9 @@ body {
     .hero-content {
         z-index: 1; 
         position: relative;
-        min-height: 100vh;
-        max-height: fit-content;
+        @include media-breakpoint-up(lg) {
+          height: 860px;
+        }
     }
 
     &-circle {
@@ -335,7 +226,7 @@ body {
       }
 
       @include media-breakpoint-only(xl) {
-        max-width:980px;
+        max-width:920px;
         top: 120px;
         right: -220px;
       }
@@ -444,7 +335,7 @@ body {
           font-size: $h3-font-size;
           font-weight: 700;
           margin:0 12px;
-          color: $gray-600;
+          color: $secondary;
           border:none;
           background-color: transparent;
 
@@ -470,7 +361,7 @@ body {
           }
         }
         &-trigger.active {
-          color: $gray-800;
+          color: $primary;
           span {
             color: #fff;
             background-color: $primary;
@@ -485,37 +376,39 @@ body {
 // FORM CONFIGURATOR
 
 // steps
-.step {
-  display: none;
-  &.active {
-    display: block;
+.wpcf7-form {
+  .step {
+    display: none;
+    &.active {
+      display: block;
+    }
   }
-}
-.radiobox {
-  border: 1px solid $gray-200;
-  border-radius: $border-radius;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  input[type="radio"] {
-    position: relative;
-    top: 4px;
-    accent-color: $primary;
-    width: 1.05rem;
-    height: 1.05rem;
+  .radiobox {
+    border: 1px solid $gray-200;
+    border-radius: $border-radius;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    input[type="radio"] {
+      position: relative;
+      top: 4px;
+      accent-color: $primary;
+      width: 1.05rem;
+      height: 1.05rem;
+    }
+    label {
+      cursor: pointer;
+      font-size: .95rem;
+      line-height: 1.4rem;
+    }
   }
-  label {
-    cursor: pointer;
-    font-size: .95rem;
-    line-height: 1.4rem;
-  }
-}
 
-input[type="range"] {
-  cursor: pointer;
-  accent-color: $primary;
-  margin-right: 15px;
-  width: 100%;
-  height: 7px;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 5px;
+  input[type="range"] {
+    cursor: pointer;
+    accent-color: $primary;
+    margin-right: 15px;
+    width: 100%;
+    height: 7px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 5px;
+  }
 }

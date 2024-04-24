@@ -27,6 +27,7 @@ class SocialLinks {
 
         return $result;
     }
+
 }
 
 SocialLinks::init();

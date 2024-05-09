@@ -702,60 +702,21 @@ add_shortcode( 'lc_the_search_query', function( $atts ) {
 	return  esc_attr(get_search_query());
 });
 
+add_shortcode('lc_the_option', function ($atts) {
+    // Extract attributes from the shortcode
+    $attributes = shortcode_atts(array(
+        'option' => '', // Default option option
+        'key' => '', // Default key is empty
+    ), $atts);
+    
+    // Fetch the option data from the specified option
+    $data = get_option($attributes['option']);
 
-/*
-add_shortcode( 'lc_the_permalink_tag', function( $atts, $enclosed_content = null ) {	
-	$attributes = shortcode_atts( array(	  
-		'tag' => 'a',
-		'class' => 'btn btn-primary',
-		'id' => '',
-		'style' => '',
-		'title' => '',
-		'target' => '',
-		'rel' => '',
-	), $atts );
+    // Check if the specified key exists and return its value
+    if (isset($data[$attributes['key']])) {
+        return $data[$attributes['key']];
+    } else {
+        return $data;
+    }
 
-	global $post;		
-
-	$link = '<a href="' . 
-		esc_attr( get_permalink( $post->id)).'" '.
-		'class="' . esc_attr( $attributes['class'] ) . '" '.
-		'id="' . esc_attr( $attributes['id'] ) . '" '.
-		'style="' . esc_attr( $attributes['style'] ) . '" '.
-		'title="' . esc_attr( $attributes['title'] ) . '" '.
-		'target="' . esc_attr( $attributes['target'] ) . '" '.
-		'rel="' . esc_attr( $attributes['rel'] ) . '" '.
-		'> ' . 
-			do_shortcode($enclosed_content) .
-		'</a>';
-
-	return $link;
 });
-*/
-
-
-
-
-
-/*
-// DEFINE SHORTCODE TO GRAB HTML FROM SHORTCODES    
-add_shortcode( 'lc_grab_html',  function ( $atts ) {
-	$attributes = shortcode_atts( array(
-		'shortcode' => '' , //the shortcode name //think you can add pars as well
-		'class' => '', //the class name of the element to grab
-		'inner' => FALSE,//return inner content
-	), $atts );
-	
-	global $post;
-	
-	$html = do_shortcode( '['.$attributes['shortcode'].' id="'.$post->ID.'"]' );  
-
-	//for debug
-	//return $html;
- 
-    return lc_filter_html_by_class($attributes['class'], $html, $attributes['inner']);
-} );
-*/
-
-
-

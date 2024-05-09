@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 		<link rel="preconnect" href="https://cdn.livecanvas.com/" crossorigin>
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-		<script type='text/javascript' src="https://cdn.livecanvas.com/remote/lc-bundle-001-g87r37g84j2312hve6xx2.js"></script>
+		<script type='text/javascript' src="https://cdn.livecanvas.com/remote/lc-bundle-001-g87r37g84j2312hve6xx2-w.js"></script>
 		  
 		<script type='text/javascript' src='<?php lc_print_editor_url() ?>libs/ace/src-min-noconflict/ace.js'></script>
 		<script type='text/javascript' src='<?php lc_print_editor_url() ?>libs/ace/src-min-noconflict/ext-language_tools.js'></script>
@@ -24,20 +24,26 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 		<script type='text/javascript' src='<?php lc_print_editor_url() ?>libs/js-beautify/beautify-html.min.js'></script>
 		<script type='text/javascript' src='<?php lc_print_editor_url() ?>libs/js-beautify/beautify-css.min.js'></script>
 
-        <?php if (!empty(locate_template('lc-editor-config.js')) ){   ?>
-                <script type='text/javascript' src='<?php echo get_stylesheet_directory_uri() ?>/lc-editor-config.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
+        <?php if (!empty(locate_template('lc-framework-config.js')) ){   ?>
+                <script type='text/javascript' src='<?php echo get_stylesheet_directory_uri() ?>/lc-framework-config.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
                 <?php } else {   ?>
                 <script type='text/javascript' src='<?php lc_print_editor_url() ?>configs/bootstrap-<?php echo lc_get_bootstrap_version(); ?>.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
 		    
         <?php } //end else ?>
 
-		
-        
-        
+        <?php if (!empty(locate_template('lc-editor-config.js')) ){   ?>
+                <script type='text/javascript' src='<?php echo get_stylesheet_directory_uri() ?>/lc-editor-config.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
+                <?php } else {   ?>
+                <script type='text/javascript' src='<?php lc_print_editor_url() ?>configs/editor-config.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
+		    
+        <?php } //end else ?>
+
         <script type='text/javascript' src='<?php lc_print_editor_url() ?>functions.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
 		<script type='text/javascript' src='<?php lc_print_editor_url() ?>editor.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script> 
 		<script type='text/javascript' src='<?php lc_print_editor_url() ?>side-panel-edit-properties.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
 		<script defer type='text/javascript' src='<?php lc_print_editor_url() ?>side-panel-advanced-helpers.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script> 
+
+        <script defer type='text/javascript' src='<?php lc_print_editor_url() ?>tree-view.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script> 
 
 		<?php do_action("lc_editor_header")  ?>
 
@@ -179,6 +185,10 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 		<section>
 			<?php include ('icons/editor-icons.html'); ?>
 		</section>
+
+        <section>
+            <?php include ('tree-view.html'); ?>
+        </section>
 
 		<?php do_action("lc_editor_before_body_closing")  ?>
 

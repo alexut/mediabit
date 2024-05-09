@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Loader {
 	public function loadParts() {
 		$folders = [
+			'admin',
 			'config',
 			'form',
 			'handlers',

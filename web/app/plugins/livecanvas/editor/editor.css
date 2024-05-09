@@ -247,6 +247,17 @@ body.lc-bottom-editor-is-shown #previewiframe {      }
 
 #saving-form a i,#saving-form button i {font-size: 20px;display: block;margin-bottom: 2px;}
 
+#saving-form #toggle-tree-view {
+    svg {
+        width: 16px;
+        height: 16px;
+        text-align: center;
+        display: block;
+        margin: 0 auto;
+        margin-bottom: 3px;
+    }
+}
+
 #saving-form #advanced-options {
     color:  var(--color-lightgrey);
     margin-right: 10px;
@@ -1977,3 +1988,245 @@ body.simplified_client_ui #primary-tools {display: none}
     height: 45px;
 }
 
+
+/* WINBOX */
+
+.winbox {
+    background: linear-gradient(90deg, var(--color2), var(--color1)) !important;
+    border-radius: 2px 2px 0 0;
+    box-shadow: none;
+}
+.winbox.min {
+    border-radius: 0;
+    top: unset !important;
+    bottom: 0 !important;
+}
+
+/* Window Title */
+.wb-title {
+    font-size: 13px;
+    font-family: "Nunito Sans", Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.wb-title:before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-stack' viewBox='0 0 16 16'%3E%3Cpath d='m14.12 10.163 1.715.858c.22.11.22.424 0 .534L8.267 15.34a.6.6 0 0 1-.534 0L.165 11.555a.299.299 0 0 1 0-.534l1.716-.858 5.317 2.659c.505.252 1.1.252 1.604 0l5.317-2.66zM7.733.063a.6.6 0 0 1 .534 0l7.568 3.784a.3.3 0 0 1 0 .535L8.267 8.165a.6.6 0 0 1-.534 0L.165 4.382a.299.299 0 0 1 0-.535z'/%3E%3Cpath d='m14.12 6.576 1.715.858c.22.11.22.424 0 .534l-7.568 3.784a.6.6 0 0 1-.534 0L.165 7.968a.299.299 0 0 1 0-.534l1.716-.858 5.317 2.659c.505.252 1.1.252 1.604 0z'/%3E%3C/svg%3E");
+    width: 12px;
+    height: 12px;
+    background-size: 10px 15px;
+    background-repeat: no-repeat;
+    content: " ";
+    display: inline-block;
+    vertical-align: baseline;
+    margin-right: 3px;
+}
+
+/* Tree Body */
+
+.wb-body {
+   /* set the width of window border via margin: */
+    margin: 4px;
+    color: #fff;
+    background: var(--color-interface-bg-dark);
+}
+
+
+
+/* Tree Head */
+
+#tree-head {
+    position: sticky;
+    top: 0;
+    left: 0;
+    display: flex;
+    z-index: 1;
+    gap: 3px;
+    justify-content: space-between;
+    padding: 6px 10px;
+    font-size: 11px;
+    background-color: var(--color-interface-bg-dark);
+    color: var(--color-prop-icons);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-interface-bg-dark) 80%, grey);
+}
+#tree-head a {
+    color: var(--color-grey-2);
+    text-decoration: none;
+    &:hover {
+        color: var(--color2);
+   }
+}
+
+#tree-head a#tree-expand-all {
+    margin: 0 3px 0 0;
+}
+
+#tree-head a#tree-expand-all::before {
+    content: "\f065";
+    font: normal normal normal 10px / 1 FontAwesome;
+    margin: 0 3px 0 0;
+}
+
+#tree-head a#tree-collapse-all::before {
+    content: "\f066";
+    font: normal normal normal 10px / 1 FontAwesome;
+    margin: 0 3px 0 0;
+}
+
+
+/* CONTEXT MENU */
+
+.lc-context-menu {
+    position: fixed;
+    visibility: hidden;
+    z-index: 99999999;
+    min-width: 144px;
+    font-size: 12px;
+    background-color: white;
+    color: var(--color-interface-bg-dark);
+    border: 1px solid var(--color-interface-bg);
+    border-radius: 5px !important;
+    box-shadow: 0 0 10px rgba(var(--color-lightgrey), 0.3);
+    user-select: none;
+}
+
+.lc-context-menu > div {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    gap: 8px;
+}
+
+.lc-context-menu > div:hover {
+    background-color: var(--color-accents);
+    color: white;
+    cursor: pointer;
+}
+
+.lc-context-menu > div[data-tree-item-action="delete-item"]:hover {
+    background-color: red;
+    color:white;
+}
+
+.lc-context-menu span.fa {
+    font-size: 14px;
+    flex: 0 0 16px;
+}
+
+/* TREE STRUCTURE */
+
+
+
+#tree-body {
+    height: 100%;
+    width: 100%;
+    user-select: none;
+    --space: 16px;
+}
+
+.tree-view-container {
+    margin-top: 0;
+    padding: 0 12px;
+}
+
+.tree-view-item {
+    display: block;
+  
+    font-family: "Monaco", "Menlo", "Ubuntu Mono", "Consolas", "source-code-pro", monospace;
+    color: var(--color-lightgrey);
+    font-size: 12px;
+    white-space: nowrap;
+    position: relative;
+
+}
+
+.tree-view-item.active {
+    outline: 1px solid var(--color2);
+    color: white;
+    width: fit-content;
+}
+
+.tree-view-item-content-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    padding: calc(var(--space)*0.3) calc(var(--space)*0.4)
+}
+
+.tree-view-item-content-wrapper:hover {
+    background-color: var(--color-accents);
+    cursor: pointer;
+}
+
+/* Change the cursor for collapsed or expanded element in the tree */
+
+.tree-view-item-content-wrapper:has(+ .tree-children) {
+    cursor: zoom-in;
+}
+
+.tree-view-item-content-wrapper:has(+ .tree-children:not([hidden])) {
+    cursor: zoom-out;
+}
+
+
+.tree-item-icon svg {
+    color: var(--color1)
+}
+
+.tree-item-tagname {
+    font-weight: bold;
+    opacity: 0.7;
+}
+
+.tree-item-id {
+    color: var(--color-secondary);
+}
+
+.tree-item-classes {
+    color: var(--color-accent);
+}
+
+ul.tree-children {
+    padding-left: var(--space); 
+    position: relative;
+
+    &:after {
+        position: absolute;
+        top: 0;
+        left: calc(var(--space)*0.4);
+        border-right: 1px solid var(--color-accents);
+        content: "";
+        height: calc(100% - (var(--space)*0.8));
+    }
+    
+    > li::before {
+        position: absolute;
+        top: calc(var(--space)*0.8);
+        left: calc(var(--space)*-0.6);
+        border-top: 1px solid var(--color-accents);
+        content: "";
+        width: calc(var(--space)*0.75);
+    }
+}
+
+
+/* Winbox Scrollbar customization */
+
+.wb-body::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.wb-body::-webkit-scrollbar-track {
+    background: var(--color-interface-bg-dark);
+}
+.wb-body::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: var(--color-grey-2);
+}
+.wb-body::-webkit-scrollbar-thumb:window-inactive {
+    background: var(--color-grey-2);
+}
+.wb-body::-webkit-scrollbar-corner {
+    background: transparent;
+}

@@ -10,7 +10,24 @@ class Footer {
         $socialLinksHtml = $this->renderSocialLinks();
         $logoHtml = $this->renderLogo();
         $anpcHtml = $this->renderAnpc();
+
+        $solutiiHtml =  wp_nav_menu(array(
+            'theme_location' => 'solutions-menu',  // or your specific theme location
+            'container'      => false,
+            'menu_class' => 'list-unstyled',
+            'echo' => false
+        ));
+        $serviciiHtml =  wp_nav_menu(array(
+            'theme_location' => 'services-menu',  // or your specific theme location
+            'container'      => false,
+            'menu_class' => 'list-unstyled',
+            'echo' => false
+        ));
         // get media with id 80
+
+        // cf7 shortcode
+
+        $form_abonare = do_shortcode('[contact-form-7 id="ad144c0"]');
 
 
         $footerHtml = <<<HTML
@@ -22,40 +39,22 @@ class Footer {
                     <p class="pb-4">Dezvoltăm soluții web, optimizate pentru motoarele de căutare, care îți vor aduce mai mulți clienți 
                     și îți vor crește vânzările.</p>
                     
-                    <h5>Primește Broșura Noastră Gratuită despre Creșterea Afacerii Online</h5>
-                    <form action="#" class="nl-subscription pb-4">
-                        <input class="form-control py-3" type="email" placeholder="Introdu adresa ta de email">
-                        <button class="btn btn-primary btn-sm" type="submit">
-                            <i class="d-md-none bi bi-envelope"></i>
-                            <span class="d-none d-md-block"> Cerere Broșură</span>
-                        </button>
-                    </form>
-                   
-                  
+                    <h5>Abonează-te la newsletter-ul nostru lunar și primește o broșură gratuită despre creșterea afacerii în online.</h5>
+                    <div class="nl-subscription pb-4">
+                    {$form_abonare}
+                    </div>
+           
                 </div>
                 <!-- Secțiunea cu Link-uri -->
                 <div class="col-lg-6 offset-lg-1 col-xl-6 offset-xl-2">
                     <div class="row">
                         <div class="col-xl-4 col-sm-5 col-6">
                         <h4 class="h5 mt-3">Servicii</h4>
-                            <ul class="list-unstyled mt-3">
-                                <li><a href="/servicii/creare-website/">Creare Website</a></li>
-                                <li><a href="/servicii/optimizare-seo/">Optimizare SEO</a></li>
-                                <li><a href="/servicii/mentenanta-website/">Mentenanță Website</a></li>
-                                <li><a href="/servicii/mentenanta-website/">Gazduire Website</a></li>
-                                <li><a href="/servicii/mentenanta-website/">Securizare Website</a></li>
-                            </ul>
+                            {$serviciiHtml}
                         </div>
                         <div class="col-xl-5 col-sm-6 col-12">
-                            <h4 class="h5 mt-3">Solutii B2B</h4>
-                            <ul class="list-unstyled mt-3">
-                            
-                                <li><a href="/servicii/mentenanta-website/">Aplicatie Medic Online</a></li>
-                                <li><a href="/servicii/mentenanta-website/">Fitness Website & Management</a></li>
-                                <li><a href="/servicii/mentenanta-website/">Solutie Website Ecommerce </a></li>
-                                <li><a href="/servicii/mentenanta-website/">Website Turism Rezervari</a></li>
-                                <li><a href="/servicii/mentenanta-website/">Aplicatie Rezervari Online</a></li>
-                            </ul>
+                            <h4 class="h5 mt-3">Soluții B2B</h4>
+                            {$solutiiHtml}
                         </div>
                         <div class="col-xl-4 col-sm-4 col-6">
                             <h4 class="h5 mt-3">Despre Noi</h4>
@@ -63,25 +62,25 @@ class Footer {
                                 <li><a href="/despre-noi/">Despre Noi</a></li>
                                 <li><a href="/blog/">Blog</a></li>
                                 <li><a href="/contact/">Contact</a></li>
-                                <li><a href="/testimoniale">Testimoniale</a></li>
+                                <!-- <li><a href="/testimoniale">Testimoniale</a></li> -->
                             </ul>
                         </div>
                         <div class="col-xl-4 col-sm-4 col-6">
                             <h4 class="h5 mt-3">Suport</h4>
                             <ul class="list-unstyled mt-3">
-                                <li><a href="/blog/">Ghid Online</a></li>
-                                <li><a href="/login/">Suport Clienti</a></li>
-                                <li><a href="/blog/">Intrebari Frecvente</a></li>
+                                <!-- <li><a href="/blog/">Ghid Online</a></li> -->
+                                <li><a href="/login/">Suport Clienți</a></li>
+                                <li><a href="/blog/">Întrebari Frecvente</a></li>
                                 <li><a href="/blog/">Deschide Tichet</a></li>
                             </ul>
                         </div>
                         <div class="col-xl-4 col-sm-4 col-6">
                             <h4 class="h5 mt-3">Politici</h4>
                             <ul class="list-unstyled mt-3">
-                                <li><a href="/politica-de-confidentialitate/">Confidențialitate</a></li>
+                                <!-- <li><a href="/politica-de-confidentialitate/">Confidențialitate</a></li> -->
                                 <li><a href="/termeni-si-conditii/">Termeni și Condiții</a></li>
                                 <li><a href="/politica-de-cookies/">Politica de Cookies</a></li>
-                                <li><a href="/politica-de-cookies/">Setari GDPR</a></li>
+                                <li><a href="/politica-de-cookies/">Setări GDPR</a></li>
                             </ul>
                         </div>
                     </div>

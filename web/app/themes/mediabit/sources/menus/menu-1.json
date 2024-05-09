@@ -1,0 +1,97 @@
+{
+    "menu_name": "Main Menu",
+    "menu_location": "main-menu",
+    "items": [
+        {
+            "title": "Acasă",
+            "url": "/",
+            "classes": "nav-item",
+            "attr_title": ""
+        },
+        {
+            "title": "Servicii",
+            "url": "#",
+            "classes": "nav-item dropdown lc-block",
+            "attr_title": "",
+         
+            "submenu": [
+                {
+                    "title": "Realizare Website",
+                    "url": "/realizare-website",
+                    "classes": "rounded-3 p-lg-2",
+                    "attr_title": "text-primary bi bi-code-slash",
+                    "description": "Creăm site-uri web personalizate."
+                },
+                {
+                    "title": "Marketing Hibrid",
+                    "url": "/marketing-hibrid",
+                    "classes": "rounded-3 p-lg-2",
+                    "attr_title": "text-primary bi bi-people",
+                    "description": "Solutii de promovare experential - digitale"
+                },
+                {
+                    "title": "Mentenanță activă",
+                    "url": "/mentenanta-activa",
+                    "classes": "rounded-3 p-lg-2",
+                    "attr_title": "text-primary bi bi-gear",
+                    "description": "Website, Imbunatățiri, Găzduire, Securitate, Actualizări."
+                }
+            ]
+        },
+
+        {
+            "title": "Soluții B2B",
+            "url": "#",
+            "classes": "nav-item dropdown lc-block",
+            "target": "",
+            "description": "",
+            "attr_title": "",
+            "submenu": [
+                {
+                    "title": "Solutii web Fitness",
+                    "url": "/site-uri-de-fitness-sport-arte-martiale-studiouri-de-dans",
+                    "classes": "rounded-3 p-lg-2",
+                    "target": "",
+                    "description": "Site-uri pentru sălile de fitness, arte marțiale și studiouri de dans.",
+                    "attr_title": "text-primary bi bi-activity"
+                },
+                {
+                    "title": "Soluții Web pentru Sănătate",
+                    "url": "/solutii-web-pentru-sanatate",
+                    "classes": "rounded-3 p-lg-2",
+                    "target": "",
+                    "description": "Site-uri personalizate pentru cabinete medicale, farmacii, clinici și spitale.",
+                    "attr_title": "text-primary bi bi-heart-pulse"
+                },
+                {
+                    "title": "Sisteme Configurare integrate cu AI",
+                    "url": "/sisteme-configurare-optimizate-cu-ai",
+                    "classes": "rounded-3 p-lg-2",
+                    "target": "",
+                    "description": "Modernizează procesul de vânzare cu soluții bazate pe inteligență artificială.",
+                    "attr_title": "text-primary bi bi-gear-wide-connected"
+                },
+                {
+                    "title": "Soluții Platforme Ecommerce",
+                    "url": "/solutii-ecommerce-optimizate",
+                    "classes": "rounded-3 p-lg-2",
+                    "target": "",
+                    "description": "Platforme de vânzare optimizate pentru maximizarea conversiilor",
+                    "attr_title": "text-primary bi bi-cart4"
+                }
+            ]
+        },
+        {
+            "title": "Blog",
+            "url": "/blog",
+            "classes": "nav-item",
+            "attr_title": ""
+        },
+        {
+            "title": "Contact",
+            "url": "/contact",
+            "classes": "nav-item",
+            "attr_title": ""
+        }
+    ]
+}

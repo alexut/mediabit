@@ -23,7 +23,9 @@ function lc_load_custom_template_for_posts_using_livecanvas ($the_template){
 
 
 //DYNAMIC TEMPLATING //////////////////////////////
-add_filter( 'template_include', function($the_template){
+add_filter( 'template_include', 'lc_use_dynamic_templates', 99998);
+
+function lc_use_dynamic_templates($the_template){
 	
 	global $post;
 	
@@ -137,7 +139,7 @@ add_filter( 'template_include', function($the_template){
 	//RETURN TEMPLATE: anyway, and if none found, just pass-through
 	return $the_template;
 
-}, 9999999 );
+} 
 
 
 //RETRIEVE THE RIGHT TEMPLATE

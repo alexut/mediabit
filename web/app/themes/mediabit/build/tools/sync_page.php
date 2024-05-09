@@ -21,9 +21,11 @@ class PageSync {
     private static function export_page($page) {
         $syncdir = self::get_syncdir();
         $filename = strtolower(str_replace(' ', '-', $page->post_name)) . '.html';
+    
         $target = $syncdir . '/' . $filename;
         
         if (!empty($page->post_content)) {
+            echo $filename . ' exported<br>';
             $file = fopen($target, 'w');
             fwrite($file, $page->post_content);
             fclose($file);

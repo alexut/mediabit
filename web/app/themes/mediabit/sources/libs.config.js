@@ -1,8 +1,8 @@
 module.exports = {
 	js: {
 		vendor : [
-		"node_modules/jquery/dist/jquery.min.js",
-		"node_modules/bootstrap/dist/js/bootstrap.bundle.js",
+		"./js/vendor/jquery.slim.min.js",
+		"./js/vendor/bootstrap.bundle.min.js",
 		"./js/vendor/splide.min.js",
 		"./js/vendor/splide-bs-addapt.js"
 	

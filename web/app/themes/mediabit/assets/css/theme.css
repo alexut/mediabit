@@ -11,6 +11,17 @@ a {
   --splide-breakpoint-xl: 1680px;
 }
 
+.dropdown-menu {
+  padding-top: 26px !important;
+}
+.dropdown-menu li:last-child {
+  margin-bottom: 25px;
+}
+
+.font-base {
+  font-family: "Inter", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
 /*!
  * Bootstrap  v5.3.2 (https://getbootstrap.com/)
  * Copyright 2011-2023 The Bootstrap Authors
@@ -765,7 +776,7 @@ progress {
 }
 @media (min-width: 768px) {
   .container-md, .container-sm, .container {
-    max-width: 720px;
+    max-width: 15px;
   }
 }
 @media (min-width: 992px) {
@@ -3529,18 +3540,18 @@ textarea.form-control-lg {
   --bs-dropdown-font-size: 1rem;
   --bs-dropdown-color: var(--bs-body-color);
   --bs-dropdown-bg: var(--bs-body-bg);
-  --bs-dropdown-border-color: var(--bs-border-color-translucent);
+  --bs-dropdown-border-color: none;
   --bs-dropdown-border-radius: var(--bs-border-radius);
   --bs-dropdown-border-width: var(--bs-border-width);
   --bs-dropdown-inner-border-radius: calc(var(--bs-border-radius) - var(--bs-border-width));
-  --bs-dropdown-divider-bg: var(--bs-border-color-translucent);
+  --bs-dropdown-divider-bg: none;
   --bs-dropdown-divider-margin-y: 0.5rem;
   --bs-dropdown-box-shadow: var(--bs-box-shadow);
   --bs-dropdown-link-color: var(--bs-body-color);
   --bs-dropdown-link-hover-color: var(--bs-body-color);
   --bs-dropdown-link-hover-bg: var(--bs-tertiary-bg);
   --bs-dropdown-link-active-color: #fff;
-  --bs-dropdown-link-active-bg: #d50f4b;
+  --bs-dropdown-link-active-bg: transparent;
   --bs-dropdown-link-disabled-color: var(--bs-tertiary-color);
   --bs-dropdown-item-padding-x: 1rem;
   --bs-dropdown-item-padding-y: 0.25rem;
@@ -3799,14 +3810,14 @@ textarea.form-control-lg {
 .dropdown-menu-dark {
   --bs-dropdown-color: #d3dce5;
   --bs-dropdown-bg: #3b5266;
-  --bs-dropdown-border-color: var(--bs-border-color-translucent);
+  --bs-dropdown-border-color: none;
   --bs-dropdown-box-shadow: ;
   --bs-dropdown-link-color: #d3dce5;
   --bs-dropdown-link-hover-color: #fff;
-  --bs-dropdown-divider-bg: var(--bs-border-color-translucent);
+  --bs-dropdown-divider-bg: none;
   --bs-dropdown-link-hover-bg: rgba(255, 255, 255, 0.15);
   --bs-dropdown-link-active-color: #fff;
-  --bs-dropdown-link-active-bg: #d50f4b;
+  --bs-dropdown-link-active-bg: transparent;
   --bs-dropdown-link-disabled-color: #bdccd6;
   --bs-dropdown-header-color: #bdccd6;
 }
@@ -19006,6 +19017,11 @@ textarea.form-control-lg {
 .icon-small {
   width: 2rem;
   height: 2rem;
+}
+
+.icon-xsmall {
+  width: 1rem;
+  height: 1rem;
 }
 
 .icon-medium {

@@ -12,4 +12,5 @@ w3-total-cache/w3-total-cache.php
 wp-fastest-cache/wpFastestCache.php
 wp-optimize/wp-optimize.php
 wp-compress-image-optimizer/wp-compress.php
+gtranslate/gtranslate.php
 

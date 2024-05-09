@@ -288,6 +288,21 @@ $(document).ready(function ($) {
     });
 
 
+    //WHEN MOUSE HOVERS CODE EDITOR: HILIGHT PAGE AND TREE ELEMENT ////////////////////////
+    $("body").on("mouseenter", "#lc-html-editor-window", function () {
+        const selector = $(this).attr("selector");
+        previewFrame.contents().find(selector).addClass("lc-highlight-currently-editing");
+        //IF TREE IS OPEN
+        if ($("#tree-body").is(":visible")) {
+            //highlight item in tree
+            $("#tree-body .tree-view-item.active").removeClass("active");
+            $("#tree-body .tree-view-item[data-selector='" + selector + "']").addClass("active");
+            //scroll tree to current item
+            //document.querySelector("#tree-body li .tree-view-item[data-selector='" + selector + "']").scrollIntoView({ behavior: "smooth"  });
+        }
+    });
+
+
     //////////////////////////////////// MAIN TOOLBAR  ///////////////////////////////////////////////////////////////////////// 
 
     // USER CLICKS (nothing) in the MAIN TOOLBAR  ACCIDENTALLY
@@ -1045,8 +1060,8 @@ $(document).ready(function ($) {
             myConsoleLog("No magic footer detected");
             setPageHTML("main#lc-main", getPageHTML("main#lc-main") + newSectionHTML);
             //update preview
-            previewFrame.contents().find("main#lc-main").append(newSectionHTML);
-            //updatePreviewSectorial("main#lc-main");
+            //previewFrame.contents().find("main#lc-main").append(newSectionHTML);
+            updatePreviewSectorial("main#lc-main");
         } else {
             //magic footer case
             myConsoleLog("Magic footer detected");
@@ -1060,7 +1075,8 @@ $(document).ready(function ($) {
         var selector = CSSelector(previewFrame.contents().find("main section:last")[0]); //alert(selector);
         revealSidePanel("sections", selector);
         $(".sidepanel-tabs a:first").click(); //open first tab
-
+        
+        //scroll the preview to the new section
         setTimeout(function () { previewFrame.contents().find("html, body").animate({ scrollTop: previewFrame.contents().find(selector).offset().top }, 500, 'linear'); }, 100);
 
 
@@ -1093,10 +1109,18 @@ $(document).ready(function ($) {
         }
     });
 
-    //MOUSE ENTERS SIDEPANEL: HILIGHT PAGE ELEMENT ////////////////////////
+    //WHEN MOUSE ENTERS SIDEPANEL: HILIGHT PAGE ELEMENT ////////////////////////
     $("body").on("mouseenter", "#sidepanel section", function () {
-        var selector = $(this).attr("selector");
+        const selector = $(this).attr("selector");
         previewFrame.contents().find(selector).addClass("lc-highlight-currently-editing");
+        //IF TREE IS OPEN
+        if ($("#tree-body").is(":visible") ) {
+            //highlight item in tree
+            $("#tree-body .tree-view-item.active").removeClass("active");
+            $("#tree-body .tree-view-item[data-selector='" + selector + "']").addClass("active");
+            //scroll tree to current item
+            //document.querySelector("#tree-body li .tree-view-item[data-selector='" + selector + "']").scrollIntoView({ behavior: "smooth"  });
+        }
     });
     //MOUSE LEAVES SIDEPANEL: de-HILIGHT PAGE ELEMENT ////////////////////////
     $("body").on("mouseleave", "#sidepanel section", function () {
@@ -1114,6 +1138,13 @@ $(document).ready(function ($) {
         $('#sidepanel').fadeOut();
         //re-show content creation buttons
         //previewFrame.contents().find("#lc-add-new-container-section-wrap").slideDown(300); 
+    });
+
+    //USER CLICKS OPEN CODE FROM SIDE PANEL 
+    $("body").on("click", ".sidepanel-action-edit-html", function (e) {
+        e.preventDefault();
+        var selector = $("#sidepanel section[style='']").attr("selector");
+        openHtmlEditor(selector);
     });
 
     //TABBER LOGIC eg IMAGES// for UnSplash /wpadmin / svg

@@ -83,7 +83,7 @@ $grid-breakpoints: (
 
 $container-max-widths: (
   sm: 540px,
-  md: 720px,
+  md: 15px,
   lg: 960px,
   xl: 1240px,
   xxl: 1380px
@@ -163,6 +163,9 @@ a {
 $input-btn-focus-box-shadow: 0 0 0 0 #fff;
 $custom-range-thumb-bg: $secondary;
 
+$dropdown-border-color: none;
+$dropdown-link-active-bg: transparent;
+
 // modal padding 
 $modal-inner-padding: 2.5rem;
 
@@ -177,3 +180,18 @@ $modal-inner-padding: 2.5rem;
 
 $bright : #ebe9ea;
 // de facut un sitem de culori sa acopere toate culorile din site si de mutat sus
+
+// HAKS 
+// TODO: Move stuff from hack, also improve dropdown caret:https://codepen.io/simonbreiter/pen/oLJrKy?editors=1000
+
+
+.dropdown-menu {
+  padding-top:26px!important;
+  li:last-child {
+    margin-bottom:2c5px;
+  }
+}
+
+.font-base {
+  font-family: $font-family-base!important;
+}

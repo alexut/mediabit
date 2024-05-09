@@ -142,14 +142,10 @@ main .lc-block.lc-highlight-block { outline: var(--color-blocks)  solid 1px; }
 main .lc-highlight-item { outline: rgb(201, 201, 201) dashed 1px; outline-style: inset;  }
 main .lc-highlight-mainpart {   outline: var(--color-sections)  dashed 1px;}
 
-main .lc-highlight-currently-editing {   outline:2px dashed  var(--color-blocks);  animation: lc-animateBorder 1s infinite;animation-direction: alternate; }
+main .lc-highlight-currently-editing { outline:2px dashed  #007df0; }
 
  
-  
-/* ANIMATED BORDERS */
- 
-@keyframes lc-animateBorder { to {outline: 2px dashed #cfcfcf; }}
- 
+
  
 
  /* CONTEXTUAL MENU INTERFACE */ 

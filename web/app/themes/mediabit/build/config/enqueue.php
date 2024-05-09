@@ -60,68 +60,8 @@ function theme_enqueue() {
                 'theme-style' => ['/assets/css/theme.css', '', 'all'],
                 'theme-font-icon' => ['//cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css', '', ''],
             ],
-        ],
-        // Template-specific scripts and styles
-        'tpl-dashboard.php' => [
-            'dequeue' => [
-                'scripts' => ['theme-script'],
-                'styles' => ['theme-style']
-            ],
-            'scripts' => [
-                'dashboard-script' => ['/assets/js/dashboard.js','', true],
-            ],
-            'styles' => [
-                'dashboard-style' => ['/assets/css/dashboard.css', '', 'all'],
-            ],
-        ],
-        'tpl-dashboard2.php' => [
-            'dequeue' => [
-                'scripts' => ['theme-script'],
-                'styles' => ['theme-style']
-            ],
-            'scripts' => [
-                'dashboard-script' => ['/assets/js/dashboard.js','', true],
-            ],
-            'styles' => [
-                'dashboard-style' => ['/assets/css/dashboard.css', '', 'all'],
-            ],
-        ],
-        'tpl-brand.php' => [
-            'dequeue' => [
-                'scripts' => ['theme-script'],
-                'styles' => ['theme-style']
-            ],
-            'scripts' => [
-                'dashboard-script' => ['/assets/js/dashboard.js','', true],
-            ],
-            'styles' => [
-                'dashboard-style' => ['/assets/css/dashboard.css', '', 'all'],
-            ],
-        ],
-        'tpl-projects.php' => [
-            'dequeue' => [
-                'scripts' => ['theme-script'],
-                'styles' => ['theme-style']
-            ],
-            'scripts' => [
-                'dashboard-script' => ['/assets/js/dashboard.js','', true],
-            ],
-            'styles' => [
-                'dashboard-style' => ['/assets/css/dashboard.css', '', 'all'],
-            ],
-        ],
-        'tpl-facturi.php' => [
-            'dequeue' => [
-                'scripts' => ['theme-script'],
-                'styles' => ['theme-style']
-            ],
-            'scripts' => [
-                'dashboard-script' => ['/assets/js/dashboard.js','', true],
-            ],
-            'styles' => [
-                'dashboard-style' => ['/assets/css/dashboard.css', '', 'all'],
-            ],
-        ],
+        ]
+           
     ];
     
     // Enqueue default scripts and styles

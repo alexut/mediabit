@@ -1,0 +1,13 @@
+.group-header {
+    background-color: #f1f1f1;
+    cursor: pointer;
+ 
+}
+.group-header td {
+    padding-top:15px;
+    padding-bottom:15px;
+}
+.group-header strong {
+    font-size:15px;
+    color:#2271b1;
+}

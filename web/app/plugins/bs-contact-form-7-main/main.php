@@ -1,9 +1,10 @@
 <?php
 /*Plugin Name: bs Contact Form 7
 Plugin URI: https://bootscore.me/documentation/bs-contact-form-7/
-Description: This plugin adds Bootstrap alerts and checkboxes to <a href="https://wordpress.org/plugins/contact-form-7/">Contact Form 7</a>. <a href="https://bootscore.me/documentation/bs-contact-form-7/">Documentation</a> | <a href="https://bootscore.me/documentation/bs-contact-form-7/#Changelog">Changelog</a>
-Version: 5.3.1
-Tested up to: 6.4.2
+Description: This plugin adds Bootstrap alerts and checkboxes to Contact Form 7. <a href="https://bootscore.me/documentation/bs-contact-form-7/">Documentation</a> | <a href="https://bootscore.me/documentation/bs-contact-form-7/#Changelog">Changelog</a>
+Requires Plugins: contact-form-7
+Version: 5.3.3
+Tested up to: 6.5
 Requires at least: 5.0
 Requires PHP: 7.4
 Author: Bootscore
@@ -37,9 +38,9 @@ $myUpdateChecker->setBranch('main');
  */
 function contact_scripts() {
     
-  wp_enqueue_script('bs-cf7-script.js', plugins_url('/js/bs-cf7-script.min.js', __FILE__), array(), false, true);
+  wp_enqueue_script('bs-cf7-script.js', plugins_url('/assets/js/bs-cf7-script.min.js', __FILE__), array(), false, true);
 
-  wp_register_style('bs-cf7-style.css', plugins_url('css/bs-cf7-style.min.css', __FILE__));
+  wp_register_style('bs-cf7-style.css', plugins_url('/assets/css/bs-cf7-style.min.css', __FILE__));
     wp_enqueue_style('bs-cf7-style.css');
   }
 

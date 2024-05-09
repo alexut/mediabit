@@ -459,6 +459,12 @@ var enrichPreview = debounce(function() {
 	//RENDER SHORTCODES
 	render_dynamic_content("main");  
 
+    //UPDATE TREE IF OPEN
+    if ($("#tree-body").is(":visible")) {
+        document.getElementById('tree-body').innerHTML = renderTreeHTMLStructure('main#lc-main');
+        $('#tree-body').find(".tree-view-item-content-wrapper").first().click(); 
+    }
+
 	//ALL IS READY, CHECK IF USER WANTS TO START FROM A READYMADE
 	if (lc_editor_post_type != 'lc_block' && lc_editor_post_type != 'lc_section' &&	lc_editor_post_type != 'lc_partial' &&
         lc_editor_main_bootstrap_version == 5 && doc.querySelector("main#lc-main").innerHTML.trim() == "" &&
@@ -513,6 +519,9 @@ var enrichPreviewSectorial = debounce(function(selector) {
 
 	//RENDER SHORTCODES  
 	render_dynamic_content(selector); 
+
+    //UPDATE TREE IF OPEN
+    if ($("#tree-body").is(":visible")) redrawTreePart(selector);
 	
 }, 400);
 
@@ -612,6 +621,59 @@ function handleKeyboardEvents(e){
 
 
 /* ******************* SIDE PANEL  ******************* */
+
+//FUNCTION TO OPEN SIDE PANEL TO EDIT AN ITEM IDENTIFIED BY A GIVEN SELECTOR,
+// USE ME
+function openSidePanel(theSelector) {
+
+    //check if it is a layout element
+    if (getLayoutElementType(theSelector)) {
+        revealSidePanel("edit-properties", theSelector, getLayoutElementType(theSelector));
+        return;
+    }
+
+    //check if it an "clickable" html element
+    if (getHtmlElementType(theSelector)) {
+        revealSidePanel(getHtmlElementType(theSelector), theSelector);
+        return;
+    }
+
+    //fallback: if it's neither, but is a div, allow simple editing
+    if (doc.querySelector(theSelector).matches("div")) {
+        revealSidePanel("edit-properties", theSelector);
+    }
+
+    //if there's nothing to do
+    alert("Please select parent element to edit properties");
+}
+
+//FUNCTION TO RETURN WHICH LAYOUT ELEMENT IS IT, READING FROM FRAMEWORK CONFIGURATION LAYOUT ELEMENTS
+function getLayoutElementType(theSelector) {
+    //loop all layout_elements and see if theSelector matches
+    for (const [name, data] of Object.entries(theFramework.layout_elements)) {
+        if (doc.querySelector(theSelector).matches(data.selector)) {
+            //selector is matching, return layout element name, with a small exception for main sections
+            return (name.replace("Main", "Section"));
+        }
+    }
+    //if not found
+    return false;
+}
+
+//FUNCTION TO RETURN IF ITS AN EDITABLE ELEMENT AND WHICH ELEMENT IS IT, READING FROM EDITOR CONFIG
+function getHtmlElementType(theSelector) {
+    //loop all editable_elements and see if theSelector matches
+    for (const [name, data] of Object.entries(theEditorConfig.editable_elements)) {
+        if (doc.querySelector(theSelector).matches(data.selector)) {
+            //selector is matching,  
+            return (name);
+        }
+    }
+    //if not found
+    return false;
+}
+
+//classic function to make the panel appear
 function revealSidePanel(item_type, selector, layoutElementName="") {
 	
 	$(".lc-editor-close").click();//close code editor
@@ -662,7 +724,7 @@ function initializeSidePanelSection(sectionSelector, layoutElementName) {
 	theSection = $(sectionSelector);
 	var selector   = theSection.attr("selector");
 	
-	myConsoleLog("Initialize panel for " + theSection.attr("item-type"));
+    myConsoleLog("Initialize panel for " + theSection.attr("item-type") + ' ' + layoutElementName);
 	
 	//INTERFACE BUILDING: build the edit properties panel
 	if (theSection.attr("item-type")=="edit-properties") {
@@ -861,7 +923,7 @@ function initializeSidePanelSection(sectionSelector, layoutElementName) {
 			$('#sidepanel select[name=aos_animation_type] option[value=' + animation_type + ']').prop('selected', true);
 	}
 
-
+    //ADD MORE INITS...
 
 } //end function
 
@@ -1268,6 +1330,28 @@ if (typeof initialize_contextual_menus !== "function"){
 		
 		if (lc_editor_simplified_client_ui) return;
 
+        //MOUSE ENTERS ANY ELEMENT: HIGHLIGHT CORRESPONDING TREE VIEW ITEM
+        previewFrameBody.on("mouseenter", "main#lc-main *:not('.lc-contextual-menu')", function (e) {
+            var selector = CSSelector($(this)[0]);
+            //IF TREE IS OPEN
+            if ($("#tree-body").is(":visible") && $("#tree-body .tree-view-item[data-selector='" + selector + "']").is(":visible")) {
+                //highlight item in tree
+                $("#tree-body .tree-view-item.active").removeClass("active");
+                $("#tree-body .tree-view-item[data-selector='" + selector + "']").addClass("active");
+                //scroll tree to current item
+                //document.querySelector("#tree-body li .tree-view-item[data-selector='" + selector + "']").scrollIntoView({ behavior: "smooth"  });
+            }
+        });
+
+        //MOUSE ENTERS TREE VIEW: UN-HIGHLIGHT  TREE VIEW ITEM
+        $("body").on("mouseenter", "#tree-body", function (e) { 
+            //IF TREE IS OPEN
+            if ($("#tree-body").is(":visible")) {
+                //un-highlight item in tree
+                $("#tree-body .tree-view-item.active").removeClass("active");     
+            }
+        });
+
 		//MOUSE ENTERS PAGE PARTs (SECTIONS)  ////////////////////////
 		previewFrameBody.on("mouseenter", lc_main_parts_selector, function(e) {
 			if ($(this).closest(".lc-rendered-shortcode-wrap").length > 0) return; //exit if we're hovering a shortcode
@@ -1498,7 +1582,7 @@ if (typeof initialize_contextual_menus !== "function"){
 } // end if function defined
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////// INITIALIZE CONTEXTUAL MENU ACTIONS  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////  CONTEXTUAL MENU ACTIONS  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function set_html_editor(html) { //quick function to beautify and set the html editor content
@@ -1577,6 +1661,88 @@ function set_css_editor(css) { //quick function to beautify and set the css edit
 	$("#lc-css-editor").removeAttr("prevent_live_update");
 }
 
+//FUNCTION TO INITIALIZE AND OPEN THE HTML EDITOR ON A SELECTOR
+function openHtmlEditor(selector) {
+    $(".close-sidepanel").click();
+    $(".lc-editor-close").click();
+    $("body").addClass("lc-bottom-editor-is-shown");
+    //$("main .lc-shortcode-preview").remove();
+    $("#lc-html-editor-window").attr("selector", selector);
+    myConsoleLog("Open html editor for: " + selector);
+    var html = getPageHTML(selector);
+    set_html_editor(html);
+    $("#lc-html-editor-window").removeClass("lc-opacity-light").fadeIn(100);
+    lc_html_editor.focus();
+    $("#html-tab").click();
+}
+function copyToClipboard(selector) {
+    var html = getPageHTML(selector); //console.log("store in clipb:"+html);
+
+    if (navigator.clipboard == undefined) {
+        alert("This requires a secure origin - either HTTPS or localhost");
+        return;
+    }
+    navigator.clipboard.writeText(html);
+}
+function pasteFromClipboard(selector) {
+    navigator.clipboard.readText()
+        .then(html => {
+            if (html === null) {
+                alert("Clipboard is Empty");
+                return;
+            }
+            setPageHTML(selector, html);
+            updatePreviewSectorial(selector);
+        })
+        .catch(err => {
+            console.error('Failed to read clipboard contents: ', err);
+        });
+}
+function duplicateElement(selector){
+    var html = doc.querySelector(selector).outerHTML;
+    setPageHTMLOuter(selector, html + html);
+
+    selector = selector.substring(0, selector.lastIndexOf(">")); //get the selector for the parent    
+    updatePreviewSectorial(selector);
+}
+function deleteElement(selector){
+    setPageHTMLOuter(selector, "");
+
+    selector = selector.substring(0, selector.lastIndexOf(">")); //get the selector for the parent    
+    updatePreviewSectorial(selector);
+
+    $(".close-sidepanel").click(); //as protection if it's panel was opened
+
+}
+function moveElementUp(selector){
+
+    if (doc.querySelector(selector).previousElementSibling === null) {
+        swal("Element is first already");
+        return false;
+    }
+    const theParentNode = doc.querySelector(selector).parentNode;
+    var this_element_outer_HTML = doc.querySelector(selector).outerHTML;
+    var previous_outer_HTML = doc.querySelector(selector).previousElementSibling.outerHTML;
+
+    doc.querySelector(selector).previousElementSibling.outerHTML = this_element_outer_HTML;
+    doc.querySelector(selector).outerHTML = previous_outer_HTML;
+
+    updatePreviewSectorial(CSSelector(theParentNode));
+}
+function moveElementDown(selector) {
+    if (doc.querySelector(selector).nextElementSibling === null) {
+        swal("Element is last already");
+        return false;
+    }
+    const theParentNode = doc.querySelector(selector).parentNode;
+    var this_element_outer_HTML = doc.querySelector(selector).outerHTML;
+    var next_outer_HTML = doc.querySelector(selector).nextElementSibling.outerHTML;
+
+    doc.querySelector(selector).nextElementSibling.outerHTML = this_element_outer_HTML;
+    doc.querySelector(selector).outerHTML = next_outer_HTML;
+
+    updatePreviewSectorial(CSSelector(theParentNode));
+}
 function initialize_contextual_menu_actions() {
 
 	//USER CLICKS ON EDIT PROPERTIES
@@ -1606,6 +1772,12 @@ function initialize_contextual_menu_actions() {
 		e.preventDefault();
 		$(".lc-editor-close").click();//close code editor
 		$(this).closest(".lc-contextual-menu").find(".lc-contextual-actions").slideToggle(100);
+        //IF TREE IS OPEN
+        if ($("#tree-body").is(":visible")  ) {
+            const selector = $(this).parent().attr("selector");
+            //scroll tree to current item
+            document.querySelector("#tree-body li .tree-view-item[data-selector='" + selector + "']").scrollIntoView({ behavior: "smooth", block: "center"  });
+        }
 	}); //end function
 
 	//USER CLICKS ANY SPECIFIC CONTEXTUAL BLOCK MENU ITEM: HIDE CONTEXTUAL MENU  
@@ -1614,70 +1786,25 @@ function initialize_contextual_menu_actions() {
 		$(this).closest(".lc-contextual-menu").slideUp();
 	}); //end function
 
-	//USER CLICKS EDIT HTML 
+	//USER CLICKS EDIT HTML IN CONTEXTUAL MENU
 	previewFrame.contents().find("body").on("click", '.lc-open-html-editor', function(e) {
-		e.preventDefault();
-		$(".close-sidepanel").click();
-		$(".lc-editor-close").click(); 
-		$("body").addClass("lc-bottom-editor-is-shown");
-		//$("main .lc-shortcode-preview").remove();
+		e.preventDefault(); 
 		var selector = $(this).closest("[selector]").attr("selector");
-		$("#lc-html-editor-window").attr("selector", selector);
-		console.log("Open html editor for: " + selector);
-		var html = getPageHTML(selector);
-		set_html_editor(html);
-		$("#lc-html-editor-window").removeClass("lc-opacity-light").fadeIn(100);
-		lc_html_editor.focus();
-		
-		$("#html-tab").click();
+        openHtmlEditor(selector); 
 	});
 
 	//USER CLICKS ON COPY BLOCK
 	previewFrame.contents().find("body").on("click", ".lc-copy-to-clipboard", function(e) {
 		e.preventDefault();
 		var selector = $(this).closest("[selector]").attr("selector");
-		var html = getPageHTML(selector); //console.log("store in clipb:"+html);
-
-		//emergency copy solution for not-chrome browsers
-		if (!usingChromeBrowser()) {
-			localStorage.setItem("lc_clipboard", html);
-			return;
-		}
-
-		if (navigator.clipboard == undefined) {
-			alert("This requires a secure origin - either HTTPS or localhost");
-			return;
-		}
-		
-		navigator.clipboard.writeText(html);
+		copyToClipboard(selector);
 	}); //end function copy block
 
 	//USER CLICKS ON PASTE BLOCK
 	previewFrame.contents().find("body").on("click", ".lc-paste-from-clipboard", function(e) {
 		e.preventDefault();
 		var selector = $(this).closest("[selector]").attr("selector");
-		//newValue=localStorage.getItem("lc_clipboard");
-
-		//emergency paste solution for not-chrome browsers
-		if (!usingChromeBrowser()) {
-			var html = localStorage.getItem("lc_clipboard");
-			setPageHTML(selector, html);
-			updatePreviewSectorial(selector);
-			return;
-		}
-
-		navigator.clipboard.readText()
-			.then(html => {
-				if (html === null) {
-					alert("Clipboard is Empty");
-					return;
-				}
-				setPageHTML(selector, html);
-				updatePreviewSectorial(selector);
-			})
-			.catch(err => {
-				console.error('Failed to read clipboard contents: ', err);
-			});
+        pasteFromClipboard(selector);
 	}); //end function paste block
 
 
@@ -1788,29 +1915,18 @@ function initialize_contextual_menu_actions() {
 		});
 	}); //end function  
 
-	//USER CLICKS ON DUPLICATE  (GENERAL) 
+	//USER CLICKS ON DUPLICATE ELEMENT (GENERAL) 
 	previewFrame.contents().find("body").on("click", ".lc-duplicate-section, .lc-duplicate-container, .lc-duplicate-row, .lc-duplicate-col, .lc-duplicate-block", function(e) {
 		e.preventDefault();
 		var selector = $(this).closest("[selector]").attr("selector");
-		var html = doc.querySelector(selector).outerHTML;
-		setPageHTMLOuter(selector, html + html);
-
-		selector = selector.substring(0, selector.lastIndexOf(">")); //get the selector for the parent  
-		updatePreviewSectorial(selector);
-
+		duplicateElement(selector);
 	}); //end function  
 
 	//USER CLICKS ON DELETE BLOCK/ROW
 	previewFrame.contents().find("body").on("click", ".lc-delete-row, .lc-delete-col, .lc-delete-block, .lc-remove-container", function(e) {
 		e.preventDefault();
 		var selector = $(this).closest("[selector]").attr("selector");
-		setPageHTMLOuter(selector, "");
-
-		selector = selector.substring(0, selector.lastIndexOf(">")); //get the selector for the parent  
-		updatePreviewSectorial(selector);
-
-		$(".close-sidepanel").click(); //as protection if it's panel was opened
-
+        deleteElement(selector);
 	}); //end function  
 
 	//USER CLICKS ON ADD BLOCK TO COLUMN
@@ -1826,19 +1942,7 @@ function initialize_contextual_menu_actions() {
 		e.preventDefault();
 		$(".close-sidepanel").click(); //or it's confusing
 		var selector = $(this).closest("[selector]").attr("selector");
-
-		if (doc.querySelector(selector).previousElementSibling === null) {
-			swal("Element is first already");
-			return false;
-		}
-
-		var this_element_outer_HTML = doc.querySelector(selector).outerHTML;
-		var previous_outer_HTML = doc.querySelector(selector).previousElementSibling.outerHTML;
-
-		doc.querySelector(selector).previousElementSibling.outerHTML = this_element_outer_HTML;
-		doc.querySelector(selector).outerHTML = previous_outer_HTML;
-
-		updatePreviewSectorial(CSSelector(doc.querySelector(selector).parentNode));
+        moveElementUp(selector);
 	}); //end function
 
 	//REODER:: MOVE DOWN
@@ -1846,19 +1950,7 @@ function initialize_contextual_menu_actions() {
 		e.preventDefault();
 		$(".close-sidepanel").click(); //or it's confusing
 		var selector = $(this).closest("[selector]").attr("selector");
-
-		if (doc.querySelector(selector).nextElementSibling === null) {
-			swal("Element is last already");
-			return false;
-		}
-
-		var this_element_outer_HTML = doc.querySelector(selector).outerHTML;
-		var next_outer_HTML = doc.querySelector(selector).nextElementSibling.outerHTML;
-
-		doc.querySelector(selector).nextElementSibling.outerHTML = this_element_outer_HTML;
-		doc.querySelector(selector).outerHTML = next_outer_HTML;
-
-		updatePreviewSectorial(CSSelector(doc.querySelector(selector).parentNode));
+        moveElementDown(selector);
 	}); //end function
 
 

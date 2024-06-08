@@ -27,17 +27,24 @@ Header
     background-color: #fff;
     border-bottom: 1px solid #fff;
     z-index: 100;
-    .mb-call a{
-      display: inline-block;
-      color: #777;
-      font-size: 0.9rem;
-      text-decoration: none;
-      line-height: 32px;
-      svg {
-        margin-top: -5px;
+    .mb-call {
+      @include media-breakpoint-up(lg) {
+      top: -2px;
+      position: relative;
+      min-width: 154px;
       }
-      span {
-        margin-top:5px;
+      a {
+        display: inline-block;
+        color: #777;
+        font-size: 0.9rem;
+        text-decoration: none;
+        line-height: 32px;
+        svg {
+          margin-top: -5px;
+        }
+        span {
+          margin-top:5px;
+        }
       }
     }
 
@@ -52,9 +59,14 @@ Header
       padding-left:1rem;
       padding-right: 1rem;
       min-height: 74px;
-    
+     
     }
-   
+    @include media-breakpoint-only(lg) {
+      .nav-link {
+        padding: 0 10px!important;
+        // border:1px solid red;
+      }
+    }
   }
 }
 

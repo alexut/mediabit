@@ -246,8 +246,25 @@ body {
             top: 90px;
             left:20px;
         }
-
-   
+    }
+    &-left {
+      position: absolute;
+      z-index: 0;
+      @include media-breakpoint-only(xxl) {
+        max-width: 920px;
+        bottom:0;
+        left: 0px; 
+      }
+      @include media-breakpoint-only(xl) {
+        max-width: 820px;
+        bottom:0;
+        left: -50px;
+      }
+      @include media-breakpoint-only(lg) {
+        max-width: 680px;
+        bottom:0;
+        left: -134px;
+      }
     }
     .p-hero {
         @include media-breakpoint-up(lg) {

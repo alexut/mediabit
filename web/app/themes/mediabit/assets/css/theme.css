@@ -15,7 +15,7 @@ a {
   padding-top: 26px !important;
 }
 .dropdown-menu li:last-child {
-  margin-bottom: 25px;
+  margin-bottom: 2c5px;
 }
 
 .font-base {
@@ -776,7 +776,7 @@ progress {
 }
 @media (min-width: 768px) {
   .container-md, .container-sm, .container {
-    max-width: 15px;
+    max-width: 720px;
   }
 }
 @media (min-width: 992px) {
@@ -19608,6 +19608,31 @@ body {
     left: 20px;
   }
 }
+.hero-left {
+  position: absolute;
+  z-index: 0;
+}
+@media (min-width: 1680px) {
+  .hero-left {
+    max-width: 920px;
+    bottom: 0;
+    left: 0px;
+  }
+}
+@media (min-width: 1352px) and (max-width: 1679.98px) {
+  .hero-left {
+    max-width: 820px;
+    bottom: 0;
+    left: -50px;
+  }
+}
+@media (min-width: 992px) and (max-width: 1351.98px) {
+  .hero-left {
+    max-width: 680px;
+    bottom: 0;
+    left: -134px;
+  }
+}
 .hero .p-hero {
   padding-top: 80vw;
 }
@@ -19915,6 +19940,13 @@ Header
 .header .navbar .navbar-nav {
   font-family: "LatoWebBold", sans-serif;
 }
+@media (min-width: 992px) {
+  .header .navbar .mb-call {
+    top: -2px;
+    position: relative;
+    min-width: 154px;
+  }
+}
 .header .navbar .mb-call a {
   display: inline-block;
   color: #777;
@@ -19942,6 +19974,11 @@ Header
     padding-left: 1rem;
     padding-right: 1rem;
     min-height: 74px;
+  }
+}
+@media (min-width: 992px) and (max-width: 1351.98px) {
+  .header .navbar .nav-link {
+    padding: 0 10px !important;
   }
 }
 

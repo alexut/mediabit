@@ -1,13 +1,17 @@
 <?php 
 add_action('init', function() {
     // Check if the environment is production
+    // Path to the db folder relative to the Bedrock root
+    $db_folder = ABSPATH . '../../db/';
+
+    // Path to the log file
+    $log_file = ABSPATH . '../../db/db_import.log';
+
+    log_message($log_file, "Initiating database import script");
+
     if (defined('WP_ENV') && WP_ENV === 'production') {
-        // Path to the db folder relative to the Bedrock root
-        $db_folder = ABSPATH . '../../db/';
-        
-        // Path to the log file
-        $log_file = ABSPATH . '../../db/db_import.log';
-        
+
+        log_message($log_file, "Environment is production");
         // Fetch all SQL files in the db folder
         $sql_files = glob($db_folder . '*.sql');
 

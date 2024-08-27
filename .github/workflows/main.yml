@@ -14,3 +14,9 @@ jobs:
         server: ftp.mediabit.ro
         username: ftp@mediabit.ro
         password: ${{ secrets.ftp_password }}
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          web/app/themes/mediabit/sources/**
+          web/app/themes/mediabit/build/tools/**

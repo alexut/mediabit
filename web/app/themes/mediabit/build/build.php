@@ -18,6 +18,7 @@ class Loader {
 			'dashboard',
 			'shortcodes',
 			'tools',
+			'tools-dev'
 		];
 		foreach ($folders as $foldername) {
 			$folder = __DIR__ . "/" . $foldername;

@@ -29,12 +29,12 @@ class Footer {
 
         $form_abonare = do_shortcode('[contact-form-7 id="ad144c0"]');
 
-
+        
         $footerHtml = <<<HTML
             <footer class="bg-light pt-5">
             <div class="container">
                 <div class="row">
-                <div class="col-xl-4 col-lg-5">
+                <div class="col-xl-4 col-lg-5 d-none d-md-block">
                     <h4 class="w-75 mt-3">Soluții web simple pentru probleme complexe.</h4>
                     <p class="pb-4">Dezvoltăm soluții web, optimizate pentru motoarele de căutare, care îți vor aduce mai mulți clienți 
                     și îți vor crește vânzările.</p>
@@ -59,7 +59,7 @@ class Footer {
                         <div class="col-xl-4 col-sm-4 col-6">
                             <h4 class="h5 mt-3">Despre Noi</h4>
                             <ul class="list-unstyled mt-3">
-                                <li><a href="/despre-noi/">Despre Noi</a></li>
+                                <!-- <li><a href="/despre-noi/">Despre Noi</a></li> -->
                                 <li><a href="/blog/">Blog</a></li>
                                 <li><a href="/contact/">Contact</a></li>
                                 <!-- <li><a href="/testimoniale">Testimoniale</a></li> -->
@@ -74,13 +74,13 @@ class Footer {
                                 <li><a href="/blog/">Deschide Tichet</a></li>
                             </ul>
                         </div>
-                        <div class="col-xl-4 col-sm-4 col-6">
+                        <div class="col-xl-4 col-sm-4 col-12">
                             <h4 class="h5 mt-3">Politici</h4>
                             <ul class="list-unstyled mt-3">
                                 <!-- <li><a href="/politica-de-confidentialitate/">Confidențialitate</a></li> -->
                                 <li><a href="/termeni-si-conditii/">Termeni și Condiții</a></li>
-                                <li><a href="/politica-de-cookies/">Politica de Cookies</a></li>
-                                <li><a href="/politica-de-cookies/">Setări GDPR</a></li>
+                                <li><a href="/politica-de-confidentialitate/">Politica de confidențialitate</a></li>
+                                <li><a  data-bs-toggle="modal" href="#bs-cookie-modal">Setări Cookies</a></li>
                             </ul>
                         </div>
                     </div>
@@ -113,7 +113,7 @@ class Footer {
                     <img class="w-100" src="/app/themes/mediabit/assets/images/ssl.png" alt="SSL">
                 </a>
          
-                <a class="col-xl-2  col-md-3  col-6 pb-1" href="" target="_blank">
+                <a class="col-xl-2  col-md-3  col-6 pb-1" href="https://termene.ro/firma/37660979-THIRD-WAVE-LABS-SRL" target="_blank" rel="noopener">
                     <img class="w-100" src="/app/themes/mediabit/assets/images/trust.png" alt="Trusted">
                 </a>
             </div>
@@ -144,7 +144,7 @@ class Footer {
     {
         $site_name = get_bloginfo('name');
         $year = date('Y');
-        $home_url = get_permalink( '/'  );
+        $home_url = home_url('/');  // Use home_url() to get the correct homepage URL
         $copyrightHtml = <<<HTML
             <p>© {$year}. 
                 <a href="{$home_url}">Third Wave Labs SRL</a> - Toate drepturile rezervate.

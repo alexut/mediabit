@@ -50,30 +50,17 @@ const theFramework = {
     },
     properties: {
         "Colors": {
-            "Text": {
-                "color": {
-                    property: "color",
-                    class: "text",
-                    widget: "colors",
-                    values: ["primary", "secondary", "success", "danger", "warning", "info", "light", "dark", "body", "muted", "white", /* "black-50", "white-50", */ "reset"],
-                    about: "Colorize text",
-                    docs: "https://getbootstrap.com/docs/5.3/utilities/colors/",
-                },
-                "opacity": {
-                    property: "opacity",
-                    widget: "select",
-                    values: ["75", "50", "25"],
-                    about: "Set text color opacity",
-                    docs: "https://getbootstrap.com/docs/5.3/utilities/colors/#opacity",
-                    class: "text-opacity"
-                },
-            },
+            
             "Background": {
                 "color": {
                     property: "background",
                     class: "bg",
                     widget: "colors",
                     values: ["primary", "secondary", "success", "danger", "warning", "info", "light", "dark", "body", "white", "transparent"],
+                    shades: {
+                        values: ["primary", "secondary", "success", "danger", "warning", "info", "light", "dark",],
+                        strengths: [25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900],
+                    }, 
                     about: "Change background color",
                     docs: "https://getbootstrap.com/docs/5.3/utilities/background/#background-color",
                 },
@@ -92,6 +79,28 @@ const theFramework = {
                     about: "Adds a linear gradient via  background image",
                     docs: "https://getbootstrap.com/docs/5.3/utilities/background/#opacity",
                     class: "bg-opacity"
+                },
+            },
+            "Text": {
+                "color": {
+                    property: "color",
+                    class: "text",
+                    widget: "colors",
+                    values: ["primary", "secondary", "success", "danger", "warning", "info", "light", "dark", "body", "muted", "white", /* "black-50", "white-50", */ "reset"],
+                    shades: {
+                        values: ["primary", "secondary", "success", "danger", "warning", "info", "light", "dark",],
+                        strengths: [25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900],
+                    },
+                    about: "Colorize text",
+                    docs: "https://getbootstrap.com/docs/5.3/utilities/colors/",
+                },
+                "opacity": {
+                    property: "opacity",
+                    widget: "select",
+                    values: ["75", "50", "25"],
+                    about: "Set text color opacity",
+                    docs: "https://getbootstrap.com/docs/5.3/utilities/colors/#opacity",
+                    class: "text-opacity"
                 },
             },
 
@@ -625,7 +634,7 @@ const theFramework = {
                 },
 
                 "Color": {
-                    property: "color",
+                    property: "border-color",
                     class: "border",
                     widget: "colors",
                     values: ["primary", "secondary", "success", "danger", "warning", "info", "light", "dark", "body", "muted", "white"],

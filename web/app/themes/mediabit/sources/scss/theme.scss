@@ -1,8 +1,10 @@
+
 // Custom bootstrap variable overrides
 @import "variable_overrides_mb";
 
 // Bootstrap and its default variables
 @import "bootstrap/bootstrap";
+@import "cookies";
 // inc
 @import "splide/splide";
 @import "icons/icons";
@@ -31,6 +33,7 @@
 // @import "inc/top_button";
 // @import "inc/utilities";
 @import "inc/widgets";
+
 
 // Pages
 @import "pages/contact";

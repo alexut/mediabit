@@ -170,3 +170,73 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize description
   updateDescription(rangeInput.value);
 });
+document.addEventListener("DOMContentLoaded", function() {
+// Get the form element dynamically
+const formElement = document.querySelector('form.wpcf7-form');
+
+  // Safeguard in case formElement is not found or id is null
+  const html_id = formElement ? formElement.id : null;
+  console.log(html_id);
+
+  // Get the select element for domain activity
+  const domeniuActivitateSelect = document.querySelector('[name="domeniu-activitate"]');
+  
+  if (domeniuActivitateSelect && html_id) {
+      // Auto-select the option in the dropdown if it matches the form ID
+      domeniuActivitateSelect.value = html_id;
+
+      // Function to update visibility of page-types fields based on the selected value
+      function updatePageTypesVisibility(selectedValue) {
+          const pageTypesFields = document.querySelectorAll('.page-types-field');
+          pageTypesFields.forEach(field => field.style.display = 'none'); // Hide all fields by default
+
+          if (selectedValue) {
+              // Construct the target field ID
+              const targetField = document.getElementById(`page-types-${selectedValue}-wrapper`);
+              if (targetField) {
+                  targetField.style.display = 'block';
+              } else {
+                  console.warn(`Field with ID page-types-${selectedValue}-wrapper not found, showing default.`);
+                  const defaultField = document.getElementById('page-types-default-wrapper');
+                  if (defaultField) {
+                      defaultField.style.display = 'block';
+                  } else {
+                      console.error("Default page-types field not found");
+                  }
+              }
+          } else {
+              const defaultField = document.getElementById('page-types-default-wrapper');
+              if (defaultField) {
+                  defaultField.style.display = 'block';
+              } else {
+                  console.error("Default page-types field not found");
+              }
+          }
+      }
+
+      // Initial update based on the selected option or fallback to the default
+      updatePageTypesVisibility(domeniuActivitateSelect.value);
+
+      // Update page-types visibility dynamically when the selection changes
+      domeniuActivitateSelect.addEventListener('change', function() {
+          updatePageTypesVisibility(this.value);
+      });
+  } else {
+     // nothing
+
+  }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+  const letters = document.querySelectorAll('.letters .char-letters');
+  const numbers = document.querySelectorAll('.numbers .char-numbers');
+
+  setTimeout(() => {
+      letters.forEach((letter, index) => {
+          setTimeout(() => {
+              letter.classList.add('fade-out');
+              numbers[index].classList.add('fade-in');
+          }, index * 140); // Delay each character's animation slightly
+      });
+  }, 3500); // Start the animation after 1.5 seconds
+});

@@ -16,14 +16,14 @@
          
             "submenu": [
                 {
-                    "title": "Realizare Website",
+                    "title": "Realizare website",
                     "url": "/realizare-website",
                     "classes": "rounded-3 p-lg-2",
                     "attr_title": "text-primary bi bi-code-slash",
                     "description": "Creăm site-uri web personalizate."
                 },
                 {
-                    "title": "Marketing Hibrid",
+                    "title": "Marketing hibrid",
                     "url": "/marketing-hibrid",
                     "classes": "rounded-3 p-lg-2",
                     "attr_title": "text-primary bi bi-people",
@@ -48,7 +48,7 @@
             "attr_title": "",
             "submenu": [
                 {
-                    "title": "Solutii web Fitness",
+                    "title": "Solutii web fitness",
                     "url": "/site-uri-de-fitness-sport-arte-martiale-studiouri-de-dans",
                     "classes": "rounded-3 p-lg-2",
                     "target": "",
@@ -56,7 +56,7 @@
                     "attr_title": "text-primary bi bi-activity"
                 },
                 {
-                    "title": "Soluții Web pentru Sănătate",
+                    "title": "Soluții web pentru sănătate",
                     "url": "/solutii-web-pentru-sanatate",
                     "classes": "rounded-3 p-lg-2",
                     "target": "",
@@ -64,7 +64,7 @@
                     "attr_title": "text-primary bi bi-heart-pulse"
                 },
                 {
-                    "title": "Sisteme Configurare integrate cu AI",
+                    "title": "Sisteme configurare integrate cu AI",
                     "url": "/sisteme-configurare-optimizate-cu-ai",
                     "classes": "rounded-3 p-lg-2",
                     "target": "",
@@ -72,7 +72,7 @@
                     "attr_title": "text-primary bi bi-gear-wide-connected"
                 },
                 {
-                    "title": "Soluții Platforme Ecommerce",
+                    "title": "Soluții platforme ecommerce",
                     "url": "/solutii-ecommerce-optimizate",
                     "classes": "rounded-3 p-lg-2",
                     "target": "",

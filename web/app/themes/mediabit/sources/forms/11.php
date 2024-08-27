@@ -5,7 +5,6 @@ $form_data = array (
   'post_content' => '',
   'post_title' => 'test21131',
   'post_date' => '2024-02-24 08:13:54',
-  '_hash' => '618273ee3bebd0260826781d901f804b',
   '_form' => '<!-- Step 1: Personal Details -->
   <div class="step active" id="step-1">
     <div class="row g-3 mb-3">

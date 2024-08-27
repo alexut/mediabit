@@ -5,7 +5,6 @@ $form_data = array (
   'post_content' => '',
   'post_title' => 'Formular Creare Website',
   'post_date' => '2024-03-21 12:00:00',
-  '_hash' => '8e912e8266bbfb705a5f768c6ff95fc6096a819e',
   '_form' => '<!-- Pasul 1: Informații Generale -->
   <div class="step active" id="step-1">
     <div class="container">
@@ -13,14 +12,14 @@ $form_data = array (
       <div class="row">
         <div class="col-lg-6">
         <div class="mb-3">
-          <label class="form-label">Numele și prenumele dvs.</label>
-            [text* your-name class:form-control placeholder "Numele și prenumele dvs."]
+          <label class="form-label">Nume și prenume.</label>
+            [text* your-name class:form-control placeholder "Popescu Ion"]
           </div>
         </div>
         <div class="col-lg-6">
           <div class="mb-3">
-            <label class="form-label">Adresa dvs. de email</label>
-            [email* your-email class:form-control placeholder "Adresa dvs. de email"]
+            <label class="form-label">Adresa de email</label>
+            [email* your-email class:form-control placeholder "Adresa de email"]
           </div>
         </div>
       </div>
@@ -34,7 +33,15 @@ $form_data = array (
         <div class="col-lg-6">
           <div class="mb-3">
             <label class="form-label">Domeniu de activitate</label>
-            [select* domeniu-activitate class:form-select first_as_label "Alege-ti o optiune" "IT & Tech" "Medicina & Farma" "Sport & Fitness" "Turism" "Educație" "ONG" "Altele"]
+            [select* domeniu-activitate class:form-select first_as_label 
+            "Alege-ti o optiune|"
+            "IT & Tech|it-tech" 
+            "Medicina & Farma|medicina-farma" 
+            "Sport & Fitness|sport-fitness" 
+            "Turism|turism" 
+            "Educație|educatie" 
+            "ONG|ong" 
+            "Altele|altele"]
           </div>
         </div>
       </div>
@@ -49,8 +56,151 @@ $form_data = array (
       <h2  class="h4 mb-4">Pagini și Design</h2>
       <div class="mb-3">
         <label class="form-label">Tipuri de pagini necesare</label>
-        [multichoice page-types class:form-select multiple "Despre noi" "Servicii" "Pagina Individuala Serviciu" "Portofoliu" "Pagina Individuala Proiect Portofoliu" "Magazin (Shop)" "Produse" "Pagina individuala de produs" "Blog (Noutăți)" "Contact" ]
-      </div>
+        <!-- Default page-types field -->
+    <div id="page-types-default-wrapper" class="page-types-field" style="display:block;">
+        [multichoice page-types-default class:form-select multiple 
+            "Acasă" 
+            "Despre noi" 
+            "Servicii" 
+            "Pagini individuale servicii"
+            "Portofoliu" 
+            "Proiecte"
+            "Magazin (Shop)"
+            "Produse"
+            "Blog (Noutăți)" 
+            "Contact"
+            "FAQ"
+            "Întrebări frecvente"
+            "Galerie foto/video"]
+    </div>
+
+    <!-- IT & Tech page-types field -->
+    <div id="page-types-it-tech-wrapper" class="page-types-field" style="display:none;">
+        [multichoice page-types-it-tech class:form-select multiple 
+            "Acasă" 
+            "Despre noi" 
+            "Servicii IT" 
+            "Pagini individuale servicii"
+            "Studii de caz" 
+            "Blog tehnic" 
+            "Proiecte"
+            "Parteneriate"
+            "Magazin de produse tech"
+            "Suport tehnic"
+            "Testimoniale"
+            "Contact"
+            "Întrebări frecvente"
+            "Galerie video"]
+    </div>
+
+    <!-- Medicină & Farma page-types field -->
+    <div id="page-types-medicina-farma-wrapper" class="page-types-field" style="display:none;">
+        [multichoice page-types-medicina-farma class:form-select multiple 
+            "Acasă" 
+            "Clinică" 
+            "Servicii medicale" 
+            "Pagini individuale servicii"
+            "Echipă medicală" 
+            "Blog (Noutăți)"
+            "Testimoniale"
+            "Programări online"
+            "Tarife"
+            "Cercetare și dezvoltare"
+            "Parteneriate"
+            "Contact"
+            "Întrebări frecvente"]
+    </div>
+    
+    <!-- Sport & Fitness page-types field -->
+    <div id="page-types-sport-fitness-wrapper" class="page-types-field" style="display:none;">
+        [multichoice page-types-sport-fitness class:form-select multiple 
+            "Acasă" 
+            "Despre noi" 
+            "Programe fitness"
+            "Pagini individuale programe"
+            "Antrenori"
+            "Transformări"
+            "Testimoniale"
+            "Blog (Noutăți)"
+            "Programări sesiuni"
+            "Program orar 0zilnic"
+            "Tarife"
+            "Parteneriate"
+            "Contact"
+            "Galerie foto/video"]
+    </div>
+
+    <!-- Turism page-types field -->
+    <div id="page-types-turism-wrapper" class="page-types-field" style="display:none;">
+        [multichoice page-types-turism class:form-select multiple 
+            "Acasă" 
+            "Despre noi" 
+            "Destinații"
+            "Oferte speciale"
+            "Testimoniale"
+            "Galerie foto/video"
+            "Blog (Sfaturi de călătorie)"
+            "Ghiduri turistice"
+            "Parteneriate"
+            "Magazin suveniruri"
+            "Rezervări"
+            "Contact"
+            "Întrebări frecvente"]
+    </div>
+    
+    <!-- Educație page-types field -->
+    <div id="page-types-educatie-wrapper" class="page-types-field" style="display:none;">
+        [multichoice page-types-educatie class:form-select multiple 
+            "Acasă" 
+            "Despre noi" 
+            "Cursuri"
+            "Facultate"
+            "Succes alumni"
+            "Blog (Noutăți)"
+            "Galerie evenimente"
+            "Programări cursuri"
+            "Tarife"
+            "Parteneriate"
+            "Resurse online"
+            "Contact"
+            "Galerie foto/video"]
+    </div>
+    
+    <!-- ONG page-types field -->
+    <div id="page-types-ong-wrapper" class="page-types-field" style="display:none;">
+        [multichoice page-types-ong class:form-select multiple 
+            "Acasă" 
+            "Despre noi" 
+            "Misiunea noastră"
+            "Proiecte"
+            "Implică-te"
+            "Blog (Noutăți)"
+            "Testimoniale"
+            "Parteneriate"
+            "Evenimente"
+            "Resurse"
+            "Raport anual"
+            "Contact"
+            "Galerie foto"]
+    </div>
+
+    <!-- Altele page-types field -->
+    <div id="page-types-altele-wrapper" class="page-types-field" style="display:none;">
+        [multichoice page-types-altele class:form-select multiple 
+            "Acasă" 
+            "Despre noi" 
+            "Servicii"
+            "Portofoliu"
+            "Blog (Noutăți)"
+            "Testimoniale"
+            "Parteneriate"
+            "Galerie"
+            "Resurse"
+            "Magazin"
+            "Contact"
+            "Întrebări frecvente"
+            "Galerie video"]
+    </div>      </div>
       <div class="mb-3">
         <label class="form-label d-block">Servicii de design</label>
         [checkbox design-services class:form-check-box "Creare logo" "Design personalizat" "Manual de branding"]
@@ -69,7 +219,7 @@ $form_data = array (
     <div class="container">
       <h2 class="h3">Buget și Termen</h2>
       <div class="mb-3">
-        <label class="form-label">Bugetul dvs. estimativ</label>
+        <label class="form-label">Bugetul estimativ</label>
         [range_slider budget-range min:400 max:21000 step:250 value:800]
         <p id="package-description">
         <span  class="text-primary fw-bold d-block h4 pt-3 mb-0">Buget de <span id="selected-amount">500</span> €.</span>
@@ -100,8 +250,8 @@ $form_data = array (
   array (
     'active' => true,
     'subject' => 'New Website Creation Request: "[your-subject]"',
-    'sender' => 'Your Website Name <no-reply@yourdomain.com>',
-    'recipient' => 'info@yourdomain.com',
+    'sender' => 'Mediabit <no-reply@mediabit.ro>',
+    'recipient' => 'hello@mediabit.ro',
     'body' => 'You have received a new request for website creation.
 
 Details:
@@ -126,12 +276,12 @@ This email was sent from the contact form on Your Website Name.',
   '_mail_2' => 
   array (
     'active' => true,
-    'subject' => 'Confirmarea solicitării dumneavoastră de creare a site-ului web',
-    'sender' => 'Numele site-ului dumneavoastră <no-reply@yourdomain.com>',
+    'subject' => 'Confirmarea solicitării dumneavoastră pentru crearea unui site web',
+    'sender' => 'Mediabit <hello@mediabit.ro>',
     'recipient' => '[your-email]',
     'body' => 'Bună [your-name],
 
-Vă mulțumim că ne-ați contactat pentru solicitarea de creare a site-ului web. Am primit solicitarea dumneavoastră cu următoarele detalii:
+Vă mulțumim că ne-ați contactat. Am primit solicitarea dumneavoastră pentru crearea unui site web cu următoarele detalii:
 
 Tipul proiectului: [project-type]
 Funcționalități dorite: [website-features]
@@ -156,7 +306,7 @@ Acesta este un răspuns automat. Vă rugăm să nu răspundeți direct la acest 
   ),
   '_messages' => 
   array (
-    'mail_sent_ok' => 'Vă mulțumim pentru mesajul dvs. A fost trimis.',
+    'mail_sent_ok' => 'Vă mulțumim pentru cererea dumneavoastră. Vă vom contacta cât mai curând posibil.',
     'mail_sent_ng' => 'A apărut o eroare la trimiterea mesajului dvs. Vă rugăm să încercați din nou mai târziu.',
     'validation_error' => 'Unul sau mai multe câmpuri conțin erori. Vă rugăm să verificați și să încercați din nou.',
     'spam' => 'A apărut o eroare la trimiterea mesajului dvs. Vă rugăm să încercați din nou mai târziu.',

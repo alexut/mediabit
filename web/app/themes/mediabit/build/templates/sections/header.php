@@ -17,16 +17,40 @@ class Header {
     }
 
     private function renderCall() {
-        // https://wa.me/15551234567?text=I%20want%20to%20build%20a%20website
+        $staticPart = '+407 ';
+        $letters = $this->formatPhoneNumber('mediabit', 'letters');
+        $numbers = $this->formatPhoneNumber('63342248', 'numbers');
+    
         $logohtml = <<<HTML
-        <div class="mb-call ms-lg-4 ms-xl-6">
-        <a href="https://wa.me/40771594504?text=Vreau%20un%20website" target="_blank">
-        <svg class="icon-set icon-primary icon-small" xmlns="http://www.w3.org/2000/svg" role="img"><title>whatsapp</title><use xlink:href="/app/themes/mediabit/assets/icons/icons.svg#whatsapp"></use></svg>
-            <span class="d-none d-sm-inline-block">(+40) 771 594 504</span></a>
+        <div class="mb-call ms-lg-4 ms-xl-6 position-relative">
+            <a href="https://wa.me/40763342248?text=Vreau%20un%20website" target="_blank" class="position-relative">
+                <svg class="icon-set icon-primary icon-small" xmlns="http://www.w3.org/2000/svg" role="img">
+                    <title>whatsapp</title>
+                    <use xlink:href="/app/themes/mediabit/assets/icons/icons.svg#whatsapp"></use>
+                </svg>
+                <span class="d-none d-sm-inline-block phone-number text-secondary fw-bold">
+                    <span class="static-part">{$staticPart}</span>
+                    <span class="letters">{$letters}</span>
+                    <span class="numbers">{$numbers}</span>
+                </span>
+            </a>
         </div>
         HTML;
+    
         return $logohtml;
     }
+    
+    private function formatPhoneNumber($phone, $type) {
+        $characters = str_split($phone);
+        $formatted = '';
+        foreach ($characters as $char) {
+            $formatted .= "<span class='char-{$type}'>{$char}</span>";
+        }
+        return $formatted;
+    }
+    
+    
+    
 
     private function renderMenuButton() {
         $buttonHtml = <<<HTML
@@ -75,8 +99,8 @@ class Header {
             HTML;
         } else {
             $authHtml = <<<HTML
-                <a class="btn btn-sm btn-outline-primary animate-event" href="#">Solicită o ofertă</a>
-                <a class="btn btn-sm btn-link fw-bold animate-event" href="/login"><svg class="icon-small icon-set icon-primary" xmlns="http://www.w3.org/2000/svg" role="img"><title>user-octagon</title><use xlink:href="/app/themes/mediabit/assets/icons/icons.svg#user-octagon"></use></svg></a>
+                <a class="btn btn-sm btn-outline-primary animate-event" href="/formular-creare-website">Solicită o ofertă</a>
+                <a class="btn btn-sm btn-link fw-bold animate-event" href="https://clienti.mediabit.ro/login"><svg class="icon-small icon-set icon-primary" xmlns="http://www.w3.org/2000/svg" role="img"><title>Clienți</title><use xlink:href="/app/themes/mediabit/assets/icons/icons.svg#user-octagon"></use></svg></a>
             HTML;
         }
     

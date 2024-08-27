@@ -4,11 +4,11 @@ module.exports = {
 		"./js/vendor/jquery.slim.min.js",
 		"./js/vendor/bootstrap.bundle.min.js",
 		"./js/vendor/splide.min.js",
-		"./js/vendor/splide-bs-addapt.js"
-	
+		"./js/vendor/splide-bs-addapt.js",
+		"./js/vendor/cookie-consent.js"
 		],
 		theme : [
-			'./js/custom.js',
+			'./js/custom.js'
 		],
 		contact: [
 			"./js/vendor/choices.js",

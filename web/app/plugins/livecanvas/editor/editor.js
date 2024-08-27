@@ -1471,8 +1471,8 @@ $(document).ready(function ($) {
 
                 //IN  CASE WE'RE LOADING THE DEFAULT UI KITS, add "BASIC SECTIONS" AND "WP INTEGRATION". 
                 //TODO WHEN WE CHOOSE HOW
-                if (url.includes("/sections/wp-json/livecanvas-remote-api/v1/categories-full/") || 
-                    url.includes("/bs4/sections-bs4.html")  
+                if (url.includes("/sections/wp-json/livecanvas-remote-api/v1/sections.json") || 
+                    url.includes("/remote/bs4/sections-bs4.html")  
                     ) {
                     //add simple media and WP integration
                     html += `

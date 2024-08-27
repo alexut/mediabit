@@ -800,7 +800,10 @@ the-property-widgets  {margin-bottom: 300px; display: block;}
 
 /* CUSTOM COLOR WIDGETS */
 
-.custom-color-widget {display: flex;padding: 10px 0 0;}
+
+custom-color-widget:not(colors-widget) {display: flex;padding: 10px 0 0;} /* no more used, for old school color widgets which are not a custom element */
+
+.custom-color-widget div {display: flex;padding: 10px 0 0;}
 .custom-color-widget span {    flex: 1 1 0;    height: 19px;    margin-right: 5px;    border-radius: 1px; border: 0.5px solid var(--color-grey);}
 .custom-color-widget span:hover{cursor: pointer}
 .custom-color-widget span:last-of-type {margin-right: 0px;}
@@ -824,6 +827,24 @@ the-property-widgets  {margin-bottom: 300px; display: block;}
     color: var(--color-grey) !important; 
     text-decoration: none; 
     margin-left: 88px;
+}
+
+/* COLOR SHADES PALETTE */
+
+.custom-color-widget .palette-shades [strength="500"] {
+    &:before {
+        content: "base";
+        font-size: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+}
+
+
+.custom-color-widget .palette-shades   span {
+    height: 10px; 
 }
 
 /* CUSTOM OPACITY WIDGETS */
@@ -1969,7 +1990,8 @@ button.lc-modal-close:hover {
 
 /* simplified_client_ui */
 body.simplified_client_ui #toggle-extras-submenu,
-body.simplified_client_ui #primary-tools {display: none}
+body.simplified_client_ui #primary-tools,
+body.simplified_client_ui #toggle-tree-view {display: none}
 
 
 /* FOR FUTURE IMPLEMENTATION eg documentation links hovering blocks/sections in the left sidebar area */

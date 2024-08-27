@@ -47,6 +47,16 @@ body {
     margin-bottom: 5px;
 }
 
+
+.placeholder-container {
+  width: 100%;
+  padding-top: 100%;
+  @include media-breakpoint-up(sm) {
+    padding-top: 110%;
+  }
+  position: relative;
+}
+
 // *
 // * ANIMATIONS
 // *
@@ -183,6 +193,51 @@ body {
       filter: blur(0px);
   }
 }
+
+.phone-number {
+  display: inline-block;
+  position: relative;
+  white-space: nowrap;
+}
+
+.phone-number .static-part {
+  display: inline-block;
+}
+
+.phone-number .letters,
+.phone-number .numbers {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-left: 45px; /* Adjust this based on the width of the static part */
+}
+
+
+.char-letters {
+  position: relative;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  &.fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.phone-number .char-numbers {
+  position: relative;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  transform: translateY(20px);
+  opacity: 0;
+  &.fade-in {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  
+}
+
 
 
   
@@ -427,5 +482,24 @@ body {
     height: 7px;
     background: rgba(255, 255, 255, 0.6);
     border-radius: 5px;
+  }
+}
+
+//single post 
+
+.single-post {
+  // bg-light
+  background-color: #f9f9f9;
+  .post-content {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    .post-meta {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+    .post-tags {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
   }
 }

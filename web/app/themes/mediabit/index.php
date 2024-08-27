@@ -15,5 +15,8 @@ if ( have_posts() ) {
 $footer = new \Mediabit\Templates\Sections\Footer();
 echo $footer->render();
 
+$cookie = new \Mediabit\Templates\Sections\Cookie();
+echo $cookie->renderGDPRScript();
+
 get_footer();
 ?>

@@ -1,10 +1,17 @@
 <?php
 function get_file_version($file, $env) {
+    // Check if the file is external (starts with http or https)
+    if (strpos($file, 'http') === 0 || strpos($file, '//') === 0) {
+        return null; // No versioning needed for external files
+    }
+
     // If the environment is not development and file doesn't exist, print an error message
     if ($env !== 'development' && !file_exists(get_stylesheet_directory() . $file)) {
         echo '<p>File does not exist: ' . get_stylesheet_directory() . $file . '</p>';
         return false;
     }
+    
+    // Return the appropriate version based on the environment
     return $env === 'development' ? time() : filemtime(get_stylesheet_directory() . $file);
 }
 

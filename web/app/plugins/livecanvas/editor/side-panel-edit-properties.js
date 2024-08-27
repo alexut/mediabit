@@ -209,15 +209,33 @@ function getPropertyWidget(p_name, p_data) {
             
             html += `<colors-widget class="custom-color-widget">`;
 
-            //loop all values 
+            //build first row: for main color values palette elements -  eg for primary, secondary, etc
+            html += `<div class="palette-main">`;
             for (const [index, val] of Object.entries(p_data.values)) { 
-                let color_value = getComputedStyle(previewiframe.contentWindow.document.documentElement).getPropertyValue('--' + getCssVariablesPrefix() + val);
-                if (!color_value)  color_value = "";
-
+                let color_value = getComputedPropertyForClass(`${(getClassName(p_data, val))}`, p_data.property); 
+                if (!color_value) color_value = ""; // needed eg for transparent  (when getComputedPropertyForClass will be able to return false)
                 html += ` <span style="background:${color_value}" value="${(getClassName(p_data, val))}" title="${val}"></span> `;
             }
-
             html += `   <span value="" title="None (Default)"></span> `;
+            html += `</div>`;
+
+            //build shades rows  -  eg for primary-100
+            if (p_data.shades){
+                for (const [index, val] of Object.entries(p_data.shades.values)) {
+                    html += `<div class="palette-shades">`;
+                    // loop foreach strength
+                    for (const [index, strength] of Object.entries(p_data.shades.strengths)) {
+                        const className = (strength != 500) ? `${(getClassName(p_data, val))}-${strength}` : `${(getClassName(p_data, val))}`;
+                        const color_value = getComputedPropertyForClass(className, p_data.property); 
+                        if (color_value) {
+                            html += `   <span style="background:${color_value}" value="${className}" title="${className}" strength="${strength}"></span> `;
+                        }  
+                    }
+                    html += `</div>`;
+                }
+            }
+            
+            //close color widget
             html += `</colors-widget>`;
 
             break;
@@ -448,14 +466,14 @@ $(document).ready(function ($) {
         var selector = $(this).closest("[selector]").attr("selector");
         var elem = doc.querySelector(selector);
         //eliminate all classes in select
-        $(this).parent().find("span").each(function (index, element) {
+        $(this).parent().parent().find("span").each(function (index, element) {
             the_value = $(element).attr("value").trim(); //myConsoleLog("Eliminate"+the_value);
             if (the_value !== "") elem.classList.remove(the_value);
         });
         var current_selected_item = $(this).attr("value").trim();
         if (current_selected_item !== "") elem.classList.add(current_selected_item); //myConsoleLog("Add class"+current_selected_item);
         $(this).closest("[selector]").find("textarea[attribute-name=class]").val(elem.classList).change();
-        $(this).parent().find("span.active").removeClass("active");
+        $(this).parent().parent().find("span.active").removeClass("active");
         $(this).addClass("active");
     });
 

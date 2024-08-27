@@ -29,22 +29,20 @@ Header
     z-index: 100;
     .mb-call {
       @include media-breakpoint-up(lg) {
-      top: -2px;
       position: relative;
       min-width: 154px;
       }
       a {
         display: inline-block;
         color: #777;
-        font-size: 0.9rem;
+        letter-spacing: 0.8px;
+        font-size: 0.95rem;
         text-decoration: none;
         line-height: 32px;
         svg {
           margin-top: -5px;
         }
-        span {
-          margin-top:5px;
-        }
+       
       }
     }
 

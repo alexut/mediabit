@@ -13,3 +13,4 @@ function custom_image_sizes()
   add_image_size('image-1920px-wide', 1920); // used as alternative for maximum size of images instead of 'full'
   // 'medium_large' for 768 pixels wide is automatically added by WordPress
 }
+

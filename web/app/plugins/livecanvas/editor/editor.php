@@ -25,9 +25,9 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 		<script type='text/javascript' src='<?php lc_print_editor_url() ?>libs/js-beautify/beautify-css.min.js'></script>
 
         <?php if (!empty(locate_template('lc-framework-config.js')) ){   ?>
-                <script type='text/javascript' src='<?php echo get_stylesheet_directory_uri() ?>/lc-framework-config.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
+                <script data-pagespeed-no-defer type='text/javascript' src='<?php echo get_stylesheet_directory_uri() ?>/lc-framework-config.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
                 <?php } else {   ?>
-                <script type='text/javascript' src='<?php lc_print_editor_url() ?>configs/bootstrap-<?php echo lc_get_bootstrap_version(); ?>.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
+                <script data-pagespeed-no-defer type='text/javascript' src='<?php lc_print_editor_url() ?>configs/bootstrap-<?php echo lc_get_bootstrap_version(); ?>.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
 		    
         <?php } //end else ?>
 
@@ -38,7 +38,13 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 		    
         <?php } //end else ?>
 
-        <script type='text/javascript' src='<?php lc_print_editor_url() ?>functions.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
+        <script type='text/javascript' src='<?php lc_print_editor_url() ?>functions.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>   
+        
+        <script type='text/javascript' src='<?php lc_print_editor_url() ?>contextual-menus-initialize.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>            
+        <script type='text/javascript' src='<?php lc_print_editor_url() ?>contextual-menus-actions.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>   
+        <script type='text/javascript' src='<?php lc_print_editor_url() ?>text-editing-initialize.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
+             
+
 		<script type='text/javascript' src='<?php lc_print_editor_url() ?>editor.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script> 
 		<script type='text/javascript' src='<?php lc_print_editor_url() ?>side-panel-edit-properties.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
 		<script defer type='text/javascript' src='<?php lc_print_editor_url() ?>side-panel-advanced-helpers.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script> 
@@ -196,7 +202,7 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 		<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;700&display=swap" rel="stylesheet">
 
-		<script defer type='text/javascript' src='https://updater.livecanvas.com/lc-update-notification.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
+		<script async type='text/javascript' src='https://updater.livecanvas.com/lc-update-notification.js?v=<?php echo LC_SCRIPTS_VERSION ?>'></script>
 
 		
 	</body>

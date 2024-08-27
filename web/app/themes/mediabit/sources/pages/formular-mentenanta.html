@@ -1,0 +1,100 @@
+<section class="pt-7">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-md-10 px-4 pb-5 text-md-center">
+                <div class="lc-block">
+                    <h1 editable="rich" class="h2">
+                        <span class="supratitle">Mentenanță activă</span>Site-ul tău va fi funcțional, sigur și optimizat!
+                    </h1>
+                </div>
+                <div class="lc-block mb-4">
+                    <div editable="rich">
+                        <p>Nu ne limităm doar la mentenanța obișnuită. Ne ocupăm activ de actualizări, securitate și optimizări, astfel încât site-ul tău să rămână performant și protejat. Suntem mereu pregătiți să intervenim rapid la orice nevoie sau schimbare.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7 pb-5">
+                [contact-form-7 id="6485645" title="Formular Mentenanță Website"]
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="py-4 py-lg-8 bg-gray-100">
+    <div class="container">
+        <div class="row mb-4 mb-lg-5">
+            <div class="col-12">
+                <div class="lc-block mw-6">
+                    <h2 class="fw-semibold mb-4 ls-n1"><span class="supratitle">Întrebări Frecvente</span> Despre Mentenanța Activă</h2>
+                    <p>Află mai multe despre cum mentenanța activă poate ajuta la optimizarea și securizarea site-ului tău. Dacă ai alte întrebări, <a href="/contact/">contactează-ne</a> pentru mai multe informații.</p> 
+                </div>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 g-4 g-lg-5">
+            <!-- Întrebare 1 -->
+            <div class="col">
+                <div class="lc-block mw-4">
+                    <p class="mb-1 fw-semibold">Ce înseamnă mentenanță activă?</p>
+                    <p class="mb-0 text-body text-opacity-75">Mentenanța activă înseamnă nu doar reparații reactive, ci și îmbunătățiri proactive și actualizări continue care ajută site-ul tău să rămână modern, sigur și optimizat pentru motoarele de căutare.</p>
+                </div>
+            </div>
+            <!-- Întrebare 2 -->
+            <div class="col">
+                <div class="lc-block mw-4">
+                    <p class="mb-1 fw-semibold">Ce tipuri de îmbunătățiri oferiți?</p>
+                    <p class="mb-0 text-body text-opacity-75">Oferim îmbunătățiri de securitate, optimizări de viteză, actualizări de conținut, integrări de noi funcționalități și multe altele, în funcție de cerințele și necesitățile afacerii tale.</p>
+                </div>
+            </div>
+            <!-- Întrebare 3 -->
+            <div class="col">
+                <div class="lc-block mw-4">
+                    <p class="mb-1 fw-semibold">Cum răspundeți la cererile urgente?</p>
+                    <p class="mb-0 text-body text-opacity-75">Avem un sistem de ticketing care ne permite să prioritizăm și să răspundem rapid la cererile urgente, asigurând că site-ul tău este întotdeauna disponibil și funcțional.</p>
+                </div>
+            </div>
+            <!-- Întrebare 4 -->
+            <div class="col">
+                <div class="lc-block mw-4">
+                    <p class="mb-1 fw-semibold">Cum pot să monitorizez progresul mentenanței active?</p>
+                    <p class="mb-0 text-body text-opacity-75">Oferim rapoarte detaliate și acces la un dashboard de monitorizare, unde poți vedea statusul actualizărilor, îmbunătățirilor efectuate și orice probleme rezolvate.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Wait for the DOM to load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to get URL parameters using URLSearchParams
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+    
+        // Get the plan parameter from the URL
+        var selectedPlan = getUrlParameter('plan');
+    
+        // Get reference to the maintenance-plan select field
+        var maintenancePlanSelect = document.querySelector('select[name="maintenance-plan"]');
+    
+        // Map the URL parameter to the correct select option
+        if (maintenancePlanSelect) {
+            if (selectedPlan === 'Basic-Lunar') {
+                maintenancePlanSelect.value = "Basic - €25 /lună (facturat lunar)";
+            } else if (selectedPlan === 'Basic-Anual') {
+                maintenancePlanSelect.value = "Basic - €20 /lună (facturat anual)";
+            } else if (selectedPlan === 'Pro-Lunar') {
+                maintenancePlanSelect.value = "Pro - €100 /lună (facturat lunar)";
+            } else if (selectedPlan === 'Pro-Anual') {
+                maintenancePlanSelect.value = "Pro - €90 /lună (facturat anual)";
+            } else if (selectedPlan === 'Enterprise') {
+                maintenancePlanSelect.value = "Enterprise - Customizat";
+            }
+        }
+    });
+    </script>
+    
+    
+    

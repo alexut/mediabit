@@ -20,5 +20,3 @@ jobs:
           **/node_modules/**
           web/app/themes/mediabit/sources/**
           web/app/themes/mediabit/build/tools-dev/**
-        local-dir: db/   # The directory containing your local db files
-        server-dir: db/  # The corresponding path on the server

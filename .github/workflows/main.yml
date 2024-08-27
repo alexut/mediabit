@@ -8,7 +8,7 @@ jobs:
     - name: 🚚 Get latest code
       uses: actions/checkout@v4
     
-    - name: 📂 Sync files
+    - name: 📂 Sync web folder contents
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: ftp.mediabit.ro
@@ -20,3 +20,5 @@ jobs:
           **/node_modules/**
           web/app/themes/mediabit/sources/**
           web/app/themes/mediabit/build/tools-dev/**
+        local-dir: web/   # Upload everything from the web folder
+        server-dir: /  # Place everything at the root of the FTP folder

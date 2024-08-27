@@ -8,6 +8,9 @@ web/app/uploads/*
 !web/app/uploads/.gitkeep
 web/app/cache/*
 
+# Database backups
+/db/
+
 # WordPress
 web/wp
 web/.htaccess

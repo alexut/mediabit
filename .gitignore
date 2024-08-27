@@ -9,7 +9,8 @@ web/app/uploads/*
 web/app/cache/*
 
 # Database backups
-/db/
+/db/*
+!/db/.gitkeep
 
 # WordPress
 web/wp

@@ -112,7 +112,7 @@ class Header {
                 {$logoHtml}
                 {$callHtml}
                 {$buttonHtml}
-                <div class="navbar-collapse offcanvas-collapse show animation-container-lg collapse text-center" id="navbarSupportedContent" style="">
+                <div class="navbar-collapse offcanvas-collapse animation-container-lg collapse text-center" id="navbarSupportedContent" style="">
                     {$navHtml}
                     {$authHtml}
                 </div>

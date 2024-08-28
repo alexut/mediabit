@@ -1,18 +1,139 @@
+// *
+// * ANIMATIONS
+// *
 
 // Define the keyframes for the animation
+// Keyframe for zoom in (show)
 @keyframes zoomFadeIn {
     0% {
-      transform: scale(0.5); // Start with the element at half its size
+      transform: scale(0.7); // Start with the element scaled down
       opacity: 0; // Completely transparent
     }
     100% {
-      transform: scale(1); // End at its normal size
+      transform: scale(1); // End at normal size
       opacity: 1; // Fully opaque
     }
   }
   
+  // Keyframe for zoom out (hide)
+  @keyframes zoomFadeOut {
+    0% {
+      transform: scale(1); // Start at normal size
+      opacity: 1; // Fully opaque
+    }
+    100% {
+      transform: scale(0.7); // End scaled down
+      opacity: 0; // Completely transparent
+    }
+  }
+
   // Create a mixin for the animation (optional for reusability)
   @mixin zoomFadeInAnimation($duration: 0.3s, $timing-function: ease-in-out, $delay: 0s) {
     animation: zoomFadeIn $duration $timing-function $delay;
   }
-  
+  // Mixin for the fade-out animation
+@mixin zoomFadeOutAnimation($duration: 0.3s, $timing-function: ease-in-out, $delay: 0s) {
+  animation: zoomFadeOut $duration $timing-function $delay forwards;
+}
+
+// Mixin for the fade-up animation
+@mixin fadeup-animation($duration: 0.7s, $delay: 0.3s, $timing: cubic-bezier(.25, .46, .45, .94)) {
+  animation: fadeup $duration $timing forwards;
+  animation-delay: $delay;
+  will-change: transform;
+}
+
+// Mixin for initializing animation states
+@mixin init-animate($transform: translateY(50%), $opacity: 0) {
+  opacity: $opacity;
+  transform: $transform;
+}
+
+// Mixin for sequential delay
+@mixin sequential-delay($start: 0.08s, $increment: 0.08s, $count: 16) {
+  @for $i from 1 through $count {
+    &:nth-child(#{$i}) {
+      animation-delay: ($start + ($i - 1) * $increment) !important;
+    }
+  }
+}
+
+// Keyframes for fade-up animation
+@keyframes fadeup {
+  0% {
+    opacity: 0;
+    transform: translateY(50%);
+  }
+  20% {
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Keyframes for blur animations
+@keyframes blur {
+  0% {
+    filter: blur(0px);
+  }
+  100% {
+    filter: blur(3px);
+  }
+}
+
+@keyframes blur-out {
+  0% {
+    filter: blur(3px);
+  }
+  100% {
+    filter: blur(0px);
+  }
+}
+
+// Applying the mixins
+.animation-container-all {
+  .animate-event {
+    @include init-animate();
+  }
+}
+
+@include media-breakpoint-down(lg) {
+  .animation-container-lg {
+    .animate-event {
+      @include init-animate();
+    }
+  }
+}
+
+@include media-breakpoint-down(md) {
+  .animation-container-md {
+    .animate-event {
+      @include init-animate();
+    }
+  }
+}
+
+[class*="animation-container"].show {
+  .animate-event {
+    @include fadeup-animation();
+  }
+}
+
+.form-animate .animate-event {
+  @include init-animate();
+  @include fadeup-animation();
+}
+
+.animate-event {
+  @include sequential-delay();
+}
+
+#formModal .modal-body {
+  min-height: 340px;
+}
+

@@ -18,6 +18,7 @@ Header
     .navbar-nav {
       font-family: $headings-font-family;
     }
+   
     position: absolute;
     width:100%;
     min-height: 100px;
@@ -26,16 +27,64 @@ Header
     background-color: #fff;
     border-bottom: 1px solid #fff;
     z-index: 100;
-    .dropdown-toggle::after {
-      content: "\F282"; /* Unicode for the Bootstrap chevron-down icon */
-      font-family: "bootstrap-icons"; /* Specify the Bootstrap Icons font */
+    .nav-link {
+      position: relative;
       display: inline-block;
-      vertical-align: middle;
-      margin-left: 0.255em; /* Adjust spacing as needed */
-      font-size: 0.75rem; /* Adjust size as needed */
-      transform: none; /* Ensure it doesn't inherit the caret rotation */
-      border: none; /* Remove the default caret styles */
     }
+    .dropdown-toggle::after {
+        content: "\F282"; /* Unicode for the Bootstrap chevron-down icon */
+        font-family: "bootstrap-icons"; /* Specify the Bootstrap Icons font */
+        display: inline-block;
+        vertical-align: middle;
+        transform: none; /* Ensure it doesn't inherit the caret rotation */
+        border: none; /* Remove the default caret styles */
+        position: absolute;
+      @include media-breakpoint-up(lg) {
+        padding-right: 10px;
+        top:12px;
+        right: 3px;
+        font-size: 0.7rem; /* Adjust size as needed */
+
+      }
+      @include media-breakpoint-down(lg) {
+        top:17px;
+        right: -25px;
+        font-size: 0.75rem; /* Adjust size as needed */
+
+      }
+    }
+
+    .dropdown-menu {
+      visibility: hidden;
+
+      @include media-breakpoint-up(lg) {
+        padding-bottom: 25px;
+          max-width: 460px;
+          overflow: hidden;
+          box-shadow: 0 0 7px rgba(0, 0, 0, 0.05);
+          border: 1px solid  #efefef;
+          display: block!important;
+          opacity: 0;
+          transition: 300ms;
+          transform: scale3d(0.9, 0.9, 1);
+      }
+      .dropdown-item {
+        @include media-breakpoint-up(lg) {
+          white-space: normal;
+          width:420px;
+        }
+      }
+      &.show {
+        @include media-breakpoint-up(lg) {
+        opacity: 1;
+        transition: 400ms;
+        transform: none;
+        }
+        visibility: visible;
+  
+      }
+    }
+    
     .mb-call {
       @include media-breakpoint-up(lg) {
       position: relative;
@@ -151,6 +200,7 @@ Header
     border-radius: 5px;
     z-index: 999;
     position: fixed;
+  
     top: 120px;
     left: 100%;
     width: 80vw;
@@ -163,33 +213,43 @@ Header
     transition: visibility .3s ease-in-out, -webkit-transform .3s ease-in-out;
     transition: transform .3s ease-in-out, visibility .3s ease-in-out;
     transition: transform .3s ease-in-out, visibility .3s ease-in-out, -webkit-transform .3s ease-in-out;
-
+    border:1 px solid $light;
+    @media (orientation: landscape) {
+      top: 15px;
+    }
     .navbar-nav {
       padding-top: 80px;
       .nav-item{
         a {
-          font-size: 1.6rem;
+          font-size: 1.5rem;
           text-align: center;
         }
         .dropdown-menu {
-          @include zoomFadeInAnimation();
+
           overflow: hidden; // 
           padding-top: 0!important;
           max-width: 320px;
           margin: 0 auto;
+          
           .nav-item {
             background-color: $light;
             text-align: center;
             &:first-child {
-              padding-top: 20px;
+              padding-top: 10px;
             }
             &:last-child {
-              padding-bottom:20px;
+              padding-bottom:10px;
             }
             p {
-              font-size: 1.1rem;
-              font-weight: normal!important;
               text-align: left;
+              line-height: 1.1;
+         
+              .text-wrap {
+                font-size: 1rem;
+                font-weight: normal!important;
+  
+              
+              }
             }
           }
         }
@@ -202,7 +262,8 @@ Header
       right:20px;
     }
     .btn-outline-primary {
-      margin-top: 50px;
+      margin-top:20px;
+      margin-bottom: 20px;
     }
   }
   .offcanvas-collapse.show {

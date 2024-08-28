@@ -5,7 +5,7 @@ class Custom_Bootstrap_Walker_Nav extends Walker_Nav_Menu {
     // Start Level - Wrapping the submenu in ul with dropdown-menu class
     function start_lvl(&$output, $depth = 0, $args = array()) {
         $indent = str_repeat("\t", $depth);
-        $output .= "\n$indent<ul class=\"dropdown-menu pb-lg-0\" aria-labelledby=\"navbarDropdownMenuLink\">\n";
+        $output .= "\n$indent<ul class=\"dropdown-menu\" aria-labelledby=\"navbarDropdownMenuLink\">\n";
     }
 
 // Start Element - Outputting each menu item
@@ -15,7 +15,7 @@ function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
     $class_names = $value = '';
 
     $classes = empty($item->classes) ? array() : (array) $item->classes;
-    $classes[] = 'nav-item'; // Ensure nav-item is added to every item.
+    $classes[] = 'nav-item animate-event'; // Ensure nav-item is added to every item.
 
     // Add dropdown class to parent menu items
     if ($args->walker->has_children) {

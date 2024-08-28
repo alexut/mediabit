@@ -1,0 +1,18 @@
+
+// Define the keyframes for the animation
+@keyframes zoomFadeIn {
+    0% {
+      transform: scale(0.5); // Start with the element at half its size
+      opacity: 0; // Completely transparent
+    }
+    100% {
+      transform: scale(1); // End at its normal size
+      opacity: 1; // Fully opaque
+    }
+  }
+  
+  // Create a mixin for the animation (optional for reusability)
+  @mixin zoomFadeInAnimation($duration: 0.3s, $timing-function: ease-in-out, $delay: 0s) {
+    animation: zoomFadeIn $duration $timing-function $delay;
+  }
+  

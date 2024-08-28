@@ -69,9 +69,8 @@ class Footer {
                             <h4 class="h5 mt-3">Suport</h4>
                             <ul class="list-unstyled mt-3">
                                 <!-- <li><a href="/blog/">Ghid Online</a></li> -->
-                                <li><a href="/login/">Suport Clienți</a></li>
-                                <li><a href="/blog/">Întrebari Frecvente</a></li>
-                                <li><a href="/blog/">Deschide Tichet</a></li>
+                                <li><a href="https://clienti.mediabit.ro/login/">Suport Clienți</a></li>
+                                <li><a href="https://clienti.mediabit.ro/login/?tichet">Deschide Tichet</a></li>
                             </ul>
                         </div>
                         <div class="col-xl-4 col-sm-4 col-12">

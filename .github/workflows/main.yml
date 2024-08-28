@@ -17,6 +17,7 @@ jobs:
         exclude: |
           **/.git*
           **/.git*/**
+          **/.todo*
           **/node_modules/**
           web/app/themes/mediabit/sources/**
           web/app/themes/mediabit/build/tools-dev/**

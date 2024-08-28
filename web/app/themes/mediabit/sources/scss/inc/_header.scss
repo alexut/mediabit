@@ -18,7 +18,6 @@ Header
     .navbar-nav {
       font-family: $headings-font-family;
     }
-    
     position: absolute;
     width:100%;
     min-height: 100px;
@@ -27,6 +26,16 @@ Header
     background-color: #fff;
     border-bottom: 1px solid #fff;
     z-index: 100;
+    .dropdown-toggle::after {
+      content: "\F282"; /* Unicode for the Bootstrap chevron-down icon */
+      font-family: "bootstrap-icons"; /* Specify the Bootstrap Icons font */
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 0.255em; /* Adjust spacing as needed */
+      font-size: 0.75rem; /* Adjust size as needed */
+      transform: none; /* Ensure it doesn't inherit the caret rotation */
+      border: none; /* Remove the default caret styles */
+    }
     .mb-call {
       @include media-breakpoint-up(lg) {
       position: relative;
@@ -138,6 +147,7 @@ Header
 
 @include media-breakpoint-down(lg) {
   .offcanvas-collapse {
+
     border-radius: 5px;
     z-index: 999;
     position: fixed;
@@ -153,12 +163,38 @@ Header
     transition: visibility .3s ease-in-out, -webkit-transform .3s ease-in-out;
     transition: transform .3s ease-in-out, visibility .3s ease-in-out;
     transition: transform .3s ease-in-out, visibility .3s ease-in-out, -webkit-transform .3s ease-in-out;
+
     .navbar-nav {
       padding-top: 80px;
-      .nav-item a {
-        font-size: 1.6rem;
-        text-align: center;
+      .nav-item{
+        a {
+          font-size: 1.6rem;
+          text-align: center;
+        }
+        .dropdown-menu {
+          @include zoomFadeInAnimation();
+          overflow: hidden; // 
+          padding-top: 0!important;
+          max-width: 320px;
+          margin: 0 auto;
+          .nav-item {
+            background-color: $light;
+            text-align: center;
+            &:first-child {
+              padding-top: 20px;
+            }
+            &:last-child {
+              padding-bottom:20px;
+            }
+            p {
+              font-size: 1.1rem;
+              font-weight: normal!important;
+              text-align: left;
+            }
+          }
+        }
       }
+     
     }
     .btn-link {
       position: absolute;
@@ -173,6 +209,7 @@ Header
     visibility: visible;
     -webkit-transform: translateX(-110%);
     transform: translateX(-110%);
+    max-height: 80vh;
     overscroll-behavior-y: contain;
     overflow-y: auto;
   }
@@ -183,4 +220,5 @@ position: relative;
 z-index: 2;
 height: 2.75rem;
 overflow-y: hidden;
+
 }

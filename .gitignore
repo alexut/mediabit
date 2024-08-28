@@ -19,6 +19,7 @@ web/.htaccess
 # Logs
 *.log
 
+
 # Dotenv
 .env
 .env.*

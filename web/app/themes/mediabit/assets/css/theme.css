@@ -18788,6 +18788,16 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+@keyframes zoomFadeIn {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
 /*!
  * bs Cookie Settings
  * 
@@ -20153,6 +20163,16 @@ Header
 .header .navbar .navbar-nav {
   font-family: "LatoWebBold", sans-serif;
 }
+.header .navbar .dropdown-toggle::after {
+  content: "\f282"; /* Unicode for the Bootstrap chevron-down icon */
+  font-family: "bootstrap-icons"; /* Specify the Bootstrap Icons font */
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.255em; /* Adjust spacing as needed */
+  font-size: 0.75rem; /* Adjust size as needed */
+  transform: none; /* Ensure it doesn't inherit the caret rotation */
+  border: none; /* Remove the default caret styles */
+}
 @media (min-width: 992px) {
   .header .navbar .mb-call {
     position: relative;
@@ -20319,6 +20339,28 @@ Header
     font-size: 1.6rem;
     text-align: center;
   }
+  .offcanvas-collapse .navbar-nav .nav-item .dropdown-menu {
+    animation: zoomFadeIn 0.3s ease-in-out 0s;
+    overflow: hidden;
+    padding-top: 0 !important;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  .offcanvas-collapse .navbar-nav .nav-item .dropdown-menu .nav-item {
+    background-color: #f8f9fa;
+    text-align: center;
+  }
+  .offcanvas-collapse .navbar-nav .nav-item .dropdown-menu .nav-item:first-child {
+    padding-top: 20px;
+  }
+  .offcanvas-collapse .navbar-nav .nav-item .dropdown-menu .nav-item:last-child {
+    padding-bottom: 20px;
+  }
+  .offcanvas-collapse .navbar-nav .nav-item .dropdown-menu .nav-item p {
+    font-size: 1.1rem;
+    font-weight: normal !important;
+    text-align: left;
+  }
   .offcanvas-collapse .btn-link {
     position: absolute;
     top: 20px;
@@ -20331,6 +20373,7 @@ Header
     visibility: visible;
     -webkit-transform: translateX(-110%);
     transform: translateX(-110%);
+    max-height: 80vh;
     overscroll-behavior-y: contain;
     overflow-y: auto;
   }
